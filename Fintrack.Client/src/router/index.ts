@@ -1,0 +1,31 @@
+import { createRouter, createWebHistory } from 'vue-router';
+import { routes as publicRoutes } from '@/public/routes';
+import { routes as authRoutes } from '@/auth/routes';
+import { routes as budgetRoutes } from '@/budgets/routes';
+import { routes as expenseRoutes } from '@/expenses/routes';
+
+const routes = [
+  ...publicRoutes,
+  ...authRoutes,
+  ...budgetRoutes,
+  ...expenseRoutes,
+  // Dashboard Redirect
+  { 
+    path: '/dashboard', 
+    redirect: '/budgets' // Redirect to budgets for now until dashboard exists
+  },
+  // Fallback
+  { path: '/:pathMatch(.*)*', redirect: '/' }
+];
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes,
+});
+
+router.beforeEach((to, from, next) => {
+  // TODO: Integrate Pinia Auth Store check
+  next();
+});
+
+export default router;
