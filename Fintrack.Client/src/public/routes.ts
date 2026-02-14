@@ -10,13 +10,8 @@ export const routes: RouteRecordRaw[] = [
         path: '',
         name: 'Landing',
         component: () => import('@/public/landing/LandingView.vue'),
-        meta: { layout: PublicLayout }
+        meta: { layout: 'div' }
       },
-      {
-        path: 'pricing',
-        name: 'Pricing',
-        component: () => import('@/public/pricing/PricingView.vue'),
-      }
     ]
   }
 ];
