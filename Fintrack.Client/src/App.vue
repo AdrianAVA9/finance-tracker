@@ -14,5 +14,3 @@ const layout = computed(() => {
     <router-view />
   </component>
 </template>
-
-<style src="@/assets/main.scss"></style>
