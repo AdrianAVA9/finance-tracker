@@ -42,7 +42,7 @@ Priority: 1
 WorkItemType: Product Backlog Item
 Activity: Development
 
-🧑‍💼 User Story #7
+🧑‍💼 User Story #5
 
 Title: Manage expense categories
 
@@ -149,61 +149,6 @@ Description:
 As a user, I want to view a dashboard summarizing income, expenses, and remaining balance so that I can quickly understand my financial situation.
 
 Priority: 3
-WorkItemType: Product Backlog Item
-Activity: Development
-
-🧑‍💼 User Story #15
-
-Title: Search and filter transactions
-
-Description:
-As a user, I want to search and filter transactions by date, category, amount, and merchant so that I can quickly find specific expenses and analyze my spending patterns.
-
-Priority: 3
-WorkItemType: Product Backlog Item
-Activity: Development
-
-🧑‍💼 User Story #16
-
-Title: Track savings goals
-
-Description:
-As a user, I want to define savings goals and track progress so that I can stay motivated and plan future expenses responsibly.
-
-Priority: 4
-WorkItemType: Product Backlog Item
-Activity: Development
-
-🧑‍💼 User Story #17
-
-Title: Receive budget and spending alerts
-
-Description:
-As a user, I want to receive alerts when I approach or exceed my budget limits so that I can take action before overspending.
-
-Priority: 4
-WorkItemType: Product Backlog Item
-Activity: Development
-
-🧑‍💼 User Story #18
-
-Title: View historical financial reports
-
-Description:
-As a user, I want to review my financial history by month or year so that I can analyze trends and improve my financial decisions.
-
-Priority: 4
-WorkItemType: Product Backlog Item
-Activity: Development
-
-🧑‍💼 User Story #19
-
-Title: Export financial reports
-
-Description:
-As a user, I want to export my financial reports in CSV and PDF formats so that I can analyze data in spreadsheets, share reports with accountants, or maintain records.
-
-Priority: 4
 WorkItemType: Product Backlog Item
 Activity: Development
 
