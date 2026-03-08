@@ -1,5 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router';
-import AuthLayout from '@/layouts/AuthLayout.vue';
+import AuthLayout from '@/auth/layouts/AuthLayout.vue';
 
 export const routes: RouteRecordRaw[] = [
   {

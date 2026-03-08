@@ -1,5 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router';
-import PublicLayout from '@/layouts/PublicLayout.vue';
+import PublicLayout from '@/public/layouts/PublicLayout.vue';
 
 export const routes: RouteRecordRaw[] = [
   {
