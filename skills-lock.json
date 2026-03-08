@@ -1,6 +1,11 @@
 {
   "version": 1,
   "skills": {
+    "api-controller-generator": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "2f77560bfec46d690ad388621337126f13b2d97cc77463c418a906962a14f810"
+    },
     "brainstorming": {
       "source": "obra/superpowers",
       "sourceType": "github",
@@ -26,10 +31,30 @@
       "sourceType": "github",
       "computedHash": "e24e3c4cab4b5a07bc1d1801db14868f3a1cd184f7f28f5dd2c4a2b234bf2f2d"
     },
+    "integration-testing": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "96f8528926ab1f24c510657491282751d79211996618cacbbf2a807ce8e855c3"
+    },
+    "permission-authorization": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "ee14dde7ed98b312d3fecf0220af2ba52a125e3b9864d2a0731588733750e886"
+    },
+    "repository-pattern": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "e05ea05b9ef35989c28ec24d35077ee3ee605a7b891927ffab56a05f77b2eedb"
+    },
     "skill-creator": {
       "source": "anthropics/skills",
       "sourceType": "github",
       "computedHash": "57f470f512f45bdac598e302bc72fd62bf2b649fc7fad032efe97720149cde4d"
+    },
+    "unit-testing": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "1f6401c907fdb7228f8e2b9f6bf6129c6373cb1729d94b98e8c16c386640faff"
     },
     "vue-best-practices": {
       "source": "hyf0/vue-skills",
