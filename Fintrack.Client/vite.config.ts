@@ -46,6 +46,42 @@ export default defineConfig({
             '^/weatherforecast': {
                 target,
                 secure: false
+            },
+            '^/register': {
+                target,
+                secure: false
+            },
+            '^/login': {
+                target,
+                secure: false
+            },
+            '^/refresh': {
+                target,
+                secure: false
+            },
+            '^/confirmEmail': {
+                target,
+                secure: false
+            },
+            '^/resendConfirmationEmail': {
+                target,
+                secure: false
+            },
+            '^/forgotPassword': {
+                target,
+                secure: false
+            },
+            '^/resetPassword': {
+                target,
+                secure: false
+            },
+            '^/manage/2fa': {
+                target,
+                secure: false
+            },
+            '^/manage/info': {
+                target,
+                secure: false
             }
         },
         port: 5173,

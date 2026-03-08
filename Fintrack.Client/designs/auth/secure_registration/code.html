@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Register | Sentinel Secure</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#191971", // Midnight Blue
+                        "background-light": "#fafafa",
+                        "background-dark": "#0F0F1A", // Charcoal Blue Base
+                        "surface-dark": "#1A1A30", // Desaturated Blue-Gray
+                        "accent-teal": "#85B2B2", // Desaturated Teal
+                        "muted-gray": "#AAAAAA",
+                    },
+                    fontFamily: {
+                        "display": ["Epilogue", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "md": "8px",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Epilogue', sans-serif;
+        }
+        .layered-obsidian-shadow {
+            box-shadow: 0 10px 30px -5px rgba(25, 25, 113, 0.2);
+        }
+        .input-focus-inset:focus {
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-slate-100 font-display selection:bg-primary/40">
+<div class="flex min-h-screen w-full flex-col lg:flex-row">
+<!-- Left Side: Marketing Image (60%) -->
+<div class="relative hidden lg:flex lg:w-[60%] flex-col items-start justify-center p-16 overflow-hidden">
+<!-- Background Image with Overlay -->
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 bg-background-dark/60 z-10"></div>
+<img alt="Abstract digital network security visualization" class="h-full w-full object-cover" data-alt="Abstract blue digital network and security nodes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7ReZf5Sq5Fzs7O6OE-yOiB0wEaFhv3jQ8c7OVoLoeGcJb0ip8t_cLZoEIb_7yCmru6C7wZVjlV9DrKyGKvJZeBL56vO8kZmMWeYaO4wj6sFSoppf1tusQ7g9OnCdXK049-xVdZ26KXnETmwex4vcbEPeKnGyGWW5SSPKC8aSMEitVX8BfaMZTMJQMMd19i6fSehKcWKQYafZeSIUvB3208cS8YjDVDjt7gyP1aAUwFs7EkI6rnhC87mC8qk4y41x9MhvIbVM3bz3k"/>
+</div>
+<!-- Content -->
+<div class="relative z-20 max-w-2xl">
+<div class="mb-12 flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-md bg-primary">
+<span class="material-symbols-outlined text-white">shield_person</span>
+</div>
+<span class="text-2xl font-bold tracking-tight text-white">Sentinel Secure</span>
+</div>
+<h1 class="mb-6 text-5xl font-extrabold leading-[1.1] tracking-tight text-white lg:text-6xl">
+                    Start your financial journey with AI precision.
+                </h1>
+<p class="text-xl font-medium leading-relaxed text-slate-300">
+                    Create an account to protect and grow your wealth with advanced AI-driven security. Our sentinel technology monitors your assets 24/7.
+                </p>
+<div class="mt-12 flex gap-8">
+<div class="flex flex-col">
+<span class="text-3xl font-bold text-white">99.9%</span>
+<span class="text-sm uppercase tracking-widest text-accent-teal">Threat Detection</span>
+</div>
+<div class="flex flex-col">
+<span class="text-3xl font-bold text-white">256-bit</span>
+<span class="text-sm uppercase tracking-widest text-accent-teal">Encryption</span>
+</div>
+</div>
+</div>
+<!-- Subtle Decorative Bottom Element -->
+<div class="absolute bottom-8 left-16 z-20 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-gray/50">
+<span>Enterprise Grade Security</span>
+<span class="h-px w-12 bg-muted-gray/30"></span>
+<span>Powered by Neural Intelligence</span>
+</div>
+</div>
+<!-- Right Side: Registration Form (40%) -->
+<div class="flex w-full flex-col items-center justify-center px-6 py-12 lg:w-[40%] lg:px-12 bg-background-dark">
+<!-- Mobile Logo (visible only on small screens) -->
+<div class="mb-10 flex items-center gap-2 lg:hidden">
+<div class="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
+<span class="material-symbols-outlined text-sm text-white">shield_person</span>
+</div>
+<span class="text-xl font-bold text-white">Sentinel Secure</span>
+</div>
+<!-- Form Card -->
+<div class="w-full max-w-md rounded-md bg-surface-dark p-8 layered-obsidian-shadow border border-white/5">
+<div class="mb-8">
+<h2 class="text-2xl font-bold tracking-tight text-white">Create Account</h2>
+<p class="mt-2 text-sm text-muted-gray">Secure your digital assets with enterprise-grade protection.</p>
+</div>
+<form class="space-y-5">
+<!-- Full Name -->
+<div class="space-y-2">
+<label class="text-sm font-semibold tracking-wide text-white" for="full-name">Full Name</label>
+<input class="w-full rounded-md border border-white/10 bg-background-dark/50 px-4 py-3 text-white placeholder:text-muted-gray/50 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all input-focus-inset font-display" id="full-name" placeholder="Enter your full name" type="text"/>
+</div>
+<!-- Email Address -->
+<div class="space-y-2">
+<label class="text-sm font-semibold tracking-wide text-white" for="email">Email Address</label>
+<input class="w-full rounded-md border border-white/10 bg-background-dark/50 px-4 py-3 text-white placeholder:text-muted-gray/50 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all input-focus-inset font-display" id="email" placeholder="name@example.com" type="email"/>
+</div>
+<!-- Password -->
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<label class="text-sm font-semibold tracking-wide text-white" for="password">Password</label>
+</div>
+<div class="relative">
+<input class="w-full rounded-md border border-white/10 bg-background-dark/50 px-4 py-3 text-white placeholder:text-muted-gray/50 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all input-focus-inset font-display" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-gray hover:text-white" type="button">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+</div>
+<!-- Strength Indicator -->
+<div class="mt-2 space-y-1.5">
+<div class="flex gap-1">
+<div class="h-1 flex-1 rounded-full bg-primary"></div>
+<div class="h-1 flex-1 rounded-full bg-primary"></div>
+<div class="h-1 flex-1 rounded-full bg-white/10"></div>
+<div class="h-1 flex-1 rounded-full bg-white/10"></div>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-accent-teal">Strength: Medium</p>
+</div>
+</div>
+<!-- Terms Agreement -->
+<div class="flex items-start gap-3 py-2">
+<div class="flex h-5 items-center">
+<input class="h-4 w-4 rounded border-white/20 bg-background-dark text-primary focus:ring-primary focus:ring-offset-background-dark" id="terms" name="terms" type="checkbox"/>
+</div>
+<label class="text-xs leading-relaxed text-muted-gray" for="terms">
+                            I agree to the <a class="text-accent-teal hover:underline" href="#">Terms of Service</a> and <a class="text-accent-teal hover:underline" href="#">Privacy Policy</a>.
+                        </label>
+</div>
+<!-- Submit Button -->
+<button class="w-full rounded-md bg-primary py-4 text-sm font-bold tracking-[0.05em] text-white transition-all hover:bg-primary/90 active:scale-[0.98]" type="submit">
+                        CREATE ACCOUNT
+                    </button>
+</form>
+<!-- Social Login Divider -->
+<div class="relative my-8">
+<div aria-hidden="true" class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-white/5"></div>
+</div>
+<div class="relative flex justify-center text-xs font-bold uppercase tracking-widest">
+<span class="bg-surface-dark px-3 text-muted-gray/60">Or continue with</span>
+</div>
+</div>
+<!-- Social Buttons -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 rounded-md border border-white/10 bg-transparent py-2.5 text-xs font-bold text-accent-teal transition-all hover:border-primary">
+<img alt="Google Logo" class="h-4 w-4 grayscale opacity-70" data-alt="Google colorful letter G logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtnnVY05OvjPUaSsHjuageKIYz0DrzpesgrjEQOzMwstJ4SlkuzaAM7sTD0LVIizVHraWHBWaoAze_HcY2MxSNnqesZycPmbb_2VgHVWqKkasYIPy1hB2YQfIiAW5ySeFSJhfgVRk9BFzMQaMpaym5-ctAg_9JVg-p4wyAybRMDeuHVaa1GmYEwSSp03bAcJmFDsrCtxICrtcN7DtmC4aYTMg0W3zPgMyZsGM8PC15lS70y0XJmskInFYwksqI3LDO2xd-ETjG39qV"/>
+                        GOOGLE
+                    </button>
+<button class="flex items-center justify-center gap-2 rounded-md border border-white/10 bg-transparent py-2.5 text-xs font-bold text-accent-teal transition-all hover:border-primary">
+<span class="material-symbols-outlined text-lg opacity-70">brand_awareness</span>
+                        APPLE
+                    </button>
+</div>
+<!-- Footer Link -->
+<p class="mt-8 text-center text-sm font-medium text-muted-gray">
+                    Already have an account? 
+                    <a class="font-bold text-accent-teal hover:underline ml-1" href="#">Sign in</a>
+</p>
+</div>
+<!-- Accessibility/Legal Footer -->
+<div class="mt-12 flex gap-6 text-[10px] font-bold uppercase tracking-widest text-muted-gray/40">
+<a class="hover:text-muted-gray transition-colors" href="#">Security</a>
+<a class="hover:text-muted-gray transition-colors" href="#">Support</a>
+<a class="hover:text-muted-gray transition-colors" href="#">Privacy</a>
+</div>
+</div>
+</div>
+</body></html>

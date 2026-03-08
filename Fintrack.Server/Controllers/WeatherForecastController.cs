@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fintrack.Server.Controllers
@@ -28,6 +29,13 @@ namespace Fintrack.Server.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [Authorize]
+        [HttpGet("secure")]
+        public IActionResult GetSecureData()
+        {
+            return Ok(new { message = "This data is secured with ASP.NET Core Identity cookies!", user = User.Identity?.Name });
         }
     }
 }

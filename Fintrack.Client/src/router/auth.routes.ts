@@ -9,13 +9,13 @@ export const authRoutes: RouteRecordRaw[] = [
       {
         path: 'login',
         name: 'Login',
-        component: () => import('@/auth/login/LoginView.vue'),
+        component: () => import('@/views/Login.vue'),
         meta: { layout: AuthLayout }
       },
       {
         path: 'register',
         name: 'Register',
-        component: () => import('@/auth/login/LoginView.vue'), // Reusing for now
+        component: () => import('@/views/Register.vue'),
         meta: { layout: AuthLayout }
       }
     ]

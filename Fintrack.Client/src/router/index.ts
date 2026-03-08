@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuth } from '@/composables/useAuth';
 import { routes as publicRoutes } from '@/public/routes';
 import { routes as authRoutes } from '@/auth/routes';
 import { routes as budgetRoutes } from '@/budgets/routes';
@@ -23,8 +24,24 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  // TODO: Integrate Pinia Auth Store check
+router.beforeEach(async (to, from, next) => {
+  const { isAuthenticated, checkSession } = useAuth();
+  
+  // We check the session on every route change if they aren't authenticated yet
+  // but navigating to a protected route
+  const publicPages = ['/auth/login', '/auth/register', '/'];
+  const authRequired = !publicPages.includes(to.path);
+
+  if (authRequired) {
+    if (!isAuthenticated.value) {
+      await checkSession();
+    }
+    
+    if (!isAuthenticated.value) {
+      return next('/auth/login');
+    }
+  }
+
   next();
 });
 
