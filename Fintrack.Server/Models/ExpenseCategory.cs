@@ -24,6 +24,8 @@ namespace Fintrack.Server.Models
         [ForeignKey(nameof(UserId))]
         public virtual ApplicationUser? User { get; set; }
 
+        public bool IsSystem { get; set; }
+
         public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
         public virtual ICollection<Budget> Budgets { get; set; } = new List<Budget>();
     }
