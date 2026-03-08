@@ -9,20 +9,17 @@ export const routes: RouteRecordRaw[] = [
       {
         path: 'login',
         name: 'Login',
-        component: () => import('@/auth/login/LoginView.vue'),
-        meta: { layout: AuthLayout }
+        component: () => import('@/auth/login/LoginView.vue')
       },
       {
         path: 'register',
         name: 'Register',
-        component: () => import('@/auth/register/RegisterView.vue'),
-        meta: { layout: AuthLayout }
+        component: () => import('@/auth/register/RegisterView.vue')
       },
       {
         path: 'password-reset',
         name: 'PasswordReset',
-        component: () => import('@/auth/login/LoginView.vue'), // Still using Login as placeholder for now
-        meta: { layout: AuthLayout }
+        component: () => import('@/auth/login/LoginView.vue') // Still using Login as placeholder for now
       }
     ]
   }

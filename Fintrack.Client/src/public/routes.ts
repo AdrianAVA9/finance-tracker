@@ -9,8 +9,7 @@ export const routes: RouteRecordRaw[] = [
       {
         path: '',
         name: 'Landing',
-        component: () => import('@/public/landing/LandingView.vue'),
-        meta: { layout: 'div' }
+        component: () => import('@/public/landing/LandingView.vue')
       },
     ]
   }
