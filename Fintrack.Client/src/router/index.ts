@@ -8,8 +8,6 @@ const routes = [
   ...publicRoutes,
   ...authRoutes,
   ...appRoutes,
-  // Fallback
-
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ];
 
@@ -20,20 +18,25 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const { isAuthenticated, checkSession } = useAuth();
-  
-  // We check the session on every route change if they aren't authenticated yet
-  // but navigating to a protected route
-  const publicPages = ['/auth/login', '/auth/register', '/', '/auth/forgot-password', '/auth/reset-password'];
-  const authRequired = !publicPages.includes(to.path);
 
-  if (authRequired) {
-    if (!isAuthenticated.value) {
-      await checkSession();
-    }
-    
-    if (!isAuthenticated.value) {
-      return next('/auth/login');
-    }
+  // Resolve auth state once before making any routing decision
+  if (!isAuthenticated.value) {
+    await checkSession();
+  }
+
+  const isAuthDomain   = to.path.startsWith('/auth'); // login, register, forgot/reset password
+  const isAppDomain    = to.path.startsWith('/app');  // protected app pages
+  const isAdminDomain  = to.path.startsWith('/admin'); // protected admin pages
+  const isPublicDomain = !isAuthDomain && !isAppDomain && !isAdminDomain; // '/' landing etc.
+
+  // Authenticated users visiting the public landing or any auth page → send to app
+  if ((isPublicDomain || isAuthDomain) && isAuthenticated.value) {
+    return next('/app');
+  }
+
+  // Unauthenticated users visiting protected domains → gate with login
+  if ((isAppDomain || isAdminDomain) && !isAuthenticated.value) {
+    return next('/auth/login');
   }
 
   next();
