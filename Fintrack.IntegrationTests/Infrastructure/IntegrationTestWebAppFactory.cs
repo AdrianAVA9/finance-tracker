@@ -5,6 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Fintrack.Server.Data;
+using Fintrack.Server.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using NSubstitute;
 using System.Data.Common;
 using Microsoft.Data.Sqlite;
 
@@ -13,6 +17,12 @@ namespace Fintrack.IntegrationTests.Infrastructure
     public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
     {
         private SqliteConnection? _connection;
+
+        /// <summary>
+        /// Exposes the shared mock email sender so tests can verify calls.
+        /// </summary>
+        public IEmailSender<ApplicationUser> MockEmailSender { get; } =
+            Substitute.For<IEmailSender<ApplicationUser>>();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -39,6 +49,11 @@ namespace Fintrack.IntegrationTests.Infrastructure
                 .AddScheme<TestAuthSchemeOptions, TestAuthHandler>(
                     TestAuthHandler.SchemeName,
                     options => { });
+
+                // Replace the real email sender with a mock so tests can verify dispatch
+                // without requiring a real SMTP server.
+                services.RemoveAll(typeof(IEmailSender<ApplicationUser>));
+                services.AddSingleton(MockEmailSender);
             });
 
             builder.UseEnvironment("Testing");
