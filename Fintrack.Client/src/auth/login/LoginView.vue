@@ -19,7 +19,7 @@ const handleLogin = async () => {
 
     loading.value = false;
     if (success) {
-        router.push('/'); // Redirect to dashboard or home after successful login
+        router.push('/app'); // Redirect to dashboard after successful login
     } else {
         errorMsg.value = 'Invalid email or password.';
     }

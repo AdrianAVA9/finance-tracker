@@ -23,7 +23,7 @@ router.beforeEach(async (to, from, next) => {
   
   // We check the session on every route change if they aren't authenticated yet
   // but navigating to a protected route
-  const publicPages = ['/auth/login', '/auth/register', '/'];
+  const publicPages = ['/auth/login', '/auth/register', '/', '/auth/forgot-password', '/auth/reset-password'];
   const authRequired = !publicPages.includes(to.path);
 
   if (authRequired) {
