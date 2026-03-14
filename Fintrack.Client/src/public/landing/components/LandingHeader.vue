@@ -17,7 +17,7 @@
         </nav>
         <!-- CTA -->
         <div class="flex items-center gap-4">
-          <a class="hidden sm:block text-sm font-medium text-white hover:text-accent transition-colors" href="#">Log In</a>
+          <a class="hidden sm:block text-sm font-medium text-white hover:text-accent transition-colors" href="/auth/login">Log In</a>
           <button class="bg-primary hover:bg-primary-hover text-white text-sm font-bold py-2.5 px-5 rounded-lg transition-all duration-300 shadow-[0_0_15px_-3px_rgba(10,125,127,0.4)] hover:shadow-[0_0_20px_-3px_rgba(10,125,127,0.6)]">
             Get Started
           </button>
