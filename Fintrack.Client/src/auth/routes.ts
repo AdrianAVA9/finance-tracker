@@ -17,9 +17,15 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/auth/register/RegisterView.vue')
       },
       {
-        path: 'password-reset',
-        name: 'PasswordReset',
-        component: () => import('@/auth/login/LoginView.vue') // Still using Login as placeholder for now
+        path: 'forgot-password',
+        name: 'ForgotPassword',
+        component: () => import('@/auth/password-reset/ForgotPasswordView.vue')
+      },
+      {
+        // email and resetCode arrive as query params: /auth/reset-password?email=...&resetCode=...
+        path: 'reset-password',
+        name: 'ResetPassword',
+        component: () => import('@/auth/password-reset/ResetPasswordView.vue')
       }
     ]
   }

@@ -7,13 +7,16 @@ namespace Fintrack.Server.Api.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        private readonly IHostEnvironment _env;
 
         public ExceptionHandlingMiddleware(
             RequestDelegate next,
-            ILogger<ExceptionHandlingMiddleware> logger)
+            ILogger<ExceptionHandlingMiddleware> logger,
+            IHostEnvironment env)
         {
             _next = next;
             _logger = logger;
+            _env = env;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -26,15 +29,26 @@ namespace Fintrack.Server.Api.Middleware
             {
                 _logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
 
-                var problemDetails = CreateProblemDetails(exception);
+                var problemDetails = CreateProblemDetails(exception, _env.IsDevelopment());
 
                 context.Response.StatusCode = problemDetails.Status ?? 500;
                 await context.Response.WriteAsJsonAsync(problemDetails);
             }
         }
 
-        private static ProblemDetails CreateProblemDetails(Exception exception)
+        private static ProblemDetails CreateProblemDetails(Exception exception, bool isDevelopment)
         {
+            if (isDevelopment)
+            {
+                // Expose the real exception in Development for easier debugging
+                return new ProblemDetails
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    Title = exception.GetType().Name,
+                    Detail = $"{exception.Message}\n\nInner Exception: {exception.InnerException?.Message}\n\nStack Trace: {exception.StackTrace}"
+                };
+            }
+
             return exception switch
             {
                 ValidationException validationException => new ProblemDetails

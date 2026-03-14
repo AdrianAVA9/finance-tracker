@@ -118,9 +118,10 @@ const handleLogin = async () => {
                                     class="text-sm text-[#9898c3] group-hover/check:text-white transition-colors">Remember
                                     me</span>
                             </label>
-                            <a href="#"
+                            <router-link
+                                to="/auth/forgot-password"
                                 class="text-sm text-[#85B2B2] hover:text-[#A5D2D2] transition-colors font-medium">Forgot
-                                Password?</a>
+                                Password?</router-link>
                         </div>
 
                         <!-- Submit Button -->

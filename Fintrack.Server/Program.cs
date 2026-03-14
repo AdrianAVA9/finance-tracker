@@ -5,7 +5,9 @@ using Fintrack.Server.Models;
 using Fintrack.Server.Data;
 using Fintrack.Server.Infrastructure;
 using Fintrack.Server.Infrastructure.Authorization;
+using Fintrack.Server.Infrastructure.Email;
 using Fintrack.Server.Api.Middleware;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,11 @@ builder.Services.AddPermissionAuthorization();
 
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Override Identity's built-in no-op email sender with our SMTP implementation.
+// These MUST be registered after AddIdentityApiEndpoints to take effect.
+builder.Services.AddTransient<IEmailSender, SmtpMailSender>();
+builder.Services.AddTransient<IEmailSender<ApplicationUser>, IdentityEmailSender>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
@@ -36,6 +43,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// In Development, expose real exception details for easier debugging
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
 
 app.UseCustomExceptionHandler();
 
