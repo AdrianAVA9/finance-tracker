@@ -30,8 +30,8 @@ namespace Fintrack.IntegrationTests.ExpenseCategoryGroups
             groups.Should().NotBeNull();
             groups!.Count.Should().BeGreaterThanOrEqualTo(11);
             
-            // Verify specifically 1. BÁSICOS MENSUALES exists and has no user attached
-            var basicGroup = groups.FirstOrDefault(g => g.Name == "1. BÁSICOS MENSUALES");
+            // Verify specifically BÁSICOS MENSUALES exists and has no user attached
+            var basicGroup = groups.FirstOrDefault(g => g.Name == "BÁSICOS MENSUALES");
             basicGroup.Should().NotBeNull();
             basicGroup!.Description.Should().Be("El costo fijo de vida");
             basicGroup.IsEditable.Should().BeFalse();
