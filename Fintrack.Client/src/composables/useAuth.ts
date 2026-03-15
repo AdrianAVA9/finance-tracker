@@ -10,8 +10,8 @@ export function useAuth() {
   const checkSession = async () => {
     isLoading.value = true;
     try {
-      // The secure endpoint we created earlier allows us to verify if our cookie is valid
-      const response = await api.get('/WeatherForecast/secure');
+      // Use the new AuthController endpoint
+      const response = await api.get('/api/v1/auth/session');
       user.value = response.data.user || 'User';
     } catch (e) {
       user.value = null; // 401 Unauthorized means no valid cookie
@@ -47,12 +47,16 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      // Note: MapIdentityApi does not provide a true logout endpoint natively in .NET 8 out of the box in some templates.
-      // We will need to define one later manually if it's missing, but for now we clear client state.
-      // Often, hitting a custom backend `/logout` endpoint to invalidate the cookie is required.
+      // Call the backend to invalidate the HttpOnly cookie
+      await api.post('/api/v1/auth/logout');
       user.value = null;
+      // Force a full page reload to clear any cached states
+      window.location.href = '/auth/login';
     } catch (error) {
       console.error('Logout failed', error);
+      // Fallback: clear local state and redirect anyway
+      user.value = null;
+      window.location.href = '/auth/login';
     }
   };
 
