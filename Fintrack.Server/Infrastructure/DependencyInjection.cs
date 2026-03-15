@@ -16,6 +16,7 @@ namespace Fintrack.Server.Infrastructure
                 sp.GetRequiredService<ApplicationDbContext>());
 
             services.AddScoped<IExpenseCategoryRepository, ExpenseCategoryRepository>();
+            services.AddScoped<IExpenseCategoryGroupRepository, ExpenseCategoryGroupRepository>();
 
             return services;
         }

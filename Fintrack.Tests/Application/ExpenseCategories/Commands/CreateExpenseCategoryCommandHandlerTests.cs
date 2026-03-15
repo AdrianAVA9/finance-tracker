@@ -28,10 +28,12 @@ namespace Fintrack.Tests.Application.ExpenseCategories.Commands
         {
             // Arrange
             var command = new CreateExpenseCategoryCommand(
-                Name: "Food",
-                Icon: "pizza",
-                Color: "#FF0000",
-                UserId: "user-123");
+                "Test Category",
+                "Test Description",
+                "icon-test",
+                "#ffffff",
+                1,
+                "user-123");
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
@@ -41,8 +43,10 @@ namespace Fintrack.Tests.Application.ExpenseCategories.Commands
                 .Received(1)
                 .Add(Arg.Is<ExpenseCategory>(e =>
                     e.Name == command.Name &&
+                    e.Description == command.Description &&
                     e.UserId == command.UserId &&
-                    e.IsSystem == false &&
+                    e.IsEditable == true &&
+                    e.GroupId == command.GroupId &&
                     e.Icon == command.Icon &&
                     e.Color == command.Color));
 

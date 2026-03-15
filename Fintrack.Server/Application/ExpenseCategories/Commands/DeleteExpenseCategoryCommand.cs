@@ -29,15 +29,12 @@ namespace Fintrack.Server.Application.ExpenseCategories.Commands
                 throw new NotFoundException(nameof(Models.ExpenseCategory), request.Id);
             }
 
-            if (category.UserId != request.UserId)
-            {
+            if (category.UserId != null && category.UserId != request.UserId)
                 throw new UnauthorizedAccessException("You do not have permission to delete this category.");
-            }
 
-            if (category.IsSystem)
-            {
-                 throw new DomainException("Cannot delete a system category.");
-            }
+            if (!category.IsEditable)
+                throw new DomainException("This category cannot be deleted.");
+            
 
             _expenseCategoryRepository.Remove(category);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

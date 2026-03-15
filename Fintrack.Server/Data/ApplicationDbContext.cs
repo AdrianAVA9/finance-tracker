@@ -12,6 +12,7 @@ namespace Fintrack.Server.Data
         {
         }
 
+        public DbSet<ExpenseCategoryGroup> ExpenseCategoryGroups { get; set; }
         public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
         public DbSet<IncomeSource> IncomeSources { get; set; }
         public DbSet<Expense> Expenses { get; set; }
@@ -20,11 +21,46 @@ namespace Fintrack.Server.Data
         public DbSet<Budget> Budgets { get; set; }
         public DbSet<SavingsGoal> SavingsGoals { get; set; }
 
+        public override int SaveChanges()
+        {
+            UpdateAuditFields();
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            UpdateAuditFields();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void UpdateAuditFields()
+        {
+            var entries = ChangeTracker.Entries<IAuditableEntity>();
+
+            foreach (var entry in entries)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedAt = DateTimeOffset.UtcNow;
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.UpdatedAt = DateTimeOffset.UtcNow;
+                }
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             // Configure Delete Behaviors to avoid infinite cascade paths
+            builder.Entity<ExpenseCategory>()
+                .HasOne(ec => ec.Group)
+                .WithMany(g => g.Categories)
+                .HasForeignKey(ec => ec.GroupId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             builder.Entity<Expense>()
                 .HasOne(e => e.Category)
                 .WithMany(c => c.Expenses)

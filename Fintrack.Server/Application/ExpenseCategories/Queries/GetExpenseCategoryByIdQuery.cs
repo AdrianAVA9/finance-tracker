@@ -25,7 +25,7 @@ namespace Fintrack.Server.Application.ExpenseCategories.Queries
                 throw new NotFoundException(nameof(ExpenseCategory), request.Id);
             }
 
-             if (category.UserId != request.UserId && !category.IsSystem)
+             if (category.UserId != null && category.UserId != request.UserId)
             {
                 throw new UnauthorizedAccessException("You do not have permission to view this category.");
             }

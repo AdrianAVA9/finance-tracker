@@ -8,6 +8,7 @@ using Fintrack.Server.Infrastructure.Authorization;
 using Fintrack.Server.Infrastructure.Email;
 using Fintrack.Server.Api.Middleware;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Fintrack.Server.Infrastructure.Data.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,22 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+}
+
+// Seed Database if needed
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await DefaultCategorySeeder.SeedAsync(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
 }
 
 app.UseCustomExceptionHandler();

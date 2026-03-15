@@ -5,7 +5,7 @@ using Fintrack.Server.Models;
 
 namespace Fintrack.Server.Application.ExpenseCategories.Commands
 {
-    public record CreateExpenseCategoryCommand(string Name, string? Icon, string? Color, string UserId) : IRequest<int>;
+    public record CreateExpenseCategoryCommand(string Name, string? Description, string? Icon, string? Color, int? GroupId, string UserId) : IRequest<int>;
 
     internal sealed class CreateExpenseCategoryCommandHandler : IRequestHandler<CreateExpenseCategoryCommand, int>
     {
@@ -25,10 +25,12 @@ namespace Fintrack.Server.Application.ExpenseCategories.Commands
             var category = new ExpenseCategory
             {
                 Name = request.Name,
+                Description = request.Description,
                 Icon = request.Icon,
                 Color = request.Color,
+                GroupId = request.GroupId,
                 UserId = request.UserId,
-                IsSystem = false
+                IsEditable = true
             };
 
             _expenseCategoryRepository.Add(category);

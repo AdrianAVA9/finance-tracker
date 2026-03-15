@@ -3,6 +3,7 @@ using System;
 using Fintrack.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fintrack.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260315013931_UpdateExpenseCategorySystemToEditable")]
+    partial class UpdateExpenseCategorySystemToEditable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -171,16 +174,6 @@ namespace Fintrack.Server.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Icon")
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
@@ -193,53 +186,14 @@ namespace Fintrack.Server.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("ExpenseCategories");
-                });
-
-            modelBuilder.Entity("Fintrack.Server.Models.ExpenseCategoryGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsEditable")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ExpenseCategoryGroups");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Models.IncomeSource", b =>
@@ -562,24 +516,8 @@ namespace Fintrack.Server.Migrations
 
             modelBuilder.Entity("Fintrack.Server.Models.ExpenseCategory", b =>
                 {
-                    b.HasOne("Fintrack.Server.Models.ExpenseCategoryGroup", "Group")
-                        .WithMany("Categories")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Fintrack.Server.Models.ApplicationUser", "User")
                         .WithMany("ExpenseCategories")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Group");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Fintrack.Server.Models.ExpenseCategoryGroup", b =>
-                {
-                    b.HasOne("Fintrack.Server.Models.ApplicationUser", "User")
-                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -705,11 +643,6 @@ namespace Fintrack.Server.Migrations
                     b.Navigation("Budgets");
 
                     b.Navigation("Expenses");
-                });
-
-            modelBuilder.Entity("Fintrack.Server.Models.ExpenseCategoryGroup", b =>
-                {
-                    b.Navigation("Categories");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Models.Invoice", b =>

@@ -5,30 +5,30 @@ using Fintrack.Server.Models;
 
 namespace Fintrack.Server.Infrastructure.Repositories
 {
-    internal sealed class ExpenseCategoryRepository : IExpenseCategoryRepository
+    public sealed class ExpenseCategoryGroupRepository : IExpenseCategoryGroupRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public ExpenseCategoryRepository(ApplicationDbContext dbContext)
+        public ExpenseCategoryGroupRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<ExpenseCategory?> GetByIdAsync(
+        public async Task<ExpenseCategoryGroup?> GetByIdAsync(
             int id,
             CancellationToken cancellationToken = default)
         {
             return await _dbContext
-                .ExpenseCategories
+                .ExpenseCategoryGroups
                 .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<ExpenseCategory>> GetAllByUserIdAsync(
+        public async Task<IReadOnlyList<ExpenseCategoryGroup>> GetAllByUserIdAsync(
             string userId,
             CancellationToken cancellationToken = default)
         {
             return await _dbContext
-                .ExpenseCategories
+                .ExpenseCategoryGroups
                 .AsNoTracking()
                 .Where(e => e.UserId == userId || e.UserId == null)
                 .OrderBy(e => e.Name)
@@ -40,23 +40,23 @@ namespace Fintrack.Server.Infrastructure.Repositories
             CancellationToken cancellationToken = default)
         {
             return await _dbContext
-                .ExpenseCategories
+                .ExpenseCategoryGroups
                 .AnyAsync(e => e.Id == id, cancellationToken);
         }
 
-        public void Add(ExpenseCategory expenseCategory)
+        public void Add(ExpenseCategoryGroup group)
         {
-            _dbContext.ExpenseCategories.Add(expenseCategory);
+            _dbContext.ExpenseCategoryGroups.Add(group);
         }
 
-        public void Update(ExpenseCategory expenseCategory)
+        public void Update(ExpenseCategoryGroup group)
         {
-            _dbContext.ExpenseCategories.Update(expenseCategory);
+            _dbContext.ExpenseCategoryGroups.Update(group);
         }
 
-        public void Remove(ExpenseCategory expenseCategory)
+        public void Remove(ExpenseCategoryGroup group)
         {
-            _dbContext.ExpenseCategories.Remove(expenseCategory);
+            _dbContext.ExpenseCategoryGroups.Remove(group);
         }
     }
 }

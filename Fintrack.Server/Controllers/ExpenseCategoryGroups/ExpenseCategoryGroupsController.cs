@@ -1,21 +1,21 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Fintrack.Server.Application.ExpenseCategories.Commands;
-using Fintrack.Server.Application.ExpenseCategories.Queries;
+using Fintrack.Server.Application.ExpenseCategoryGroups.Commands;
+using Fintrack.Server.Application.ExpenseCategoryGroups.Queries;
 using Fintrack.Server.Infrastructure.Authorization;
 using Fintrack.Server.Models;
 
-namespace Fintrack.Server.Controllers.ExpenseCategories
+namespace Fintrack.Server.Controllers.ExpenseCategoryGroups
 {
     [Authorize]
     [ApiController]
-    [Route("api/v1/expensecategories")]
-    public class ExpenseCategoriesController : ControllerBase
+    [Route("api/v1/expensecategorygroups")]
+    public class ExpenseCategoryGroupsController : ControllerBase
     {
         private readonly ISender _sender;
 
-        public ExpenseCategoriesController(ISender sender)
+        public ExpenseCategoryGroupsController(ISender sender)
         {
             _sender = sender;
         }
@@ -24,23 +24,23 @@ namespace Fintrack.Server.Controllers.ExpenseCategories
 
         [HttpGet("{id:int}")]
         [HasPermission(Permissions.CategoriesRead)]
-        [ProducesResponseType(typeof(ExpenseCategory), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ExpenseCategoryGroup), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(
             int id,
             CancellationToken cancellationToken)
         {
-            var query = new GetExpenseCategoryByIdQuery(id, GetUserId());
+            var query = new GetExpenseCategoryGroupByIdQuery(id, GetUserId());
             var result = await _sender.Send(query, cancellationToken);
             return Ok(result);
         }
 
         [HttpGet]
         [HasPermission(Permissions.CategoriesRead)]
-        [ProducesResponseType(typeof(IReadOnlyList<ExpenseCategory>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IReadOnlyList<ExpenseCategoryGroup>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var query = new GetAllExpenseCategoriesQuery(GetUserId());
+            var query = new GetAllExpenseCategoryGroupsQuery(GetUserId());
             var result = await _sender.Send(query, cancellationToken);
             return Ok(result);
         }
@@ -50,15 +50,12 @@ namespace Fintrack.Server.Controllers.ExpenseCategories
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create(
-            [FromBody] RequestCreateExpenseCategory request,
+            [FromBody] RequestCreateExpenseCategoryGroup request,
             CancellationToken cancellationToken)
         {
-            var command = new CreateExpenseCategoryCommand(
+            var command = new CreateExpenseCategoryGroupCommand(
                 request.Name,
                 request.Description,
-                request.Icon,
-                request.Color,
-                request.GroupId,
                 GetUserId());
 
             var resultId = await _sender.Send(command, cancellationToken);
@@ -76,16 +73,13 @@ namespace Fintrack.Server.Controllers.ExpenseCategories
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(
             int id,
-            [FromBody] RequestUpdateExpenseCategory request,
+            [FromBody] RequestUpdateExpenseCategoryGroup request,
             CancellationToken cancellationToken)
         {
-            var command = new UpdateExpenseCategoryCommand(
+            var command = new UpdateExpenseCategoryGroupCommand(
                 id,
                 request.Name,
                 request.Description,
-                request.Icon,
-                request.Color,
-                request.GroupId,
                 GetUserId());
 
             await _sender.Send(command, cancellationToken);
@@ -101,7 +95,7 @@ namespace Fintrack.Server.Controllers.ExpenseCategories
             int id,
             CancellationToken cancellationToken)
         {
-            var command = new DeleteExpenseCategoryCommand(id, GetUserId());
+            var command = new DeleteExpenseCategoryGroupCommand(id, GetUserId());
             
             await _sender.Send(command, cancellationToken);
             

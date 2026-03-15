@@ -5,7 +5,7 @@ using Fintrack.Server.Domain.ExpenseCategories;
 
 namespace Fintrack.Server.Application.ExpenseCategories.Commands
 {
-    public record UpdateExpenseCategoryCommand(int Id, string Name, string? Icon, string? Color, string UserId) : IRequest;
+    public record UpdateExpenseCategoryCommand(int Id, string Name, string? Description, string? Icon, string? Color, int? GroupId, string UserId) : IRequest;
 
     internal sealed class UpdateExpenseCategoryCommandHandler : IRequestHandler<UpdateExpenseCategoryCommand>
     {
@@ -29,19 +29,17 @@ namespace Fintrack.Server.Application.ExpenseCategories.Commands
                 throw new NotFoundException(nameof(Models.ExpenseCategory), request.Id);
             }
 
-            if (category.UserId != request.UserId)
-            {
-                throw new UnauthorizedAccessException("You do not have permission to modify this category.");
-            }
-            
-            if (category.IsSystem)
-            {
-                 throw new DomainException("Cannot modify a system category.");
-            }
+            if (category.UserId != null && category.UserId != request.UserId)
+                throw new UnauthorizedAccessException("You do not have permission to update this category.");
+
+            if (!category.IsEditable)
+                throw new DomainException("This category cannot be updated.");
 
             category.Name = request.Name;
+            category.Description = request.Description;
             category.Icon = request.Icon;
             category.Color = request.Color;
+            category.GroupId = request.GroupId;
 
             _expenseCategoryRepository.Update(category);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

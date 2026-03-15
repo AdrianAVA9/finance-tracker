@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Fintrack.Server.Data;
+using Fintrack.Server.Infrastructure.Data.Seeders;
 using Xunit;
 
 namespace Fintrack.IntegrationTests.Infrastructure
@@ -58,6 +59,9 @@ namespace Fintrack.IntegrationTests.Infrastructure
             // Re-create the database for each test to ensure test isolation
             await DbContext.Database.EnsureDeletedAsync();
             await DbContext.Database.EnsureCreatedAsync();
+            
+            // Re-run the startup seeder for the fresh database
+            await DefaultCategorySeeder.SeedAsync(DbContext);
         }
 
         public Task DisposeAsync()
