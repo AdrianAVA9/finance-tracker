@@ -112,6 +112,13 @@ const removeRow = (id: string) => {
   items.value = items.value.filter(i => i.id !== id)
 }
 
+interface Props {
+  submitting?: boolean
+  error?: string
+}
+
+const props = defineProps<Props>()
+
 const emit = defineEmits(['submit'])
 
 const saveExpense = () => {
@@ -149,6 +156,24 @@ const saveExpense = () => {
 
     <!-- MAIN FORM CONTAINER -->
     <form @submit.prevent="saveExpense" class="flex flex-col gap-6">
+
+      <!-- Error Message Area -->
+      <Transition
+        enter-active-class="transition duration-300 ease-out"
+        enter-from-class="transform -translate-y-4 opacity-0"
+        enter-to-class="transform translate-y-0 opacity-100"
+        leave-active-class="transition duration-200 ease-in"
+        leave-from-class="transform translate-y-0 opacity-100"
+        leave-to-class="transform -translate-y-4 opacity-0"
+      >
+        <div v-if="error" class="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-start gap-3">
+          <span class="material-symbols-outlined text-red-500 mt-0.5">error</span>
+          <div class="flex-1">
+            <h4 class="text-red-500 font-bold text-sm">Error al guardar</h4>
+            <p class="text-red-400/80 text-xs mt-0.5">{{ error }}</p>
+          </div>
+        </div>
+      </Transition>
 
       <!-- ============================== -->
       <!-- SIMPLE MODE WRAPPER -->
@@ -254,10 +279,19 @@ const saveExpense = () => {
         <!-- Footer Actions (Simple Mode) -->
         <div class="p-6 pt-2 flex flex-col gap-4 border-t border-border-dark bg-background-dark/30">
           <div class="flex flex-col sm:flex-row gap-3">
-            <button type="submit" :disabled="isSubmitDisabled" class="flex-1 py-3.5 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/10">
-              <span class="material-symbols-outlined text-xl">save</span> Guardar
+            <button type="submit" :disabled="isSubmitDisabled || submitting" class="flex-1 py-3.5 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/10">
+              <template v-if="submitting">
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Guardando...</span>
+              </template>
+              <template v-else>
+                <span class="material-symbols-outlined text-xl">save</span> Guardar
+              </template>
             </button>
-            <button type="button" class="flex-1 py-3.5 bg-card-dark border border-border-dark hover:border-primary/50 text-text-main rounded-lg font-semibold transition-all">
+            <button type="button" :disabled="submitting" class="flex-1 py-3.5 bg-card-dark border border-border-dark hover:border-primary/50 text-text-main rounded-lg font-semibold transition-all">
               Guardar y agregar otro
             </button>
           </div>
@@ -371,10 +405,17 @@ const saveExpense = () => {
         <!-- Actions Footer (Itemized Mode) -->
         <div class="flex flex-col gap-4">
           <div class="grid grid-cols-2 gap-4">
-            <button type="submit" :disabled="isSubmitDisabled" class="w-full bg-primary disabled:bg-primary/20 disabled:text-text-muted/50 text-white rounded-lg py-3.5 font-bold transition-all border border-border-dark focus:outline-none">
-              Guardar
+            <button type="submit" :disabled="isSubmitDisabled || submitting" class="w-full bg-primary hover:bg-primary/90 disabled:bg-primary/20 disabled:text-text-muted/50 text-white rounded-lg py-3.5 font-bold transition-all border border-border-dark focus:outline-none flex items-center justify-center gap-2">
+              <template v-if="submitting">
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Guardando...</span>
+              </template>
+              <span v-else>Guardar</span>
             </button>
-            <button type="button" class="w-full bg-border-dark text-text-main hover:bg-border-dark/80 rounded-lg py-3.5 font-bold transition-all border border-border-dark/50">
+            <button type="button" :disabled="submitting" class="w-full bg-border-dark text-text-main hover:bg-border-dark/80 rounded-lg py-3.5 font-bold transition-all border border-border-dark/50 disabled:opacity-50">
               Guardar y agregar otro
             </button>
           </div>

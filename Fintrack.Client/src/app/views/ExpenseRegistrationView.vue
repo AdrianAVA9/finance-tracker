@@ -1,17 +1,27 @@
 <template>
   <div class="max-w-4xl mx-auto pb-8 px-4 sm:px-6 lg:px-8">
-    <ExpenseRegistrationForm @submit="handleExpenseSubmit" />
+    <ExpenseRegistrationForm 
+      :submitting="isSubmitting" 
+      :error="errorMessage"
+      @submit="handleExpenseSubmit" 
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ExpenseRegistrationForm from '@/app/components/expenses/ExpenseRegistrationForm.vue'
 import api from '@/services/api'
 
 const router = useRouter()
+const isSubmitting = ref(false)
+const errorMessage = ref<string | undefined>(undefined)
 
 const handleExpenseSubmit = async (expenseData: any) => {
+  isSubmitting.value = true
+  errorMessage.value = undefined
+  
   try {
     // Flatten frequency if present
     const payload = {
@@ -24,9 +34,10 @@ const handleExpenseSubmit = async (expenseData: any) => {
     
     // Success feedback and redirect
     router.push({ name: 'Dashboard' })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error saving expense:', error)
-    alert('Error al guardar el gasto. Por favor intente de nuevo.')
+    errorMessage.value = error.response?.data?.detail || error.message || 'Error al guardar el gasto. Por favor intente de nuevo.'
+    isSubmitting.value = false
   }
 }
 </script>
