@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f6b7a",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#0a0e0f",
+                        "card-dark": "#1c2426",
+                        "neutral-gray": "#a0adb0",
+                        "soft-white": "#e0e5e7",
+                        "border-dark": "#293e42"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .quiet-shadow {
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .focus-glow:focus-within {
+            box-shadow: 0 0 0 2px rgba(31, 107, 122, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-border-dark bg-background-dark/80 backdrop-blur-md px-4 lg:px-40 py-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">account_balance_wallet</span>
+</div>
+<h2 class="text-soft-white text-lg font-bold leading-tight tracking-tight">Personal Finance</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center rounded-xl h-10 w-10 bg-border-dark text-soft-white hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border border-border-dark">
+<img class="w-full h-full object-cover" data-alt="User profile avatar showing a smiling person" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoV3tSLWlDecI2OOQdNGN6AtZp0h4NofNfqNWABD8JcdGigo54nPVR56nullhOkIKdJf71KmtEAOsu8EjICf0Ru4vIHPIkcPmvInKXsqmhDhoUwV9pPwvO8KwtYkj7I6rXwDFtekXsmVEWjA7OcEI5lbUFta_uj0gYZGFPxHzjlF8ZYpyrvbgHtpkxJ8CksRBeY65D971D6y7u_mL4xIU_rtkb_c34ki7YhgFNHjM4jHaug4FUirANLqaEgR4tW0CNG9B4aiAAo0gT"/>
+</div>
+</div>
+</header>
+<main class="flex flex-col items-center justify-start pt-8 pb-20 px-4">
+<!-- Main Form Container -->
+<div class="w-full max-w-[640px] flex flex-col gap-6">
+<!-- Header Card: Fixed context -->
+<div class="bg-card-dark rounded-lg p-6 quiet-shadow border border-border-dark/30">
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-neutral-gray text-xs font-semibold uppercase tracking-wider">Comercio</span>
+<p class="text-soft-white text-xl font-bold">Supermercado Central</p>
+</div>
+<div class="text-right">
+<span class="text-neutral-gray text-xs font-semibold uppercase tracking-wider">Monto Total</span>
+<p class="text-soft-white text-xl font-bold">₡25,000.00</p>
+</div>
+</div>
+<div class="flex items-center gap-2 text-neutral-gray">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span class="text-sm">25 Oct 2023</span>
+<span class="mx-2 text-border-dark">|</span>
+<span class="material-symbols-outlined text-sm">receipt_long</span>
+<span class="text-sm">Modo Desglosado</span>
+</div>
+</div>
+</div>
+<!-- Dynamic List Card -->
+<div class="bg-card-dark rounded-lg quiet-shadow border border-border-dark/30 overflow-hidden">
+<div class="px-6 py-4 border-b border-border-dark/30 bg-primary/5">
+<h3 class="text-soft-white text-lg font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">list_alt</span>
+                        Ítems de la factura
+                    </h3>
+</div>
+<div class="p-6 flex flex-col gap-6">
+<!-- Item Row 1 -->
+<div class="grid grid-cols-12 gap-3 items-start group">
+<div class="col-span-4 flex flex-col gap-1.5">
+<label class="text-neutral-gray text-xs font-medium ml-1">Monto (₡)</label>
+<div class="relative focus-glow rounded-lg">
+<input class="w-full bg-background-dark border-border-dark text-soft-white rounded-lg px-3 py-2.5 text-sm focus:ring-0 focus:border-primary transition-all" type="number" value="12000"/>
+</div>
+</div>
+<div class="col-span-7 flex flex-col gap-1.5">
+<label class="text-neutral-gray text-xs font-medium ml-1">Categoría &amp; Descripción</label>
+<div class="flex gap-2">
+<div class="relative w-1/3">
+<select class="w-full bg-background-dark border-border-dark text-soft-white rounded-lg pl-3 pr-8 py-2.5 text-sm appearance-none focus:ring-0 focus:border-primary">
+<option>Comida</option>
+<option>Hogar</option>
+<option>Salud</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-2.5 text-neutral-gray pointer-events-none">expand_more</span>
+</div>
+<input class="flex-1 bg-background-dark border-border-dark text-soft-white rounded-lg px-3 py-2.5 text-sm focus:ring-0 focus:border-primary" type="text" value="Compras semanales"/>
+</div>
+</div>
+<div class="col-span-1 pt-8 flex justify-center">
+<button class="text-neutral-gray hover:text-red-400 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Item Row 2 -->
+<div class="grid grid-cols-12 gap-3 items-start">
+<div class="col-span-4 flex flex-col gap-1.5">
+<label class="text-neutral-gray text-xs font-medium ml-1">Monto (₡)</label>
+<div class="relative focus-glow rounded-lg">
+<input class="w-full bg-background-dark border-border-dark text-soft-white rounded-lg px-3 py-2.5 text-sm focus:ring-0 focus:border-primary transition-all" type="number" value="8000"/>
+</div>
+</div>
+<div class="col-span-7 flex flex-col gap-1.5">
+<label class="text-neutral-gray text-xs font-medium ml-1">Categoría &amp; Descripción</label>
+<div class="flex gap-2">
+<div class="relative w-1/3">
+<select class="w-full bg-background-dark border-border-dark text-soft-white rounded-lg pl-3 pr-8 py-2.5 text-sm appearance-none focus:ring-0 focus:border-primary">
+<option>Limpieza</option>
+<option>Comida</option>
+<option>Hogar</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-2.5 text-neutral-gray pointer-events-none">expand_more</span>
+</div>
+<input class="flex-1 bg-background-dark border-border-dark text-soft-white rounded-lg px-3 py-2.5 text-sm focus:ring-0 focus:border-primary" type="text" value="Detergente y otros"/>
+</div>
+</div>
+<div class="col-span-1 pt-8 flex justify-center">
+<button class="text-neutral-gray hover:text-red-400 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Add Item Button -->
+<button class="w-full py-3 border-2 border-dashed border-border-dark rounded-lg text-neutral-gray hover:text-primary hover:border-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 font-semibold">
+<span class="material-symbols-outlined">add_circle</span>
+                        Agregar ítem
+                    </button>
+</div>
+<!-- Feedback Section -->
+<div class="px-6 py-4 bg-red-950/20 border-t border-red-900/30 flex items-center justify-between">
+<div class="flex items-center gap-2 text-red-400">
+<span class="material-symbols-outlined text-sm">error</span>
+<span class="text-sm font-medium">Faltan ₡5,000 por asignar</span>
+</div>
+<div class="text-neutral-gray text-xs">
+                        Suma actual: ₡20,000 / ₡25,000
+                    </div>
+</div>
+</div>
+<!-- Actions Footer -->
+<div class="flex flex-col gap-4">
+<div class="grid grid-cols-2 gap-4">
+<button class="w-full bg-primary/20 text-neutral-gray/50 cursor-not-allowed rounded-lg py-3.5 font-bold transition-all border border-border-dark">
+                        Guardar
+                    </button>
+<button class="w-full bg-border-dark text-soft-white hover:bg-border-dark/80 rounded-lg py-3.5 font-bold transition-all border border-border-dark/50">
+                        Guardar y agregar otro
+                    </button>
+</div>
+<button class="w-fit self-center px-6 py-2 text-neutral-gray hover:text-soft-white transition-colors flex items-center gap-2 text-sm">
+<span class="material-symbols-outlined text-base">arrow_back</span>
+                    Volver a modo simple
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile context) -->
+<nav class="fixed bottom-0 w-full bg-card-dark border-t border-border-dark px-6 py-3 flex justify-around items-center lg:hidden">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Resumen</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-neutral-gray">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px]">Gastos</span>
+</button>
+<div class="bg-primary rounded-full p-3 -mt-10 border-4 border-background-dark quiet-shadow">
+<span class="material-symbols-outlined text-white">add</span>
+</div>
+<button class="flex flex-col items-center gap-1 text-neutral-gray">
+<span class="material-symbols-outlined">calculate</span>
+<span class="text-[10px]">Presupuesto</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-neutral-gray">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px]">Perfil</span>
+</button>
+</nav>
+</body></html>

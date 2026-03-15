@@ -82,6 +82,10 @@ export default defineConfig({
             '^/manage/info': {
                 target,
                 secure: false
+            },
+            '^/api': {
+                target,
+                secure: false
             }
         },
         port: 5173,

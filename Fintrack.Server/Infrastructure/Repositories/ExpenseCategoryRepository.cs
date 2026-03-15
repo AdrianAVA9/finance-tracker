@@ -29,6 +29,7 @@ namespace Fintrack.Server.Infrastructure.Repositories
         {
             return await _dbContext
                 .ExpenseCategories
+                .Include(e => e.Group)
                 .AsNoTracking()
                 .Where(e => e.UserId == userId || e.UserId == null)
                 .OrderBy(e => e.Name)

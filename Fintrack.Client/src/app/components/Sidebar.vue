@@ -25,7 +25,7 @@ import { ref } from 'vue';
                 <span class="text-sm">Dashboard</span>
             </router-link>
 
-            <router-link to="/app/expenses"
+            <router-link to="/app/expenses/new"
                 class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-text-secondary-dark hover:bg-slate-100 dark:hover:bg-[#2B3036] hover:text-primary dark:hover:text-white transition-all group"
                 active-class="bg-primary text-white shadow-glow hover:bg-primary dark:hover:bg-primary font-semibold">
                 <span class="material-symbols-outlined group-hover:scale-110 transition-transform">receipt_long</span>

@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { computed } from 'vue';
 
 const { logout } = useAuth();
 const router = useRouter();
+const route = useRoute();
+
+const pageTitle = computed(() => route.meta.title as string || 'Dashboard');
+const pageSubtitle = computed(() => route.meta.subtitle as string || 'Welcome back');
 
 const handleLogout = async () => {
     await logout();
@@ -15,8 +20,8 @@ const handleLogout = async () => {
     <header
         class="h-20 px-8 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-[#1c1f22]/90 backdrop-blur-md z-10 sticky top-0">
         <div>
-            <h2 class="text-xl font-bold dark:text-white tracking-tight">Dashboard</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Welcome back</p>
+            <h2 class="text-xl font-bold dark:text-white tracking-tight">{{ pageTitle }}</h2>
+            <p v-if="pageSubtitle" class="text-xs text-slate-500 dark:text-slate-400">{{ pageSubtitle }}</p>
         </div>
 
         <div class="flex items-center gap-4">

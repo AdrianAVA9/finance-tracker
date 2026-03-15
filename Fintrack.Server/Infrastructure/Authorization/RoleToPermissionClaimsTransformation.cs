@@ -8,34 +8,40 @@ namespace Fintrack.Server.Infrastructure.Authorization
     {
         public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
-            var roles = principal
+            // Do not mutate the original principal. Clone it.
+            var clone = principal.Clone();
+
+            var roles = clone
                 .FindAll(ClaimTypes.Role)
                 .Select(c => c.Value)
                 .ToList();
 
+            // Default fallback: if the user has no explicit roles assigned
             if (!roles.Any())
             {
-                return Task.FromResult(principal);
+                roles.Add(Roles.User);
             }
 
             var permissions = RolePermissions.GetPermissionsForRoles(roles);
 
-            var identity = principal.Identity as ClaimsIdentity;
-
-            if (identity is null)
-            {
-                return Task.FromResult(principal);
-            }
+            var newIdentity = new ClaimsIdentity();
+            var addedAny = false;
 
             foreach (var permission in permissions)
             {
-                if (!principal.HasClaim("permission", permission))
+                if (!clone.HasClaim("permission", permission))
                 {
-                    identity.AddClaim(new Claim("permission", permission));
+                    newIdentity.AddClaim(new Claim("permission", permission));
+                    addedAny = true;
                 }
             }
 
-            return Task.FromResult(principal);
+            if (addedAny)
+            {
+                clone.AddIdentity(newIdentity);
+            }
+
+            return Task.FromResult(clone);
         }
     }
 }

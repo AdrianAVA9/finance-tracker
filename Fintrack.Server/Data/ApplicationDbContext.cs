@@ -16,6 +16,8 @@ namespace Fintrack.Server.Data
         public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
         public DbSet<IncomeSource> IncomeSources { get; set; }
         public DbSet<Expense> Expenses { get; set; }
+        public DbSet<ExpenseItem> ExpenseItems { get; set; }
+        public DbSet<RecurringExpense> RecurringExpenses { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<InvoiceItem> InvoiceItems { get; set; }
         public DbSet<Budget> Budgets { get; set; }
@@ -61,11 +63,23 @@ namespace Fintrack.Server.Data
                 .HasForeignKey(ec => ec.GroupId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            builder.Entity<Expense>()
-                .HasOne(e => e.Category)
-                .WithMany(c => c.Expenses)
-                .HasForeignKey(e => e.CategoryId)
-                .OnDelete(DeleteBehavior.SetNull);
+            builder.Entity<ExpenseItem>()
+                .HasOne(ei => ei.Expense)
+                .WithMany(e => e.Items)
+                .HasForeignKey(ei => ei.ExpenseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ExpenseItem>()
+                .HasOne(ei => ei.Category)
+                .WithMany()
+                .HasForeignKey(ei => ei.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<RecurringExpense>()
+                .HasOne(re => re.Category)
+                .WithMany()
+                .HasForeignKey(re => re.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Expense>()
                 .HasOne(e => e.Invoice)
