@@ -18,8 +18,10 @@ namespace Fintrack.Server.Models
         public decimal Amount { get; set; }
 
         [Required]
-        [StringLength(7)]
-        public string Period { get; set; } = string.Empty; // Format: "yyyy-MM"
+        public int Month { get; set; }
+
+        [Required]
+        public int Year { get; set; }
 
         [ForeignKey(nameof(UserId))]
         public virtual ApplicationUser? User { get; set; }
