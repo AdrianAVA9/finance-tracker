@@ -141,7 +141,7 @@ watch([selectedMonth, selectedYear], loadBudgets)
           class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-[#121416] text-sm font-bold shadow-lg shadow-primary/25 transition-all"
         >
           <span class="material-symbols-outlined text-xl">add</span>
-          <span>Add Budget</span>
+          <span>Agregar presupuesto</span>
         </button>
       </div>
     </header>

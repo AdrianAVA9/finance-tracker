@@ -27,13 +27,17 @@ internal sealed class UpsertBudgetsCommandHandler : IRequestHandler<UpsertBudget
     {
         var existingBudgets = await _dbContext.Budgets
             .Where(b => b.UserId == request.UserId && b.Month == request.Month && b.Year == request.Year)
-            .ToListAsync(cancellationToken);
+            .ToDictionaryAsync(b => b.CategoryId, cancellationToken);
 
-        foreach (var entry in request.Budgets)
+        // Group to handle safety if multiple items for same CategoryId are sent in one batch
+        var uniqueBudgets = request.Budgets
+            .GroupBy(b => b.CategoryId)
+            .Select(g => g.Last()) // Take the last one if duplicates exist
+            .ToList();
+
+        foreach (var entry in uniqueBudgets)
         {
-            var existing = existingBudgets.FirstOrDefault(b => b.CategoryId == entry.CategoryId);
-
-            if (existing != null)
+            if (existingBudgets.TryGetValue(entry.CategoryId, out var existing))
             {
                 existing.Amount = entry.Amount;
             }

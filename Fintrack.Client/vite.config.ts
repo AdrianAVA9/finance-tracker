@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { fileURLToPath, URL } from 'node:url';
 
 import { defineConfig } from 'vite';
@@ -93,5 +94,11 @@ export default defineConfig({
             key: fs.readFileSync(keyFilePath),
             cert: fs.readFileSync(certFilePath),
         }
+    },
+    test: {
+        environment: 'jsdom',
+        globals: true,
+        setupFiles: [],
+        root: fileURLToPath(new URL('./', import.meta.url)),
     }
 })

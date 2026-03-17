@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Fintrack.Server.Domain.Abstractions;
 
 namespace Fintrack.Server.Models
@@ -27,6 +28,7 @@ namespace Fintrack.Server.Models
         [ForeignKey(nameof(UserId))]
         public virtual ApplicationUser? User { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<ExpenseCategory> Categories { get; set; } = new List<ExpenseCategory>();
     }
 }

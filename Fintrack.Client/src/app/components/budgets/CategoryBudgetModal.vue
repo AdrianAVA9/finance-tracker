@@ -46,7 +46,7 @@ watch(() => props.isOpen, (newVal) => {
       amount.value = null
     }
   }
-})
+}, { immediate: true })
 
 const handleSave = async () => {
   if (!selectedCategoryId.value || !amount.value) return
@@ -93,8 +93,8 @@ onMounted(loadCategories)
           <!-- Header -->
           <div class="flex items-center justify-between px-5 pt-5 pb-1">
             <div>
-              <h2 class="text-lg font-bold tracking-tight text-white">{{ budget ? 'Editar Presupuesto' : 'Set Category Budget' }}</h2>
-              <p class="text-xs text-text-muted mt-0.5">Define spending limits for your tracking.</p>
+              <h2 class="text-lg font-bold tracking-tight text-white">{{ budget ? 'Editar Presupuesto' : 'Configurar Presupuesto' }}</h2>
+              <p class="text-xs text-text-muted mt-0.5">Define los límites de gasto para tu control financiero.</p>
             </div>
             <button @click="emit('close')" class="group p-1.5 rounded-lg hover:bg-border-dark transition-colors">
               <span class="material-symbols-outlined text-text-muted group-hover:text-white transition-colors text-[20px]">close</span>

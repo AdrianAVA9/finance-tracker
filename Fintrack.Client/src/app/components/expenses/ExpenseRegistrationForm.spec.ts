@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
 import ExpenseRegistrationForm from './ExpenseRegistrationForm.vue'
 import api from '@/services/api'
@@ -6,14 +6,22 @@ import api from '@/services/api'
 // Mock the API to prevent actual network calls during the UI unit test
 vi.mock('@/services/api', () => ({
   default: {
-    get: vi.fn(() => Promise.resolve({ data: [] }))
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn()
   }
 }))
 
 describe('ExpenseRegistrationForm.vue', () => {
+  const mockCategories = [
+    { id: 1, name: 'Food', group: { name: 'Essentials' } },
+    { id: 2, name: 'Transport', group: { name: 'Essentials' } }
+  ]
 
   it('Should keep save button disabled if simple amount is not provided', async () => {
+    vi.mocked(api.get).mockResolvedValue({ data: mockCategories })
     const wrapper = mount(ExpenseRegistrationForm)
+    await flushPromises()
     
     // Fill out Merchant but NOT Amount
     await wrapper.find('input[placeholder="Ej: AutoMercado"]').setValue('Test Merchant')
@@ -21,11 +29,13 @@ describe('ExpenseRegistrationForm.vue', () => {
     await wrapper.find('select').setValue(1)
     
     const submitBtn = wrapper.find('button[type="submit"]')
-    expect(submitBtn.element.disabled).toBe(true)
+    expect((submitBtn.element as HTMLButtonElement).disabled).toBe(true)
   })
 
   it('Should emit submit event when valid simple form is submitted', async () => {
+    vi.mocked(api.get).mockResolvedValue({ data: mockCategories })
     const wrapper = mount(ExpenseRegistrationForm)
+    await flushPromises()
     
     await wrapper.find('input[placeholder="Ej: AutoMercado"]').setValue('Test Merchant')
     await wrapper.find('input[type="date"]').setValue('2025-01-01')
@@ -39,7 +49,9 @@ describe('ExpenseRegistrationForm.vue', () => {
     expect(emitted![0][0]).toMatchObject({
       merchant: 'Test Merchant',
       totalAmount: 100,
-      isRecurring: false,
+      items: [
+        { categoryId: 1, itemAmount: 100 }
+      ]
     })
   })
 
@@ -67,11 +79,11 @@ describe('ExpenseRegistrationForm.vue', () => {
     await wrapper.findAll('button').find((b: any) => b.text().includes('Desglosar en múltiples categorías'))!.trigger('click')
 
     // Find the first row's amount input. It has type="number" and step="0.01"
-    const itemAmountInput = wrapper.findAll('input[type="number"][step="0.01"]').at(0)
+    const itemAmountInput = wrapper.findAll('input[type="number"][step="0.01"]')[0]
     await itemAmountInput!.setValue(50.00) // Sum is 50, but total is 100
 
     const submitBtn = wrapper.find('button[type="submit"]')
-    expect(submitBtn.element.disabled).toBe(true)
+    expect((submitBtn.element as HTMLButtonElement).disabled).toBe(true)
     
     // Check blackbox rendering text
     expect(wrapper.text()).toContain('Faltan ₡50.00 por asignar')

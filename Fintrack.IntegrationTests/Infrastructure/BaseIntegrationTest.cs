@@ -49,9 +49,30 @@ namespace Fintrack.IntegrationTests.Infrastructure
             return await Client.PostAsJsonAsync(url, content);
         }
 
+        protected async Task<HttpResponseMessage> PutAsync<T>(string url, T content)
+        {
+            return await Client.PutAsJsonAsync(url, content);
+        }
+
         protected async Task<HttpResponseMessage> GetAsync(string url)
         {
             return await Client.GetAsync(url);
+        }
+
+        protected async Task<HttpResponseMessage> DeleteAsync(string url)
+        {
+            return await Client.DeleteAsync(url);
+        }
+
+        protected async Task AddAsync<TEntity>(TEntity entity) where TEntity : class
+        {
+            DbContext.Set<TEntity>().Add(entity);
+            await DbContext.SaveChangesAsync();
+        }
+
+        protected async Task<TEntity?> FindAsync<TEntity>(int id) where TEntity : class
+        {
+            return await DbContext.Set<TEntity>().FindAsync(id);
         }
 
         public async Task InitializeAsync()

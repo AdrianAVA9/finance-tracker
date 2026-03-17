@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Fintrack.Server.Domain.Abstractions;
 
 namespace Fintrack.Server.Models
@@ -39,7 +40,10 @@ namespace Fintrack.Server.Models
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+        
+        [JsonIgnore]
         public virtual ICollection<Budget> Budgets { get; set; } = new List<Budget>();
     }
 }
