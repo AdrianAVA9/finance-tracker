@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Income Registration - Sentinel Secure</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration for Theme Customization -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            sentinel: {
+              dark: '#0a0a0c',
+              card: '#141417',
+              border: '#2a2a2e',
+              accent: '#10b981', // Positive Green
+              turquoise: '#06b6d4' // Turquoise
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: BaseStyles -->
+<style data-purpose="base-typography">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0a0a0c;
+      color: #e5e7eb;
+    }
+  </style>
+<style data-purpose="custom-elements">
+    /* Custom focus states for dark mode registration form */
+    .sentinel-input:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #2a2a2e;
+      border-radius: 10px;
+    }
+  </style>
+<!-- END: BaseStyles -->
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+<!-- BEGIN: MainContainer -->
+<main class="w-full max-w-lg" data-purpose="registration-form-container">
+<!-- BEGIN: IncomeFormCard -->
+<div class="bg-sentinel-card border border-sentinel-border rounded-2xl shadow-2xl overflow-hidden p-6 md:p-8">
+<!-- BEGIN: HeaderSection -->
+<header class="mb-8">
+<h1 class="text-xs font-semibold tracking-widest text-sentinel-accent uppercase mb-1">Registro de Ingresos</h1>
+<p class="text-sm text-gray-400">Complete los detalles para su nueva entrada de capital.</p>
+</header>
+<!-- END: HeaderSection -->
+<form action="#" class="space-y-6" method="POST">
+<!-- BEGIN: HeroAmountSection -->
+<div class="bg-sentinel-dark/50 border border-sentinel-border rounded-xl p-6 text-center" data-purpose="hero-amount-input">
+<label class="block text-sm font-medium text-gray-400 mb-2" for="monto">Monto del Ingreso</label>
+<div class="flex items-center justify-center space-x-2">
+<span class="text-3xl font-bold text-sentinel-accent">+</span>
+<span class="text-3xl font-bold text-gray-100">₡</span>
+<input class="bg-transparent border-none text-4xl font-bold text-gray-100 focus:ring-0 w-full text-left p-0 placeholder-gray-700" id="monto" name="monto" placeholder="0.00" required="" type="number"/>
+</div>
+</div>
+<!-- END: HeroAmountSection -->
+<!-- BEGIN: FormFields -->
+<div class="grid grid-cols-1 gap-5">
+<!-- Payer Field -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-gray-300" for="fuente">Fuente o Pagador</label>
+<input class="sentinel-input w-full bg-sentinel-dark border-sentinel-border rounded-lg text-gray-200 py-3 px-4 focus:ring-sentinel-accent" id="fuente" placeholder="Ej. Salario Quincenal, Freelance..." type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Date Picker -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-gray-300" for="fecha">Fecha del depósito</label>
+<input class="sentinel-input w-full bg-sentinel-dark border-sentinel-border rounded-lg text-gray-200 py-3 px-4 focus:ring-sentinel-accent" id="fecha" type="date"/>
+</div>
+<!-- Category Dropdown -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-gray-300" for="categoria">Categoría</label>
+<select class="sentinel-input w-full bg-sentinel-dark border-sentinel-border rounded-lg text-gray-200 py-3 px-4 focus:ring-sentinel-accent" id="categoria">
+<option value="salario">💼 Salario</option>
+<option value="inversion">📈 Inversión</option>
+<option value="venta">🏷️ Venta</option>
+<option value="otros">✨ Otros</option>
+</select>
+</div>
+</div>
+<!-- Notes Field -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-gray-300" for="notas">Notas <span class="text-gray-500 font-normal">(Opcional)</span></label>
+<textarea class="sentinel-input w-full bg-sentinel-dark border-sentinel-border rounded-lg text-gray-200 py-3 px-4 focus:ring-sentinel-accent resize-none" id="notas" placeholder="Detalles adicionales..." rows="2"></textarea>
+</div>
+</div>
+<!-- END: FormFields -->
+<!-- BEGIN: AutomationSection -->
+<div class="border-t border-sentinel-border pt-6" data-purpose="automation-toggle-section">
+<div class="flex items-center justify-between mb-6">
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-gray-200">🔁 Automatización</span>
+<span class="text-xs text-gray-500">Convertir en ingreso recurrente</span>
+</div>
+<!-- Toggle Switch (State: ON) -->
+<button aria-checked="true" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-sentinel-accent" role="switch" type="button">
+<span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 transform translate-x-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+<!-- Expanded Automation Fields -->
+<div class="bg-sentinel-dark/30 border border-sentinel-border rounded-xl p-4 space-y-4" data-purpose="expanded-fields">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="block text-xs font-medium text-gray-400 uppercase tracking-wider" for="frecuencia">Frecuencia</label>
+<select class="sentinel-input w-full bg-sentinel-dark border-sentinel-border rounded-lg text-sm text-gray-200 focus:ring-sentinel-turquoise" id="frecuencia">
+<option value="semanal">Semanal</option>
+<option value="quincenal">Quincenal</option>
+<option selected="" value="mensual">Mensual</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-medium text-gray-400 uppercase tracking-wider" for="proximo">Próximo depósito</label>
+<input class="sentinel-input w-full bg-sentinel-dark border-sentinel-border rounded-lg text-sm text-gray-200 focus:ring-sentinel-turquoise" id="proximo" type="date"/>
+</div>
+</div>
+</div>
+</div>
+<!-- END: AutomationSection -->
+<!-- BEGIN: ActionButtons -->
+<div class="flex flex-col space-y-3 pt-4">
+<button class="w-full bg-gradient-to-r from-sentinel-accent to-sentinel-turquoise text-sentinel-dark font-bold py-4 rounded-xl hover:opacity-90 transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98]" type="submit">
+            Guardar Ingreso
+          </button>
+<button class="w-full bg-transparent border border-sentinel-border text-gray-400 font-medium py-3 rounded-xl hover:bg-sentinel-border hover:text-white transition-all" type="button">
+            Guardar y registrar otro
+          </button>
+</div>
+<!-- END: ActionButtons -->
+</form>
+</div>
+<!-- END: IncomeFormCard -->
+<!-- BEGIN: FooterBranding -->
+<footer class="mt-8 text-center">
+<div class="inline-flex items-center space-x-2 text-gray-600 text-xs">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Secure Session Active • Sentinel App v2.4</span>
+</div>
+</footer>
+<!-- END: FooterBranding -->
+</main>
+<!-- END: MainContainer -->
+<!-- JavaScript for Basic Interactivity (Toggle Visual State Demo) -->
+<script data-purpose="form-interactivity">
+    // This script is purely for demonstration of the toggle UI behavior
+    const toggleBtn = document.querySelector('[role="switch"]');
+    const thumb = toggleBtn.querySelector('span');
+    const expandedArea = document.querySelector('[data-purpose="expanded-fields"]');
+
+    toggleBtn.addEventListener('click', () => {
+      const isChecked = toggleBtn.getAttribute('aria-checked') === 'true';
+      if (isChecked) {
+        toggleBtn.setAttribute('aria-checked', 'false');
+        toggleBtn.classList.replace('bg-sentinel-accent', 'bg-gray-700');
+        thumb.classList.replace('translate-x-5', 'translate-x-0');
+        expandedArea.classList.add('hidden');
+      } else {
+        toggleBtn.setAttribute('aria-checked', 'true');
+        toggleBtn.classList.replace('bg-gray-700', 'bg-sentinel-accent');
+        thumb.classList.replace('translate-x-0', 'translate-x-5');
+        expandedArea.classList.remove('hidden');
+      }
+    });
+  </script>
+</body></html>

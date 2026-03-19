@@ -15,7 +15,7 @@ using Fintrack.Server.Models.Enums;
 
 namespace Fintrack.Tests.Infrastructure.BackgroundJobs
 {
-    public class RecurringExpenseProcessorJobTests
+    public class RecurringTransactionProcessorJobTests
     {
         private ApplicationDbContext GetInMemoryContext()
         {
@@ -24,17 +24,17 @@ namespace Fintrack.Tests.Infrastructure.BackgroundJobs
                 .Options;
             return new ApplicationDbContext(options);
         }
-
+ 
         [Fact]
         public void Should_CalculateNextProcessingDate_Correctly_SupportingEdgeCases()
         {
             // Arrange
             var serviceProvider = Substitute.For<IServiceProvider>();
-            var logger = Substitute.For<ILogger<RecurringExpenseProcessorJob>>();
-            var job = new RecurringExpenseProcessorJob(serviceProvider, logger);
-
+            var logger = Substitute.For<ILogger<RecurringTransactionProcessorJob>>();
+            var job = new RecurringTransactionProcessorJob(serviceProvider, logger);
+ 
             // Reflection to access the private CalculateNextDate method
-            var methodInfo = typeof(RecurringExpenseProcessorJob).GetMethod("CalculateNextDate", BindingFlags.NonPublic | BindingFlags.Instance);
+            var methodInfo = typeof(RecurringTransactionProcessorJob).GetMethod("CalculateNextDate", BindingFlags.NonPublic | BindingFlags.Instance);
 
             // Edge Case 1: Monthly from Jan 31st. Should be Feb 28th (or 29th on leap year).
             var jan31 = new DateTime(2025, 1, 31);
@@ -84,11 +84,11 @@ namespace Fintrack.Tests.Infrastructure.BackgroundJobs
             var serviceProvider = Substitute.For<IServiceProvider>();
             serviceProvider.GetService(typeof(IServiceScopeFactory)).Returns(serviceScopeFactory);
 
-            var logger = Substitute.For<ILogger<RecurringExpenseProcessorJob>>();
-            var job = new RecurringExpenseProcessorJob(serviceProvider, logger);
-
+            var logger = Substitute.For<ILogger<RecurringTransactionProcessorJob>>();
+            var job = new RecurringTransactionProcessorJob(serviceProvider, logger);
+ 
             // Act - invoking the private logic directly to avoid the infinite while loop in ExecuteAsync
-            var methodInfo = typeof(RecurringExpenseProcessorJob).GetMethod("ProcessRecurringExpensesAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+            var methodInfo = typeof(RecurringTransactionProcessorJob).GetMethod("ProcessRecurringExpensesAsync", BindingFlags.NonPublic | BindingFlags.Instance);
             var task = (Task)methodInfo.Invoke(job, new object[] { CancellationToken.None });
             await task;
 

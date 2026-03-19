@@ -14,7 +14,9 @@ namespace Fintrack.Server.Data
 
         public DbSet<ExpenseCategoryGroup> ExpenseCategoryGroups { get; set; }
         public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
-        public DbSet<IncomeSource> IncomeSources { get; set; }
+        public DbSet<IncomeCategory> IncomeCategories { get; set; }
+        public DbSet<Income> Incomes { get; set; }
+        public DbSet<RecurringIncome> RecurringIncomes { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<ExpenseItem> ExpenseItems { get; set; }
         public DbSet<RecurringExpense> RecurringExpenses { get; set; }
@@ -102,6 +104,18 @@ namespace Fintrack.Server.Data
             builder.Entity<Budget>()
                 .HasIndex(b => new { b.UserId, b.CategoryId, b.Month, b.Year })
                 .IsUnique();
+
+            builder.Entity<Income>()
+                .HasOne(i => i.Category)
+                .WithMany(c => c.Incomes)
+                .HasForeignKey(i => i.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<RecurringIncome>()
+                .HasOne(ri => ri.Category)
+                .WithMany(c => c.RecurringIncomes)
+                .HasForeignKey(ri => ri.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

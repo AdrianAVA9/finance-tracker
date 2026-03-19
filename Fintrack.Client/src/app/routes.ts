@@ -24,6 +24,12 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: 'Register Expense', subtitle: 'Record a new transaction or log an itemized receipt.' }
       },
       {
+        path: 'incomes/new',
+        name: 'IncomeRegistration',
+        component: () => import('@/app/views/IncomeRegistrationView.vue'),
+        meta: { title: 'Registro de Ingresos', subtitle: 'Complete los detalles para su nueva entrada de capital.' }
+      },
+      {
         path: 'budgets',
         name: 'BudgetRegistration',
         component: () => import('@/app/views/BudgetRegistrationView.vue'),

@@ -8,9 +8,14 @@ namespace Fintrack.Server.Infrastructure.Data.Seeders
     {
         public static async Task SeedAsync(ApplicationDbContext context)
         {
+            await SeedExpenseCategoriesAsync(context);
+            await SeedIncomeCategoriesAsync(context);
+        }
+
+        private static async Task SeedExpenseCategoriesAsync(ApplicationDbContext context)
+        {
             if (await context.ExpenseCategoryGroups.AnyAsync(g => g.UserId == null))
             {
-                // System groups already exist, do not re-seed.
                 return;
             }
 
@@ -104,6 +109,32 @@ namespace Fintrack.Server.Infrastructure.Data.Seeders
             await context.SaveChangesAsync();
         }
 
+        private static async Task SeedIncomeCategoriesAsync(ApplicationDbContext context)
+        {
+            // Clear existing system categories to ensure we have exactly the ones requested
+            var existingSystemCategories = await context.IncomeCategories
+                .Where(c => c.UserId == null)
+                .ToListAsync();
+            
+            if (existingSystemCategories.Any())
+            {
+                context.IncomeCategories.RemoveRange(existingSystemCategories);
+                await context.SaveChangesAsync();
+            }
+
+            // --- Income Categories ---
+            await TryAddIncomeCategory(context, "Salario / Nómina", "payments", "#10B981");
+            await TryAddIncomeCategory(context, "Freelance / Consultoría", "work", "#06B6D4");
+            await TryAddIncomeCategory(context, "Ventas / Negocios", "storefront", "#F59E0B");
+            await TryAddIncomeCategory(context, "Bonos y Aguinaldo", "redeem", "#EC4899");
+            await TryAddIncomeCategory(context, "Inversiones", "trending_up", "#8B5CF6");
+            await TryAddIncomeCategory(context, "Rentas", "apartment", "#3B82F6");
+            await TryAddIncomeCategory(context, "Reembolsos", "assignment_return", "#64748B");
+            await TryAddIncomeCategory(context, "Otros", "more_horiz", "#94A3B8");
+
+            await context.SaveChangesAsync();
+        }
+
         private static async Task<int> TryAddGroup(ApplicationDbContext context, string name, string description)
         {
             var group = new ExpenseCategoryGroup
@@ -133,6 +164,19 @@ namespace Fintrack.Server.Infrastructure.Data.Seeders
             };
 
             context.ExpenseCategories.Add(category);
+        }
+
+        private static async Task TryAddIncomeCategory(ApplicationDbContext context, string name, string icon, string color)
+        {
+            var category = new IncomeCategory
+            {
+                Name = name,
+                UserId = null,
+                Icon = icon,
+                Color = color
+            };
+
+            context.IncomeCategories.Add(category);
         }
     }
 }

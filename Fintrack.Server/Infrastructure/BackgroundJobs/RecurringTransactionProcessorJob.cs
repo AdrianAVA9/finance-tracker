@@ -13,12 +13,12 @@ using Fintrack.Server.Models.Enums;
 
 namespace Fintrack.Server.Infrastructure.BackgroundJobs
 {
-    public class RecurringExpenseProcessorJob : BackgroundService
+    public class RecurringTransactionProcessorJob : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<RecurringExpenseProcessorJob> _logger;
+        private readonly ILogger<RecurringTransactionProcessorJob> _logger;
 
-        public RecurringExpenseProcessorJob(IServiceProvider serviceProvider, ILogger<RecurringExpenseProcessorJob> logger)
+        public RecurringTransactionProcessorJob(IServiceProvider serviceProvider, ILogger<RecurringTransactionProcessorJob> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -26,22 +26,58 @@ namespace Fintrack.Server.Infrastructure.BackgroundJobs
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("RecurringExpenseProcessorJob started.");
+            _logger.LogInformation("RecurringTransactionProcessorJob started.");
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
+                    await ProcessRecurringIncomesAsync(stoppingToken);
                     await ProcessRecurringExpensesAsync(stoppingToken);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error occurred processing recurring expenses.");
+                    _logger.LogError(ex, "Error occurred processing recurring transactions.");
                 }
 
-                // Runs roughly every 24 hours. For precise daily scheduling, Quartz or Hangfire is recommended.
                 await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             }
+        }
+
+        private async Task ProcessRecurringIncomesAsync(CancellationToken cancellationToken)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            var today = DateTime.UtcNow.Date;
+
+            var dueIncomes = await dbContext.RecurringIncomes
+                .Where(r => r.IsActive && r.NextProcessingDate.Date <= today)
+                .ToListAsync(cancellationToken);
+
+            if (!dueIncomes.Any()) return;
+
+            _logger.LogInformation($"Found {dueIncomes.Count} recurring incomes to process.");
+
+            foreach (var template in dueIncomes)
+            {
+                var newIncome = new Income
+                {
+                    UserId = template.UserId,
+                    Amount = template.Amount,
+                    Source = template.Source,
+                    CategoryId = template.CategoryId,
+                    Date = today,
+                    Notes = $"Procesado automáticamente desde plantilla recurrente."
+                };
+
+                dbContext.Incomes.Add(newIncome);
+
+                template.NextProcessingDate = CalculateNextDate(template.NextProcessingDate.Date, template.Frequency, today);
+                _logger.LogInformation($"Processed recurring income {template.Id}. Next date: {template.NextProcessingDate:d}");
+            }
+
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
 
         private async Task ProcessRecurringExpensesAsync(CancellationToken cancellationToken)
@@ -51,7 +87,6 @@ namespace Fintrack.Server.Infrastructure.BackgroundJobs
 
             var today = DateTime.UtcNow.Date;
 
-            // Find all active templates due today or earlier
             var dueExpenses = await dbContext.RecurringExpenses
                 .Where(r => r.IsActive && r.NextProcessingDate.Date <= today)
                 .ToListAsync(cancellationToken);
@@ -63,14 +98,12 @@ namespace Fintrack.Server.Infrastructure.BackgroundJobs
 
             foreach (var template in dueExpenses)
             {
-                // 1. Create the materialized expense record
                 var newExpense = new Expense
                 {
                     UserId = template.UserId,
                     TotalAmount = template.Amount,
-                    Date = today, // Date of generation
+                    Date = today,
                     Merchant = template.Merchant,
-                    // Status is NeedsReview: An automated recurring expense requires manual approval
                     Status = ExpenseStatus.NeedsReview, 
                     Items = new List<ExpenseItem>
                     {
@@ -85,13 +118,10 @@ namespace Fintrack.Server.Infrastructure.BackgroundJobs
 
                 dbContext.Expenses.Add(newExpense);
 
-                // 2. Update the next processing date safely, even if the job missed a few days
                 template.NextProcessingDate = CalculateNextDate(template.NextProcessingDate.Date, template.Frequency, today);
-                
                 _logger.LogInformation($"Processed recurring expense {template.Id}. Next date: {template.NextProcessingDate:d}");
             }
 
-            // 3. ACID Transaction: all or nothing
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 

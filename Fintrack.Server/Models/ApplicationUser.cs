@@ -12,7 +12,9 @@ namespace Fintrack.Server.Models
 
         // Navigation properties
         public virtual ICollection<ExpenseCategory> ExpenseCategories { get; set; } = new List<ExpenseCategory>();
-        public virtual ICollection<IncomeSource> IncomeSources { get; set; } = new List<IncomeSource>();
+        public virtual ICollection<IncomeCategory> IncomeCategories { get; set; } = new List<IncomeCategory>();
+        public virtual ICollection<Income> Incomes { get; set; } = new List<Income>();
+        public virtual ICollection<RecurringIncome> RecurringIncomes { get; set; } = new List<RecurringIncome>();
         public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
         public virtual ICollection<Budget> Budgets { get; set; } = new List<Budget>();
         public virtual ICollection<SavingsGoal> SavingsGoals { get; set; } = new List<SavingsGoal>();

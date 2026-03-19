@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Fintrack.Server.Domain.Abstractions;
 
 namespace Fintrack.Server.Models
 {
-    public class IncomeSource
+    public class Income : IAuditableEntity
     {
         [Key]
         public int Id { get; set; }
@@ -13,21 +14,28 @@ namespace Fintrack.Server.Models
 
         [Required]
         [StringLength(200)]
-        public string Name { get; set; } = string.Empty;
+        public string Source { get; set; } = string.Empty; // Pagador
 
         [Column(TypeName = "decimal(18,2)")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Monto debe ser mayor a cero.")]
         public decimal Amount { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string Frequency { get; set; } = "Monthly"; // e.g. Weekly, Monthly, Yearly
+        public int CategoryId { get; set; }
 
-        public DateTime? NextDate { get; set; }
+        [Required]
+        public DateTime Date { get; set; }
 
         [StringLength(500)]
         public string? Notes { get; set; }
 
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
+
         [ForeignKey(nameof(UserId))]
         public virtual ApplicationUser? User { get; set; }
+
+        [ForeignKey(nameof(CategoryId))]
+        public virtual IncomeCategory? Category { get; set; }
     }
 }
