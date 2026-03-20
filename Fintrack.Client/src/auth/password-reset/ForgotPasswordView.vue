@@ -22,16 +22,16 @@ const handleSubmit = async () => {
           <div class="bg-emerald-500/20 p-4 rounded-full">
             <span class="material-symbols-outlined text-emerald-400 text-4xl">mark_email_read</span>
           </div>
-          <h2 class="text-slate-100 text-xl font-bold">Check your inbox</h2>
+          <h2 class="text-slate-100 text-xl font-bold">Revisa tu bandeja de entrada</h2>
           <p class="text-slate-400 text-sm text-center">
-            If an account with <span class="text-white font-medium">{{ email }}</span> exists, a password reset link has been sent.
+            Si existe una cuenta con <span class="text-white font-medium">{{ email }}</span>, se ha enviado un enlace de recuperación.
           </p>
           <router-link
             to="/auth/login"
             class="mt-4 text-sm text-[#1e6a7b] hover:text-[#2a8fa8] transition-colors font-medium inline-flex items-center gap-2"
           >
             <span class="material-symbols-outlined text-lg">arrow_back</span>
-            Back to Login
+            Volver al Inicio de Sesión
           </router-link>
         </div>
 
@@ -42,8 +42,8 @@ const handleSubmit = async () => {
             <div class="bg-[#1e6a7b]/20 p-3 rounded-full mb-4">
               <span class="material-symbols-outlined text-[#1e6a7b] text-3xl">shield_lock</span>
             </div>
-            <h1 class="text-slate-100 text-2xl font-bold tracking-tight">Sentinel Secure</h1>
-            <p class="text-slate-400 text-sm mt-2 text-center">Enter your email to receive a password recovery link.</p>
+            <h1 class="text-slate-100 text-2xl font-bold tracking-tight">Fintrack</h1>
+            <p class="text-slate-400 text-sm mt-2 text-center">Ingresa tu correo electrónico para recibir un enlace de recuperación.</p>
           </div>
 
           <!-- Error Message -->
@@ -55,7 +55,7 @@ const handleSubmit = async () => {
           <form @submit.prevent="handleSubmit" class="space-y-6">
             <div class="space-y-2">
               <label class="text-slate-200 text-sm font-medium block ml-1" for="reset-email">
-                Email Address
+                Correo Electrónico
               </label>
               <div class="relative">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xl">mail</span>
@@ -75,9 +75,9 @@ const handleSubmit = async () => {
               :disabled="isLoading"
               class="w-full bg-[#1e6a7b] hover:bg-[#1e6a7b]/90 text-white font-bold py-3.5 rounded-lg shadow-lg shadow-[#1e6a7b]/20 transition-all flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span v-if="isLoading">Sending...</span>
+              <span v-if="isLoading">Enviando...</span>
               <template v-else>
-                <span>Send Reset Link</span>
+                <span>Enviar Enlace</span>
                 <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </template>
             </button>
@@ -90,7 +90,7 @@ const handleSubmit = async () => {
               class="text-slate-400 hover:text-[#1e6a7b] text-sm font-medium transition-colors inline-flex items-center gap-2"
             >
               <span class="material-symbols-outlined text-lg">arrow_back</span>
-              Back to Login
+              Volver al Inicio de Sesión
             </router-link>
           </div>
         </template>
@@ -102,7 +102,7 @@ const handleSubmit = async () => {
     <footer class="py-8 text-center">
       <div class="flex items-center justify-center gap-2 text-slate-600 text-xs font-medium uppercase tracking-widest">
         <span class="material-symbols-outlined text-sm">verified_user</span>
-        End-to-End Encrypted Recovery
+        Recuperación Encriptada de Extremo a Extremo
       </div>
     </footer>
   </div>

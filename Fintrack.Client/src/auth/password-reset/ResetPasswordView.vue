@@ -21,16 +21,16 @@ const canSubmit = computed(() => newPassword.value.length >= 6 && passwordsMatch
 
 const passwordStrength = computed(() => {
   const pw = newPassword.value;
-  if (pw.length === 0) return { label: 'None', width: '0%', color: '#1e293b' };
-  if (pw.length < 6)   return { label: 'Weak',   width: '25%', color: '#ef4444' };
-  if (pw.length < 10)  return { label: 'Medium', width: '55%', color: '#f59e0b' };
+  if (pw.length === 0) return { label: 'Ninguna', width: '0%', color: '#1e293b' };
+  if (pw.length < 6)   return { label: 'Débil',   width: '25%', color: '#ef4444' };
+  if (pw.length < 10)  return { label: 'Media', width: '55%', color: '#f59e0b' };
   if (pw.match(/[A-Z]/) && pw.match(/[0-9]/) && pw.match(/[^a-zA-Z0-9]/))
-                       return { label: 'Strong',  width: '100%', color: '#1e6a7b' };
-  return              { label: 'Good',   width: '75%', color: '#22c55e' };
+                       return { label: 'Fuerte',  width: '100%', color: '#1e6a7b' };
+  return              { label: 'Buena',   width: '75%', color: '#22c55e' };
 });
 
 const validationError = computed(() => {
-  if (confirmPassword.value && !passwordsMatch.value) return 'Passwords do not match.';
+  if (confirmPassword.value && !passwordsMatch.value) return 'Las contraseñas no coinciden.';
   return '';
 });
 
@@ -61,8 +61,8 @@ const handleSubmit = async () => {
           <span class="material-symbols-outlined text-3xl">lock_reset</span>
         </div>
         <div class="text-center">
-          <h1 class="text-2xl font-bold tracking-tight text-white">Secure Your Account</h1>
-          <p class="mt-2 text-sm text-slate-400">Choose a strong, unique password to protect your data.</p>
+          <h1 class="text-2xl font-bold tracking-tight text-white">Asegura tu Cuenta</h1>
+          <p class="mt-2 text-sm text-slate-400">Elige una contraseña segura y única para proteger tus datos.</p>
         </div>
       </div>
 
@@ -71,8 +71,8 @@ const handleSubmit = async () => {
         <div class="bg-emerald-500/20 p-4 rounded-full">
           <span class="material-symbols-outlined text-emerald-400 text-4xl">check_circle</span>
         </div>
-        <h2 class="text-white text-xl font-bold">Password Updated!</h2>
-        <p class="text-slate-400 text-sm text-center">Your password has been changed successfully. Redirecting you to login...</p>
+        <h2 class="text-white text-xl font-bold">¡Contraseña Actualizada!</h2>
+        <p class="text-slate-400 text-sm text-center">Tu contraseña ha sido cambiada con éxito. Redirigiendo al inicio de sesión...</p>
       </div>
 
       <!-- Form -->
@@ -87,13 +87,13 @@ const handleSubmit = async () => {
 
           <!-- New Password -->
           <div class="space-y-2">
-            <label class="text-sm font-semibold text-slate-300 ml-1">New Password</label>
+            <label class="text-sm font-semibold text-slate-300 ml-1">Nueva Contraseña</label>
             <div class="relative flex items-center">
               <input
                 v-model="newPassword"
                 id="new-password"
                 :type="showPassword ? 'text' : 'password'"
-                placeholder="Enter at least 6 characters"
+                placeholder="Ingresa al menos 6 caracteres"
                 required
                 class="block w-full rounded-xl border border-slate-700 bg-slate-800 text-white focus:border-[#1e6a7b] focus:ring-1 focus:ring-[#1e6a7b] py-3.5 px-4 pr-12 transition-all outline-none placeholder:text-slate-600"
               />
@@ -110,7 +110,7 @@ const handleSubmit = async () => {
           <!-- Password Strength -->
           <div class="space-y-3">
             <div class="flex items-center justify-between px-1">
-              <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Password Strength</span>
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Seguridad de la Contraseña</span>
               <span class="text-xs font-bold" :style="{ color: passwordStrength.color }">{{ passwordStrength.label }}</span>
             </div>
             <div class="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
@@ -120,19 +120,19 @@ const handleSubmit = async () => {
               />
             </div>
             <p class="text-[11px] text-slate-500 italic">
-              Tip: Use a mix of uppercase, lowercase, numbers, and symbols.
+              Consejo: Usa una mezcla de mayúsculas, minúsculas, números y símbolos.
             </p>
           </div>
 
           <!-- Confirm Password -->
           <div class="space-y-2">
-            <label class="text-sm font-semibold text-slate-300 ml-1">Confirm Password</label>
+            <label class="text-sm font-semibold text-slate-300 ml-1">Confirmar Contraseña</label>
             <div class="relative flex items-center">
               <input
                 v-model="confirmPassword"
                 id="confirm-password"
                 :type="showConfirmPassword ? 'text' : 'password'"
-                placeholder="Repeat new password"
+                placeholder="Repite la nueva contraseña"
                 required
                 :class="[
                   'block w-full rounded-xl border bg-slate-800 text-white py-3.5 px-4 pr-12 transition-all outline-none placeholder:text-slate-600 focus:ring-1',
@@ -158,10 +158,10 @@ const handleSubmit = async () => {
             :disabled="isLoading || !canSubmit"
             class="w-full flex items-center justify-center gap-2 bg-[#1e6a7b] hover:bg-[#1e6a7b]/90 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-[#1e6a7b]/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span v-if="isLoading">Updating...</span>
+            <span v-if="isLoading">Actualizando...</span>
             <template v-else>
               <span class="material-symbols-outlined text-xl">verified_user</span>
-              Update Password
+              Actualizar Contraseña
             </template>
           </button>
         </form>
@@ -174,7 +174,7 @@ const handleSubmit = async () => {
           class="inline-flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-[#1e6a7b] transition-colors"
         >
           <span class="material-symbols-outlined text-lg">arrow_back</span>
-          Back to Sign In
+          Volver al Inicio de Sesión
         </router-link>
       </div>
     </div>

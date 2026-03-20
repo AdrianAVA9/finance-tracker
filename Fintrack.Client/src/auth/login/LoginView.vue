@@ -21,7 +21,7 @@ const handleLogin = async () => {
     if (success) {
         router.push('/app'); // Redirect to dashboard after successful login
     } else {
-        errorMsg.value = 'Invalid email or password.';
+        errorMsg.value = 'Correo o contraseña inválidos.';
     }
 };
 </script>
@@ -43,13 +43,13 @@ const handleLogin = async () => {
             <div class="relative z-10 p-12 max-w-2xl text-left self-end mb-20">
                 <div class="flex items-center gap-3 mb-6">
                     <span class="material-symbols-outlined text-4xl text-blue-400">security</span>
-                    <p class="text-2xl font-bold tracking-wide">Sentinel Secure</p>
+                    <p class="text-2xl font-bold tracking-wide">Fintrack</p>
                 </div>
                 <h2 class="text-4xl md:text-5xl font-bold leading-tight mb-4 text-white">
-                    Financial clarity,<br />powered by intelligence.
+                    Claridad financiera,<br />impulsada por inteligencia.
                 </h2>
                 <p class="text-lg text-[#9898c3] max-w-lg">
-                    Experience the next generation of budget management where AI precision meets bank-grade security.
+                    Experimenta la próxima generación de gestión presupuestaria donde la precisión se une a la seguridad.
                 </p>
             </div>
         </div>
@@ -61,7 +61,7 @@ const handleLogin = async () => {
                 <!-- Mobile Logo (Visible only on small screens) -->
                 <div class="lg:hidden mb-8 flex items-center gap-2">
                     <span class="material-symbols-outlined text-3xl text-[#191971]">security</span>
-                    <span class="text-xl font-bold">Sentinel Secure</span>
+                    <span class="text-xl font-bold">Fintrack</span>
                 </div>
 
                 <!-- Login Card -->
@@ -74,8 +74,8 @@ const handleLogin = async () => {
 
                     <!-- Header -->
                     <div class="mb-8">
-                        <h1 class="text-[32px] font-bold leading-tight text-white mb-2">Secure Access</h1>
-                        <p class="text-[#9898c3] text-sm">Manage your budget with AI precision.</p>
+                        <h1 class="text-[32px] font-bold leading-tight text-white mb-2">Acceso Seguro</h1>
+                        <p class="text-[#9898c3] text-sm">Gestiona tu presupuesto con precisión.</p>
                         <p v-if="errorMsg" class="mt-2 text-red-500 text-sm font-semibold">{{ errorMsg }}</p>
                     </div>
 
@@ -83,9 +83,9 @@ const handleLogin = async () => {
                     <form @submit.prevent="handleLogin" class="flex flex-col gap-5">
                         <!-- Email Field -->
                         <div class="flex flex-col gap-2">
-                            <label for="email" class="text-white text-sm font-medium">Email Address</label>
+                            <label for="email" class="text-white text-sm font-medium">Correo Electrónico</label>
                             <div class="relative">
-                                <input v-model="email" type="email" id="email" placeholder="name@example.com"
+                                <input v-model="email" type="email" id="email" placeholder="nombre@ejemplo.com"
                                     class="w-full h-12 rounded-lg bg-[#0F0F1A] border border-[#393960] text-white placeholder-[#9898c3] px-4 focus:outline-none focus:border-[#191971] focus:ring-1 focus:ring-[#191971] transition-all duration-200"
                                     required>
                             </div>
@@ -93,7 +93,7 @@ const handleLogin = async () => {
 
                         <!-- Password Field -->
                         <div class="flex flex-col gap-2">
-                            <label for="password" class="text-white text-sm font-medium">Password</label>
+                            <label for="password" class="text-white text-sm font-medium">Contraseña</label>
                             <div class="relative flex items-center">
                                 <input v-model="password" type="password" id="password" placeholder="••••••••"
                                     class="w-full h-12 rounded-lg bg-[#0F0F1A] border border-[#393960] text-white placeholder-[#9898c3] pl-4 pr-12 focus:outline-none focus:border-[#191971] focus:ring-1 focus:ring-[#191971] transition-all duration-200"
@@ -115,39 +115,34 @@ const handleLogin = async () => {
                                         class="material-symbols-outlined absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none text-sm top-0 left-0">check</span>
                                 </div>
                                 <span
-                                    class="text-sm text-[#9898c3] group-hover/check:text-white transition-colors">Remember
-                                    me</span>
+                                    class="text-sm text-[#9898c3] group-hover/check:text-white transition-colors">Recordarme</span>
                             </label>
                             <router-link
                                 to="/auth/forgot-password"
-                                class="text-sm text-[#85B2B2] hover:text-[#A5D2D2] transition-colors font-medium">Forgot
-                                Password?</router-link>
+                                class="text-sm text-[#85B2B2] hover:text-[#A5D2D2] transition-colors font-medium">¿Olvidaste tu contraseña?</router-link>
                         </div>
 
                         <!-- Submit Button -->
                         <button type="submit" :disabled="loading"
                             class="mt-4 w-full h-12 bg-[#191971] hover:bg-[#191971]/90 text-white font-medium rounded-lg shadow-lg shadow-[#191971]/20 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span v-if="loading">Signing In...</span>
-                            <span v-else>Sign In</span>
+                            <span v-if="loading">Iniciando Sesión...</span>
+                            <span v-else>Iniciar Sesión</span>
                             <span v-if="!loading" class="material-symbols-outlined text-lg">login</span>
                         </button>
                     </form>
 
-
-
                     <!-- Footer Link -->
                     <div class="mt-8 text-center">
                         <p class="text-sm text-[#9898c3]">
-                            Don't have an account?
+                            ¿No tienes una cuenta?
                             <router-link to="/auth/register"
-                                class="text-[#85B2B2] hover:text-[#A5D2D2] font-medium transition-colors">Sign
-                                up</router-link>
+                                class="text-[#85B2B2] hover:text-[#A5D2D2] font-medium transition-colors">Regístrate</router-link>
                         </p>
                     </div>
                 </div>
 
                 <p class="mt-8 text-xs text-[#9898c3]/50 text-center">
-                    © 2024 Sentinel Secure Inc. All rights reserved.
+                    © 2024 Fintrack Inc. Todos los derechos reservados.
                 </p>
             </div>
         </div>
