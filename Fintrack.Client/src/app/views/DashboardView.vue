@@ -1,8 +1,79 @@
 <script setup lang="ts">
-// Main Dashboard component containing the mock data visualizers
+import { ref, onMounted, computed } from 'vue';
+import dashboardService, { type DashboardSummaryDto } from '@/services/dashboardService';
+
+const dashboardData = ref<DashboardSummaryDto | null>(null);
+const isLoading = ref(true);
+
+const fetchDashboardData = async () => {
+    try {
+        isLoading.value = true;
+        dashboardData.value = await dashboardService.getDashboardSummary();
+    } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+onMounted(() => {
+    fetchDashboardData();
+});
+
+const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    }).format(value);
+};
+
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    
+    if (isToday) {
+        return `Today, ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+    }
+    
+    return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+    }) + `, ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+};
+
+const maxChartValue = computed(() => {
+    if (!dashboardData.value || dashboardData.value.monthlyData.length === 0) return 1000;
+    const values = dashboardData.value.monthlyData.flatMap(d => [d.income, d.expense]);
+    const max = Math.max(...values);
+    return max === 0 ? 1000 : max * 1.1; // 10% padding
+});
+
+const getBarHeight = (value: number) => {
+    return `${(value / maxChartValue.value) * 100}%`;
+};
+
+const getCategoryPercentage = (amount: number) => {
+    if (!dashboardData.value || dashboardData.value.monthlyExpenses === 0) return 0;
+    return Math.round((amount / dashboardData.value.monthlyExpenses) * 100);
+};
+
+const getCategoryDashOffset = (index: number) => {
+    if (!dashboardData.value) return 0;
+    let offset = 0;
+    for (let i = 0; i < index; i++) {
+        const cat = dashboardData.value.topSpendingCategories[i];
+        if (cat) {
+            offset += getCategoryPercentage(cat.amount);
+        }
+    }
+    return -offset;
+};
 </script>
 
 <template>
+    <template v-if="dashboardData">
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Total Balance -->
@@ -13,13 +84,21 @@
             </div>
             <div class="relative z-10">
                 <p class="text-slate-500 dark:text-text-secondary-dark text-sm font-medium mb-1">Total Balance</p>
-                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">$12,450.00</h3>
+                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
+                    {{ formatCurrency(dashboardData.totalBalance) }}
+                </h3>
                 <div class="flex items-center gap-2">
                     <span
-                        class="bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-accent-lime px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[14px]">trending_up</span> 12%
+                        :class="[
+                            dashboardData.totalBalance >= 0 ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-accent-lime' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400',
+                            'px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1'
+                        ]">
+                        <span class="material-symbols-outlined text-[14px]">
+                            {{ dashboardData.totalBalance >= 0 ? 'trending_up' : 'trending_down' }}
+                        </span> 
+                        {{ dashboardData.totalBalance >= 0 ? 'Active' : 'Negative' }}
                     </span>
-                    <span class="text-slate-400 text-xs">vs last month</span>
+                    <span class="text-slate-400 text-xs">Current health</span>
                 </div>
             </div>
         </div>
@@ -32,13 +111,21 @@
             </div>
             <div class="relative z-10">
                 <p class="text-slate-500 dark:text-text-secondary-dark text-sm font-medium mb-1">Monthly Income</p>
-                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">$5,200.00</h3>
+                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
+                    {{ formatCurrency(dashboardData.monthlyIncome) }}
+                </h3>
                 <div class="flex items-center gap-2">
                     <span
-                        class="bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-accent-lime px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[14px]">arrow_upward</span> 2%
+                        :class="[
+                            dashboardData.incomeChangePercentage >= 0 ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-accent-lime' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400',
+                            'px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1'
+                        ]">
+                        <span class="material-symbols-outlined text-[14px]">
+                            {{ dashboardData.incomeChangePercentage >= 0 ? 'arrow_upward' : 'arrow_downward' }}
+                        </span> 
+                        {{ Math.abs(Math.round(dashboardData.incomeChangePercentage)) }}%
                     </span>
-                    <span class="text-slate-400 text-xs">from average</span>
+                    <span class="text-slate-400 text-xs">vs last month</span>
                 </div>
             </div>
         </div>
@@ -51,13 +138,21 @@
             </div>
             <div class="relative z-10">
                 <p class="text-slate-500 dark:text-text-secondary-dark text-sm font-medium mb-1">Monthly Expenses</p>
-                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">$3,150.00</h3>
+                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
+                    {{ formatCurrency(dashboardData.monthlyExpenses) }}
+                </h3>
                 <div class="flex items-center gap-2">
                     <span
-                        class="bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[14px]">arrow_downward</span> 5%
+                        :class="[
+                            dashboardData.expenseChangePercentage <= 0 ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-accent-lime' : 'bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400',
+                            'px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1'
+                        ]">
+                        <span class="material-symbols-outlined text-[14px]">
+                            {{ dashboardData.expenseChangePercentage <= 0 ? 'arrow_downward' : 'arrow_upward' }}
+                        </span> 
+                        {{ Math.abs(Math.round(dashboardData.expenseChangePercentage)) }}%
                     </span>
-                    <span class="text-slate-400 text-xs">higher than usual</span>
+                    <span class="text-slate-400 text-xs">vs last month</span>
                 </div>
             </div>
         </div>
@@ -93,70 +188,14 @@
                     </div>
                     <!-- Bars (Pairs) -->
                     <div class="w-full h-full flex items-end justify-around gap-2 z-10 pb-6">
-                        <!-- Jan -->
-                        <div class="flex flex-col items-center gap-2 h-full justify-end w-1/6 group">
+                        <div v-for="item in dashboardData.monthlyData" :key="item.month" class="flex flex-col items-center gap-2 h-full justify-end w-1/6 group">
                             <div class="flex items-end gap-1 h-full w-full justify-center">
                                 <div class="w-3 md:w-5 bg-primary rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 60%"></div>
+                                    :style="{ height: getBarHeight(item.income) }"></div>
                                 <div class="w-3 md:w-5 bg-slate-300 dark:bg-slate-600 rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 40%"></div>
+                                    :style="{ height: getBarHeight(item.expense) }"></div>
                             </div>
-                            <span class="text-xs font-bold text-slate-400">Jan</span>
-                        </div>
-
-                        <!-- Feb -->
-                        <div class="flex flex-col items-center gap-2 h-full justify-end w-1/6 group">
-                            <div class="flex items-end gap-1 h-full w-full justify-center">
-                                <div class="w-3 md:w-5 bg-primary rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 75%"></div>
-                                <div class="w-3 md:w-5 bg-slate-300 dark:bg-slate-600 rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 45%"></div>
-                            </div>
-                            <span class="text-xs font-bold text-slate-400">Feb</span>
-                        </div>
-
-                        <!-- Mar -->
-                        <div class="flex flex-col items-center gap-2 h-full justify-end w-1/6 group">
-                            <div class="flex items-end gap-1 h-full w-full justify-center">
-                                <div class="w-3 md:w-5 bg-primary rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 50%"></div>
-                                <div class="w-3 md:w-5 bg-slate-300 dark:bg-slate-600 rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 55%"></div>
-                            </div>
-                            <span class="text-xs font-bold text-slate-400">Mar</span>
-                        </div>
-
-                        <!-- Apr -->
-                        <div class="flex flex-col items-center gap-2 h-full justify-end w-1/6 group">
-                            <div class="flex items-end gap-1 h-full w-full justify-center">
-                                <div class="w-3 md:w-5 bg-primary rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 80%"></div>
-                                <div class="w-3 md:w-5 bg-slate-300 dark:bg-slate-600 rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 30%"></div>
-                            </div>
-                            <span class="text-xs font-bold text-slate-400">Apr</span>
-                        </div>
-
-                        <!-- May -->
-                        <div class="flex flex-col items-center gap-2 h-full justify-end w-1/6 group">
-                            <div class="flex items-end gap-1 h-full w-full justify-center">
-                                <div class="w-3 md:w-5 bg-primary rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 65%"></div>
-                                <div class="w-3 md:w-5 bg-slate-300 dark:bg-slate-600 rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 35%"></div>
-                            </div>
-                            <span class="text-xs font-bold text-slate-400">May</span>
-                        </div>
-
-                        <!-- Jun -->
-                        <div class="flex flex-col items-center gap-2 h-full justify-end w-1/6 group">
-                            <div class="flex items-end gap-1 h-full w-full justify-center">
-                                <div class="w-3 md:w-5 bg-primary rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 90%"></div>
-                                <div class="w-3 md:w-5 bg-slate-300 dark:bg-slate-600 rounded-t-sm opacity-90 group-hover:opacity-100 transition-all bar-animate"
-                                    style="--h: 40%"></div>
-                            </div>
-                            <span class="text-xs font-bold text-slate-400">Jun</span>
+                            <span class="text-xs font-bold text-slate-400">{{ item.month }}</span>
                         </div>
                     </div>
                 </div>
@@ -206,50 +245,34 @@
                     <!-- Donut Chart Representation -->
                     <div class="relative size-32 shrink-0">
                         <svg class="w-full h-full rotate-[-90deg]" viewBox="0 0 36 36">
-                            <!-- Ring 1 Housing -->
+                            <!-- Background Ring -->
                             <path class="text-slate-800"
                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                                 fill="none" stroke="#2B3036" stroke-width="4.5"></path>
-                            <path class="text-primary"
+                            
+                            <!-- Dynamic Rings -->
+                            <path v-for="(cat, index) in dashboardData.topSpendingCategories" 
+                                :key="cat.categoryName"
+                                :style="{ color: cat.color || 'var(--color-primary)' }"
                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                fill="none" stroke="currentColor" stroke-dasharray="40, 100" stroke-width="4.5"></path>
-                            <!-- Ring 2 Food -->
-                            <path class="text-emerald-500"
-                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                fill="none" stroke="currentColor" stroke-dasharray="20, 100" stroke-dashoffset="-40"
-                                stroke-width="4.5"></path>
-                            <!-- Ring 3 Transport -->
-                            <path class="text-sky-400"
-                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                fill="none" stroke="currentColor" stroke-dasharray="15, 100" stroke-dashoffset="-60"
+                                fill="none" 
+                                stroke="currentColor" 
+                                :stroke-dasharray="`${getCategoryPercentage(cat.amount)}, 100`" 
+                                :stroke-dashoffset="getCategoryDashOffset(index)"
                                 stroke-width="4.5"></path>
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span class="text-xl font-bold dark:text-white">40%</span>
-                            <span class="text-[10px] uppercase text-slate-500 font-bold">Housing</span>
+                            <span class="text-xl font-bold dark:text-white">{{ getCategoryPercentage(dashboardData.topSpendingCategories[0]?.amount || 0) }}%</span>
+                            <span class="text-[10px] uppercase text-slate-500 font-bold">{{ dashboardData.topSpendingCategories[0]?.categoryName || 'None' }}</span>
                         </div>
                     </div>
                     <div class="flex flex-col gap-3 w-full">
-                        <div class="flex items-center justify-between text-xs">
+                        <div v-for="cat in dashboardData.topSpendingCategories" :key="cat.categoryName" class="flex items-center justify-between text-xs">
                             <div class="flex items-center gap-2">
-                                <div class="size-2 rounded-full bg-primary"></div>
-                                <span class="text-slate-600 dark:text-slate-300 font-medium">Housing</span>
+                                <div class="size-2 rounded-full" :style="{ backgroundColor: cat.color || 'var(--color-primary)' }"></div>
+                                <span class="text-slate-600 dark:text-slate-300 font-medium">{{ cat.categoryName }}</span>
                             </div>
-                            <span class="font-bold dark:text-white">$1,260</span>
-                        </div>
-                        <div class="flex items-center justify-between text-xs">
-                            <div class="flex items-center gap-2">
-                                <div class="size-2 rounded-full bg-emerald-500"></div>
-                                <span class="text-slate-600 dark:text-slate-300 font-medium">Food</span>
-                            </div>
-                            <span class="font-bold dark:text-white">$630</span>
-                        </div>
-                        <div class="flex items-center justify-between text-xs">
-                            <div class="flex items-center gap-2">
-                                <div class="size-2 rounded-full bg-sky-400"></div>
-                                <span class="text-slate-600 dark:text-slate-300 font-medium">Transport</span>
-                            </div>
-                            <span class="font-bold dark:text-white">$472</span>
+                            <span class="font-bold dark:text-white">{{ formatCurrency(cat.amount) }}</span>
                         </div>
                     </div>
                 </div>
@@ -277,127 +300,56 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm">
-                    <tr
+                    <tr v-for="tx in dashboardData.recentTransactions" :key="tx.id"
                         class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-[#32383f] transition-colors group">
                         <td class="p-4">
                             <div class="flex items-center gap-3">
                                 <div
-                                    class="size-10 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-[20px]">coffee</span>
+                                    class="size-10 rounded-full flex items-center justify-center shrink-0"
+                                    :style="{ backgroundColor: (tx.categoryColor || '#64748b') + '20', color: tx.categoryColor || '#64748b' }">
+                                    <span class="material-symbols-outlined text-[20px]">{{ tx.categoryIcon || 'receipt_long' }}</span>
                                 </div>
                                 <div>
                                     <p
                                         class="font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
-                                        Starbucks</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">Card •••• 4242</p>
+                                        {{ tx.description }}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">{{ tx.type }}</p>
                                 </div>
                             </div>
                         </td>
                         <td class="p-4">
                             <span
-                                class="px-2.5 py-1 rounded-full text-xs font-bold bg-orange-50 dark:bg-transparent border border-orange-200 dark:border-orange-500/30 text-orange-600 dark:text-orange-400">
-                                Food & Drink
+                                class="px-2.5 py-1 rounded-full text-xs font-bold border"
+                                :style="{ 
+                                    backgroundColor: (tx.categoryColor || '#64748b') + '10', 
+                                    borderColor: (tx.categoryColor || '#64748b') + '30',
+                                    color: tx.categoryColor || '#64748b'
+                                }">
+                                {{ tx.categoryName }}
                             </span>
                         </td>
                         <td class="p-4 text-slate-600 dark:text-slate-400 font-medium">
-                            Today, 10:23 AM
+                            {{ formatDate(tx.date) }}
                         </td>
-                        <td class="p-4 text-right font-bold text-slate-900 dark:text-white">
-                            -$5.50
-                        </td>
-                    </tr>
-
-                    <tr
-                        class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-[#32383f] transition-colors group">
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="size-10 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
-                                </div>
-                                <div>
-                                    <p
-                                        class="font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
-                                        Whole Foods Market</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">Card •••• 4242</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="p-4">
-                            <span
-                                class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-transparent border border-blue-200 dark:border-blue-500/30 text-blue-600 dark:text-blue-400">
-                                Groceries
-                            </span>
-                        </td>
-                        <td class="p-4 text-slate-600 dark:text-slate-400 font-medium">
-                            Yesterday, 6:45 PM
-                        </td>
-                        <td class="p-4 text-right font-bold text-slate-900 dark:text-white">
-                            -$124.80
-                        </td>
-                    </tr>
-
-                    <tr
-                        class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-[#32383f] transition-colors group">
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="size-10 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-[20px]">subscriptions</span>
-                                </div>
-                                <div>
-                                    <p
-                                        class="font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
-                                        Netflix Subscription</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">Auto-Pay</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="p-4">
-                            <span
-                                class="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-50 dark:bg-transparent border border-purple-200 dark:border-purple-500/30 text-purple-600 dark:text-purple-400">
-                                Entertainment
-                            </span>
-                        </td>
-                        <td class="p-4 text-slate-600 dark:text-slate-400 font-medium">
-                            Oct 24, 2023
-                        </td>
-                        <td class="p-4 text-right font-bold text-slate-900 dark:text-white">
-                            -$15.99
-                        </td>
-                    </tr>
-
-                    <tr class="hover:bg-slate-50 dark:hover:bg-[#32383f] transition-colors group">
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="size-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-[20px]">work</span>
-                                </div>
-                                <div>
-                                    <p
-                                        class="font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
-                                        Freelance Payment</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">Direct Deposit</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="p-4">
-                            <span
-                                class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-transparent border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
-                                Income
-                            </span>
-                        </td>
-                        <td class="p-4 text-slate-600 dark:text-slate-400 font-medium">
-                            Oct 20, 2023
-                        </td>
-                        <td class="p-4 text-right font-bold text-emerald-600 dark:text-emerald-400">
-                            +$1,500.00
+                        <td :class="['p-4 text-right font-bold', tx.amount >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white']">
+                            {{ tx.amount >= 0 ? '+' : '' }}{{ formatCurrency(tx.amount) }}
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+    </div>
+    </template>
+
+    <div v-else-if="isLoading" class="flex flex-col items-center justify-center min-h-[400px]">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <p class="mt-4 text-slate-400">Loading dashboard data...</p>
+    </div>
+
+    <div v-else class="flex flex-col items-center justify-center min-h-[400px]">
+        <span class="material-symbols-outlined text-rose-500 text-5xl mb-4">error</span>
+        <h4 class="text-lg font-bold text-slate-900 dark:text-white">Error loading data</h4>
+        <p class="text-slate-500 text-sm">Please try refreshing the page later.</p>
     </div>
 
     <footer class="mt-12 mb-6 text-center">
