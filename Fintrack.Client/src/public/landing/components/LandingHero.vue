@@ -6,28 +6,28 @@
       <div class="flex flex-col gap-6 text-center lg:text-left z-10">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-dark border border-surface-border w-fit mx-auto lg:mx-0">
           <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-          <span class="text-xs font-medium text-accent uppercase tracking-wider">v2.0 Now Live</span>
+          <span class="text-xs font-medium text-accent uppercase tracking-wider">v2.0 Ya disponible</span>
         </div>
         <h1 class="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight text-white">
-          Your Finances, <br/>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">Automated by AI.</span>
+          Tus Finanzas, <br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">Automatizadas por IA.</span>
         </h1>
         <p class="text-lg text-slate-400 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-          Stop manual entry. Let our intelligent engine capture receipts, categorize expenses, and secure your future with bank-grade precision.
+          Deja el registro manual. Deja que nuestro motor inteligente capture recibos, categorice gastos y asegure tu futuro con precisión bancaria.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
           <button class="bg-primary hover:bg-primary-hover text-white text-base font-bold h-12 px-8 rounded-xl transition-all shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group">
-            Start for Free
+            Empieza Gratis
             <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </button>
           <button class="bg-surface-dark hover:bg-[#252525] border border-surface-border text-white text-base font-medium h-12 px-8 rounded-xl transition-all flex items-center justify-center gap-2">
             <span class="material-symbols-outlined text-lg text-slate-400">play_circle</span>
-            View Demo
+            Ver Demo
           </button>
         </div>
         <div class="pt-8 flex items-center justify-center lg:justify-start gap-6 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
           <!-- Logos replaced with text for simplicity/compliance -->
-          <span class="text-sm font-semibold text-slate-500">TRUSTED BY TEAMS AT</span>
+          <span class="text-sm font-semibold text-slate-500">CONFIADO POR EQUIPOS EN</span>
           <div class="flex gap-4 text-slate-400 font-heading font-bold">
             <span>ACME</span>
             <span>CORP</span>
@@ -47,14 +47,14 @@
               <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
               <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
             </div>
-            <div class="text-[10px] font-mono text-slate-500 uppercase">Dashboard • Live</div>
+            <div class="text-[10px] font-mono text-slate-500 uppercase">Panel • En Vivo</div>
           </div>
           <!-- Abstract Data Visualization -->
           <div class="p-8 flex flex-col gap-6 h-full" data-alt="Abstract interface showing a spending graph with an upward trend and expense categories">
             <div class="flex justify-between items-end">
               <div>
-                <div class="text-sm text-slate-400">Total Balance</div>
-                <div class="text-3xl font-heading font-bold text-white">$124,592.00</div>
+                <div class="text-sm text-slate-400">Balance Total</div>
+                <div class="text-3xl font-heading font-bold text-white">₡124,592.00</div>
               </div>
               <div class="text-accent text-sm font-bold flex items-center gap-1 bg-accent/10 px-2 py-1 rounded">
                 <span class="material-symbols-outlined text-sm">trending_up</span> +12.4%
@@ -63,16 +63,16 @@
             <!-- Fake Graph -->
             <div class="h-32 w-full flex items-end gap-2 mt-4">
               <div class="w-full bg-primary/20 rounded-t-sm h-[40%] hover:bg-primary/40 transition-all duration-500 cursor-pointer group relative">
-                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Mon: $420</div>
+                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Lun: ₡420</div>
               </div>
               <div class="w-full bg-primary/20 rounded-t-sm h-[60%] hover:bg-primary/40 transition-all duration-500 cursor-pointer group relative">
-                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Tue: $640</div>
+                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Mar: ₡640</div>
               </div>
               <div class="w-full bg-primary/20 rounded-t-sm h-[30%] hover:bg-primary/40 transition-all duration-500 cursor-pointer group relative">
-                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Wed: $310</div>
+                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Mié: ₡310</div>
               </div>
               <div class="w-full bg-primary/20 rounded-t-sm h-[80%] hover:bg-primary/40 transition-all duration-500 cursor-pointer group relative">
-                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Thu: $890</div>
+                <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Jue: ₡890</div>
               </div>
               <div class="w-full bg-primary rounded-t-sm h-[55%] relative shadow-[0_0_15px_rgba(10,125,127,0.5)]"></div>
               <div class="w-full bg-surface-border/30 rounded-t-sm h-[0%]"></div> <!-- Future -->
@@ -84,10 +84,10 @@
                   <span class="material-symbols-outlined text-lg">receipt_long</span>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium text-white truncate">AWS Infrastructure</div>
-                  <div class="text-xs text-slate-500">Cloud Services</div>
+                  <div class="text-sm font-medium text-white truncate">Infraestructura AWS</div>
+                  <div class="text-xs text-slate-500">Servicios en la Nube</div>
                 </div>
-                <div class="text-sm font-bold text-white">-$2,400.00</div>
+                <div class="text-sm font-bold text-white">-₡2,400.00</div>
               </div>
             </div>
           </div>
@@ -98,8 +98,8 @@
             <span class="material-symbols-outlined">auto_awesome</span>
           </div>
           <div>
-            <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">AI Insight</div>
-            <div class="text-sm font-medium text-white">Subscription optimized</div>
+            <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Análisis IA</div>
+            <div class="text-sm font-medium text-white">Suscripción optimizada</div>
           </div>
         </div>
       </div>

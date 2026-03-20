@@ -3,13 +3,13 @@
     <!-- CTA Footer -->
     <section class="w-full py-20 px-4 bg-gradient-to-b from-background-dark to-[#051111] border-t border-surface-border">
       <div class="max-w-4xl mx-auto text-center flex flex-col items-center gap-8">
-        <h2 class="font-heading text-4xl md:text-5xl font-bold text-white">Ready to automate your future?</h2>
-        <p class="text-slate-400 text-lg max-w-xl">Join 50,000+ users who have saved an average of 12 hours per month on finance management.</p>
+        <h2 class="font-heading text-4xl md:text-5xl font-bold text-white">¿Listo para automatizar tu futuro?</h2>
+        <p class="text-slate-400 text-lg max-w-xl">Únete a más de 50,000 usuarios que ahorran un promedio de 12 horas al mes en gestión financiera.</p>
         <button class="bg-primary hover:bg-primary-hover text-white text-lg font-bold h-14 px-10 rounded-xl transition-all shadow-lg hover:shadow-primary/40 flex items-center justify-center gap-3">
-          Get Started Now
+          Empieza Ahora
           <span class="material-symbols-outlined">rocket_launch</span>
         </button>
-        <p class="text-xs text-slate-500">No credit card required for 14-day trial.</p>
+        <p class="text-xs text-slate-500">No se requiere tarjeta de crédito para la prueba de 14 días.</p>
       </div>
     </section>
 
@@ -22,10 +22,10 @@
               <div class="w-6 h-6 rounded bg-primary flex items-center justify-center text-white">
                 <span class="material-symbols-outlined text-sm">account_balance_wallet</span>
               </div>
-              <span class="font-heading font-bold text-lg text-white">SmartSpend AI</span>
+              <span class="font-heading font-bold text-lg text-white">Fintrack</span>
             </div>
             <p class="text-slate-500 max-w-xs mb-6">
-              The world's most intelligent expense tracker. Built for modern professionals who value their time.
+              El rastreador de gastos más inteligente del mundo. Construido para profesionales modernos que valoran su tiempo.
             </p>
             <div class="flex gap-4">
               <a class="text-slate-400 hover:text-white transition-colors" href="#"><span class="sr-only">Twitter</span>
@@ -37,32 +37,32 @@
             </div>
           </div>
           <div class="flex flex-col gap-3">
-            <h4 class="font-bold text-white mb-2">Product</h4>
-            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Features</a>
-            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Pricing</a>
+            <h4 class="font-bold text-white mb-2">Producto</h4>
+            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Funcionalidades</a>
+            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Precios</a>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">API</a>
-            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Changelog</a>
+            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Registro de Cambios</a>
           </div>
           <div class="flex flex-col gap-3">
-            <h4 class="font-bold text-white mb-2">Company</h4>
-            <a class="text-slate-400 hover:text-primary transition-colors" href="#">About</a>
-            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Careers</a>
+            <h4 class="font-bold text-white mb-2">Empresa</h4>
+            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Acerca de</a>
+            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Carreras</a>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Blog</a>
-            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Contact</a>
+            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Contacto</a>
           </div>
           <div class="flex flex-col gap-3">
             <h4 class="font-bold text-white mb-2">Legal</h4>
-            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Privacy Policy</a>
-            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Terms of Service</a>
-            <a class="text-slate-400 hover:text-primary transition-colors" href="#">GDPR Compliance</a>
-            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Security</a>
+            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Política de Privacidad</a>
+            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Términos de Servicio</a>
+            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Cumplimiento de GDPR</a>
+            <a class="text-slate-400 hover:text-primary transition-colors" href="#">Seguridad</a>
           </div>
         </div>
         <div class="border-t border-surface-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p class="text-slate-600 text-xs">© 2023 SmartSpend AI Inc. All rights reserved.</p>
+          <p class="text-slate-600 text-xs">© 2023 Fintrack Inc. Todos los derechos reservados.</p>
           <div class="flex items-center gap-2">
             <div class="w-2 h-2 rounded-full bg-green-500"></div>
-            <span class="text-slate-500 text-xs">All Systems Operational</span>
+            <span class="text-slate-500 text-xs">Todos los sistemas operativos</span>
           </div>
         </div>
       </div>

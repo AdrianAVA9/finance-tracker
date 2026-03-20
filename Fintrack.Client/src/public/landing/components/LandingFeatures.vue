@@ -2,8 +2,8 @@
   <section class="w-full py-20 px-4 bg-[#111111]" id="features">
     <div class="max-w-7xl mx-auto flex flex-col gap-10">
       <div class="text-center max-w-2xl mx-auto">
-        <h2 class="font-heading text-3xl md:text-4xl font-bold text-white mb-4">Everything you need to master money</h2>
-        <p class="text-slate-400">Our bento-box grid of tools puts you in control with AI precision.</p>
+        <h2 class="font-heading text-3xl md:text-4xl font-bold text-white mb-4">Todo lo que necesitas para dominar tu dinero</h2>
+        <p class="text-slate-400">Nuestra cuadrícula de herramientas te pone el control con precisión de IA.</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[minmax(280px,auto)]">
         <!-- Feature 1: Large Scan -->
@@ -12,8 +12,8 @@
             <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-2">
               <span class="material-symbols-outlined text-2xl">document_scanner</span>
             </div>
-            <h3 class="text-2xl font-bold text-white">AI Invoice Scanning</h3>
-            <p class="text-slate-400 max-w-md">Instantly turn receipts into data. Our smart engine captures every detail automatically, recognizing vendors, dates, and amounts with 99.8% accuracy.</p>
+            <h3 class="text-2xl font-bold text-white">Escaneo de Facturas con IA</h3>
+            <p class="text-slate-400 max-w-md">Convierte recibos en datos al instante. Nuestro motor inteligente captura cada detalle automáticamente, reconociendo proveedores, fechas y montos con un 99.8% de precisión.</p>
           </div>
           <!-- Visualization: Scanning Effect -->
           <div class="absolute top-0 right-0 h-full w-1/3 min-w-[200px] bg-gradient-to-l from-black/20 to-transparent pointer-events-none"></div>
@@ -28,8 +28,8 @@
           <div class="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 mb-6">
             <span class="material-symbols-outlined text-2xl">shield_lock</span>
           </div>
-          <h3 class="text-xl font-bold text-white mb-2">Bank-Grade Encryption</h3>
-          <p class="text-slate-400 text-sm">Your data is protected with AES-256 encryption. We never sell your personal information.</p>
+          <h3 class="text-xl font-bold text-white mb-2">Encriptación de Nivel Bancario</h3>
+          <p class="text-slate-400 text-sm">Tus datos están protegidos con encriptación AES-256. Nunca vendemos tu información personal.</p>
           <div class="mt-auto pt-6 flex justify-center">
             <span class="material-symbols-outlined text-6xl text-emerald-500/10 group-hover:text-emerald-500/20 transition-colors">lock</span>
           </div>
@@ -39,8 +39,8 @@
           <div class="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-400 mb-6">
             <span class="material-symbols-outlined text-2xl">pie_chart</span>
           </div>
-          <h3 class="text-xl font-bold text-white mb-2">Real-time Budgets</h3>
-          <p class="text-slate-400 text-sm">Visualize spending against your goals with dynamic charts that update instantly.</p>
+          <h3 class="text-xl font-bold text-white mb-2">Presupuestos en Tiempo Real</h3>
+          <p class="text-slate-400 text-sm">Visualiza tus gastos frente a tus metas con gráficos dinámicos que se actualizan al instante.</p>
           <div class="mt-6 h-24 w-full flex items-end justify-between gap-1 opacity-50">
             <div class="w-full bg-orange-500/20 h-[40%] rounded-t"></div>
             <div class="w-full bg-orange-500/40 h-[70%] rounded-t"></div>
@@ -54,8 +54,8 @@
             <div class="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 mb-6">
               <span class="material-symbols-outlined text-2xl">hub</span>
             </div>
-            <h3 class="text-xl font-bold text-white mb-2">Connects with 5,000+ Banks</h3>
-            <p class="text-slate-400">Seamlessly syncs with your accounts via Plaid for a holistic financial view.</p>
+            <h3 class="text-xl font-bold text-white mb-2">Conéctate con más de 5,000 Bancos</h3>
+            <p class="text-slate-400">Sincroniza perfectamente tus cuentas para una visión financiera holística.</p>
           </div>
           <div class="flex-1 w-full">
             <!-- Bank Logo Grid Abstraction -->
