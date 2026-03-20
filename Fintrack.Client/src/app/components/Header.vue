@@ -43,14 +43,7 @@ const handleLogout = async () => {
                     class="px-3 py-1.5 rounded-md bg-white dark:bg-primary text-slate-900 dark:text-white shadow-sm text-xs font-bold transition-all">CRC</button>
             </div>
 
-            <button
-                class="size-10 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-[#2B3036] text-slate-600 dark:text-slate-300 transition-colors relative">
-                <span class="material-symbols-outlined">notifications</span>
-                <span
-                    class="absolute top-2.5 right-2.5 size-2 bg-red-500 rounded-full border-2 border-white dark:border-[#1c1f22]"></span>
-            </button>
 
-            <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
             <div class="flex items-center gap-3 group relative cursor-pointer">
                 <div
