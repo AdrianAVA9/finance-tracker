@@ -21,9 +21,11 @@ onMounted(() => {
 });
 
 const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('es-CR', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'CRC',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
     }).format(value);
 };
 
@@ -33,14 +35,14 @@ const formatDate = (dateString: string) => {
     const isToday = date.toDateString() === now.toDateString();
     
     if (isToday) {
-        return `Today, ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+        return `Hoy, ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
     }
     
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString('es-ES', {
         month: 'short',
         day: '2-digit',
         year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
-    }) + `, ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+    }) + `, ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
 };
 
 const maxChartValue = computed(() => {
@@ -83,7 +85,7 @@ const getCategoryDashOffset = (index: number) => {
                 <span class="material-symbols-outlined text-[80px] text-primary">account_balance</span>
             </div>
             <div class="relative z-10">
-                <p class="text-slate-500 dark:text-text-secondary-dark text-sm font-medium mb-1">Total Balance</p>
+                <p class="text-slate-500 dark:text-text-secondary-dark text-sm font-medium mb-1">Balance Total</p>
                 <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
                     {{ formatCurrency(dashboardData.totalBalance) }}
                 </h3>
@@ -96,9 +98,9 @@ const getCategoryDashOffset = (index: number) => {
                         <span class="material-symbols-outlined text-[14px]">
                             {{ dashboardData.totalBalance >= 0 ? 'trending_up' : 'trending_down' }}
                         </span> 
-                        {{ dashboardData.totalBalance >= 0 ? 'Active' : 'Negative' }}
+                        {{ dashboardData.totalBalance >= 0 ? 'Activo' : 'Negativo' }}
                     </span>
-                    <span class="text-slate-400 text-xs">Current health</span>
+                    <span class="text-slate-400 text-xs">Estado actual</span>
                 </div>
             </div>
         </div>
@@ -110,7 +112,7 @@ const getCategoryDashOffset = (index: number) => {
                 <span class="material-symbols-outlined text-[80px] text-emerald-500">payments</span>
             </div>
             <div class="relative z-10">
-                <p class="text-slate-500 dark:text-text-secondary-dark text-sm font-medium mb-1">Monthly Income</p>
+                <p class="text-slate-500 dark:text-text-secondary-dark text-sm font-medium mb-1">Ingresos Mensuales</p>
                 <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
                     {{ formatCurrency(dashboardData.monthlyIncome) }}
                 </h3>
@@ -125,7 +127,7 @@ const getCategoryDashOffset = (index: number) => {
                         </span> 
                         {{ Math.abs(Math.round(dashboardData.incomeChangePercentage)) }}%
                     </span>
-                    <span class="text-slate-400 text-xs">vs last month</span>
+                    <span class="text-slate-400 text-xs">vs mes anterior</span>
                 </div>
             </div>
         </div>
@@ -137,7 +139,7 @@ const getCategoryDashOffset = (index: number) => {
                 <span class="material-symbols-outlined text-[80px] text-rose-500">credit_card</span>
             </div>
             <div class="relative z-10">
-                <p class="text-slate-500 dark:text-text-secondary-dark text-sm font-medium mb-1">Monthly Expenses</p>
+                <p class="text-slate-500 dark:text-text-secondary-dark text-sm font-medium mb-1">Gastos Mensuales</p>
                 <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
                     {{ formatCurrency(dashboardData.monthlyExpenses) }}
                 </h3>
@@ -152,7 +154,7 @@ const getCategoryDashOffset = (index: number) => {
                         </span> 
                         {{ Math.abs(Math.round(dashboardData.expenseChangePercentage)) }}%
                     </span>
-                    <span class="text-slate-400 text-xs">vs last month</span>
+                    <span class="text-slate-400 text-xs">vs mes anterior</span>
                 </div>
             </div>
         </div>
@@ -165,9 +167,8 @@ const getCategoryDashOffset = (index: number) => {
             class="lg:col-span-8 bg-card-light dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-soft flex flex-col">
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h4 class="text-lg font-bold text-slate-900 dark:text-white">Income vs Expenses</h4>
-                    <p class="text-sm text-slate-500 dark:text-text-secondary-dark">Net positive flow for current
-                        quarter</p>
+                    <h4 class="text-lg font-bold text-slate-900 dark:text-white">Ingresos vs Gastos</h4>
+                    <p class="text-sm text-slate-500 dark:text-text-secondary-dark">Flujo positivo neto para este trimestre</p>
                 </div>
                 <button
                     class="text-primary dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-lg transition-colors">
@@ -203,11 +204,11 @@ const getCategoryDashOffset = (index: number) => {
             <div class="flex items-center gap-6 mt-4 justify-center">
                 <div class="flex items-center gap-2">
                     <div class="size-3 rounded-full bg-primary"></div>
-                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Income</span>
+                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Ingresos</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="size-3 rounded-full bg-slate-300 dark:bg-slate-600"></div>
-                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Expense</span>
+                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Gastos</span>
                 </div>
             </div>
         </div>
@@ -226,13 +227,12 @@ const getCategoryDashOffset = (index: number) => {
                         class="size-16 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-primary text-3xl">document_scanner</span>
                     </div>
-                    <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">AI Quick Scan</h4>
-                    <p class="text-sm text-slate-500 dark:text-text-secondary-dark mb-6 max-w-[200px]">Drop your receipt
-                        here to auto-log expenses instantly.</p>
+                    <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Escaneo Rápido IA</h4>
+                    <p class="text-sm text-slate-500 dark:text-text-secondary-dark mb-6 max-w-[200px]">Arrastra tu recibo aquí para registrar gastos instantáneamente.</p>
                     <button
                         class="px-6 py-2.5 bg-primary hover:bg-[#17525e] text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
                         <span class="material-symbols-outlined text-lg">upload_file</span>
-                        Upload File
+                        Subir Archivo
                     </button>
                 </router-link>
             </div>
@@ -240,7 +240,7 @@ const getCategoryDashOffset = (index: number) => {
             <!-- Mini Categories Pie -->
             <div
                 class="h-64 bg-card-light dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-soft flex flex-col">
-                <h4 class="text-base font-bold text-slate-900 dark:text-white mb-4">Top Spending</h4>
+                <h4 class="text-base font-bold text-slate-900 dark:text-white mb-4">Gastos Principales</h4>
                 <div class="flex-1 flex items-center gap-4">
                     <!-- Donut Chart Representation -->
                     <div class="relative size-32 shrink-0">
@@ -263,7 +263,7 @@ const getCategoryDashOffset = (index: number) => {
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
                             <span class="text-xl font-bold dark:text-white">{{ getCategoryPercentage(dashboardData.topSpendingCategories[0]?.amount || 0) }}%</span>
-                            <span class="text-[10px] uppercase text-slate-500 font-bold">{{ dashboardData.topSpendingCategories[0]?.categoryName || 'None' }}</span>
+                            <span class="text-[10px] uppercase text-slate-500 font-bold">{{ dashboardData.topSpendingCategories[0]?.categoryName || 'Ninguno' }}</span>
                         </div>
                     </div>
                     <div class="flex flex-col gap-3 w-full">
@@ -284,19 +284,19 @@ const getCategoryDashOffset = (index: number) => {
     <div
         class="bg-card-light dark:bg-card-dark rounded-2xl border border-slate-200 dark:border-slate-800 shadow-soft overflow-hidden">
         <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-            <h4 class="text-lg font-bold text-slate-900 dark:text-white">Recent Transactions</h4>
-            <router-link to="/app/expenses" class="text-primary text-sm font-bold hover:underline">View
-                All</router-link>
+            <h4 class="text-lg font-bold text-slate-900 dark:text-white">Gastos Recientes</h4>
+            <router-link to="/app/expenses" class="text-primary text-sm font-bold hover:underline">Ver
+                Todo</router-link>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr
                         class="bg-slate-50 dark:bg-[#23272b] text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
-                        <th class="p-4 font-semibold rounded-tl-lg">Transaction</th>
-                        <th class="p-4 font-semibold">Category</th>
-                        <th class="p-4 font-semibold">Date</th>
-                        <th class="p-4 font-semibold text-right rounded-tr-lg">Amount</th>
+                        <th class="p-4 font-semibold rounded-tl-lg">Gasto</th>
+                        <th class="p-4 font-semibold">Categoría</th>
+                        <th class="p-4 font-semibold">Fecha</th>
+                        <th class="p-4 font-semibold text-right rounded-tr-lg">Monto</th>
                     </tr>
                 </thead>
                 <tbody class="text-sm">
@@ -343,16 +343,16 @@ const getCategoryDashOffset = (index: number) => {
 
     <div v-else-if="isLoading" class="flex flex-col items-center justify-center min-h-[400px]">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        <p class="mt-4 text-slate-400">Loading dashboard data...</p>
+        <p class="mt-4 text-slate-400">Cargando datos del tablero...</p>
     </div>
 
     <div v-else class="flex flex-col items-center justify-center min-h-[400px]">
         <span class="material-symbols-outlined text-rose-500 text-5xl mb-4">error</span>
-        <h4 class="text-lg font-bold text-slate-900 dark:text-white">Error loading data</h4>
-        <p class="text-slate-500 text-sm">Please try refreshing the page later.</p>
+        <h4 class="text-lg font-bold text-slate-900 dark:text-white">Error al cargar datos</h4>
+        <p class="text-slate-500 text-sm">Por favor intenta recargar la página más tarde.</p>
     </div>
 
     <footer class="mt-12 mb-6 text-center">
-        <p class="text-xs text-slate-400 dark:text-slate-600 font-medium">© 2024 Fintrack Inc. All rights reserved.</p>
+        <p class="text-xs text-slate-400 dark:text-slate-600 font-medium">© 2024 Fintrack Inc. Todos los derechos reservados.</p>
     </footer>
 </template>

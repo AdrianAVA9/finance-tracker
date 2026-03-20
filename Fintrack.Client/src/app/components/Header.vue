@@ -8,7 +8,7 @@ const router = useRouter();
 const route = useRoute();
 
 const pageTitle = computed(() => route.meta.title as string || 'Dashboard');
-const pageSubtitle = computed(() => route.meta.subtitle as string || 'Welcome back');
+const pageSubtitle = computed(() => route.meta.subtitle as string || '¡Bienvenido de nuevo!');
 
 const handleLogout = async () => {
     await logout();
@@ -28,9 +28,7 @@ const handleLogout = async () => {
             <div
                 class="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-[#2B3036] rounded-lg p-1 border border-slate-200 dark:border-slate-700">
                 <button
-                    class="px-3 py-1.5 rounded-md bg-white dark:bg-primary text-slate-900 dark:text-white shadow-sm text-xs font-bold transition-all">USD</button>
-                <button
-                    class="px-3 py-1.5 rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-bold transition-all">EUR</button>
+                    class="px-3 py-1.5 rounded-md bg-white dark:bg-primary text-slate-900 dark:text-white shadow-sm text-xs font-bold transition-all">CRC</button>
             </div>
 
             <button
@@ -51,9 +49,9 @@ const handleLogout = async () => {
                 <div
                     class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#2B3036] rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <button @click="handleLogout"
-                        class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors font-medium flex items-center gap-2">
+                        class="w-full text-left px-4 py-3 text-sm text-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors font-bold flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm">logout</span>
-                        Sign Out
+                        Cerrar sesión
                     </button>
                 </div>
             </div>

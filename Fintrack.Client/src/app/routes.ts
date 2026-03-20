@@ -15,13 +15,13 @@ export const routes: RouteRecordRaw[] = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/app/views/DashboardView.vue'),
-        meta: { title: 'Dashboard', subtitle: 'Welcome back' }
+        meta: { title: 'Dashboard', subtitle: '¡Bienvenido de nuevo!' }
       },
       {
         path: 'expenses/new',
         name: 'ExpenseRegistration',
         component: () => import('@/app/views/ExpenseRegistrationView.vue'),
-        meta: { title: 'Register Expense', subtitle: 'Record a new transaction or log an itemized receipt.' }
+        meta: { title: 'Registrar Gasto', subtitle: 'Registra un nuevo gasto o sube un recibo desglosado.' }
       },
       {
         path: 'incomes/new',

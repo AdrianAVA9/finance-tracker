@@ -47,11 +47,11 @@ const filteredBudgets = computed(() => {
     (b.categoryGroup?.toLowerCase().includes(searchQuery.value.toLowerCase()))
   )
 
-  if (sortBy.value === 'Highest Budget') {
+  if (sortBy.value === 'Mayor Presupuesto') {
     result.sort((a, b) => b.limitAmount - a.limitAmount)
-  } else if (sortBy.value === 'Highest Spent') {
+  } else if (sortBy.value === 'Mayor Gasto') {
     result.sort((a, b) => b.spentAmount - a.spentAmount)
-  } else if (sortBy.value === 'Name (A-Z)') {
+  } else if (sortBy.value === 'Nombre (A-Z)') {
     result.sort((a, b) => a.categoryName.localeCompare(b.categoryName))
   }
 
@@ -209,9 +209,9 @@ watch([selectedMonth, selectedYear], loadBudgets)
           <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
             <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Ordenar:</span>
             <select v-model="sortBy" class="bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer">
-              <option>Highest Budget</option>
-              <option>Highest Spent</option>
-              <option>Name (A-Z)</option>
+              <option>Mayor Presupuesto</option>
+              <option>Mayor Gasto</option>
+              <option>Nombre (A-Z)</option>
             </select>
           </div>
         </div>
@@ -292,23 +292,7 @@ watch([selectedMonth, selectedYear], loadBudgets)
           </div>
         </div>
 
-        <!-- AI Insight -->
-        <div class="mt-4 p-6 rounded-xl bg-gradient-to-r from-primary/10 to-accent-lime/10 border border-primary/20 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent-lime flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/20">
-              <span class="material-symbols-outlined text-xl">auto_awesome</span>
-            </div>
-            <div>
-              <h4 class="text-lg font-bold text-slate-900 dark:text-white">Perspectiva Inteligente</h4>
-              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-lg">
-                Basado en tus patrones de gasto recurrentes, podrías exceder tu límite de comida este mes por ₡15,000. Considera ajustar ahora.
-              </p>
-            </div>
-          </div>
-          <button class="whitespace-nowrap px-4 py-2 rounded-lg bg-card-light dark:bg-background-dark text-slate-900 dark:text-white font-bold text-sm shadow-sm hover:shadow-md transition-all border border-transparent hover:border-primary/20">
-            Ajustar Presupuesto
-          </button>
-        </div>
+
       </div>
     </div>
 
