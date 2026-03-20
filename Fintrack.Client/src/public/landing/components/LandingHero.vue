@@ -16,10 +16,10 @@
           Deja el registro manual. Deja que nuestro motor inteligente capture recibos, categorice gastos y asegure tu futuro con precisión bancaria.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
-          <button class="bg-primary hover:bg-primary-hover text-white text-base font-bold h-12 px-8 rounded-xl transition-all shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group">
+          <a href="/auth/register" class="bg-primary hover:bg-primary-hover text-white text-base font-bold h-12 px-8 rounded-xl transition-all shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group">
             Empieza Gratis
             <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
-          </button>
+          </a>
           <button class="bg-surface-dark hover:bg-[#252525] border border-surface-border text-white text-base font-medium h-12 px-8 rounded-xl transition-all flex items-center justify-center gap-2">
             <span class="material-symbols-outlined text-lg text-slate-400">play_circle</span>
             Ver Demo

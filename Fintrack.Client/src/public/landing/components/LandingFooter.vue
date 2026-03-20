@@ -5,10 +5,10 @@
       <div class="max-w-4xl mx-auto text-center flex flex-col items-center gap-8">
         <h2 class="font-heading text-4xl md:text-5xl font-bold text-white">¿Listo para automatizar tu futuro?</h2>
         <p class="text-slate-400 text-lg max-w-xl">Únete a más de 50,000 usuarios que ahorran un promedio de 12 horas al mes en gestión financiera.</p>
-        <button class="bg-primary hover:bg-primary-hover text-white text-lg font-bold h-14 px-10 rounded-xl transition-all shadow-lg hover:shadow-primary/40 flex items-center justify-center gap-3">
+        <a href="/auth/register" class="bg-primary hover:bg-primary-hover text-white text-lg font-bold h-14 px-10 rounded-xl transition-all shadow-lg hover:shadow-primary/40 flex items-center justify-center gap-3">
           Empieza Ahora
           <span class="material-symbols-outlined">rocket_launch</span>
-        </button>
+        </a>
         <p class="text-xs text-slate-500">No se requiere tarjeta de crédito para la prueba de 14 días.</p>
       </div>
     </section>

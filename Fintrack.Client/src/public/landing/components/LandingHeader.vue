@@ -18,9 +18,9 @@
         <!-- CTA -->
         <div class="flex items-center gap-4">
           <a class="hidden sm:block text-sm font-medium text-white hover:text-accent transition-colors" href="/auth/login">Iniciar Sesión</a>
-          <button class="bg-primary hover:bg-primary-hover text-white text-sm font-bold py-2.5 px-5 rounded-lg transition-all duration-300 shadow-[0_0_15px_-3px_rgba(10,125,127,0.4)] hover:shadow-[0_0_20px_-3px_rgba(10,125,127,0.6)]">
+          <a href="/auth/register" class="bg-primary hover:bg-primary-hover text-white text-sm font-bold py-2.5 px-5 rounded-lg transition-all duration-300 shadow-[0_0_15px_-3px_rgba(10,125,127,0.4)] hover:shadow-[0_0_20px_-3px_rgba(10,125,127,0.6)]">
             Empezar
-          </button>
+          </a>
         </div>
       </div>
     </div>
