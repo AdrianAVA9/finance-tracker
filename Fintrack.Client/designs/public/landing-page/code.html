@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SmartSpend AI - Automated Budget Manager</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#0a7d7f",
+              "primary-hover": "#086668",
+              "accent": "#00C4CC",
+              "background-light": "#fafafa",
+              "background-dark": "#121212",
+              "surface-dark": "#1E1E1E",
+              "surface-border": "#2A2A2A",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"],
+              "heading": ["Space Grotesk", "sans-serif"],
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "full": "9999px"},
+            backgroundImage: {
+                'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display overflow-x-hidden antialiased selection:bg-primary selection:text-white">
+<!-- Top Navigation -->
+<header class="fixed top-0 left-0 right-0 z-50 border-b border-surface-border bg-[#121212]/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16 sm:h-20">
+<!-- Logo -->
+<div class="flex items-center gap-3">
+<div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent text-white">
+<span class="material-symbols-outlined text-lg">account_balance_wallet</span>
+</div>
+<span class="font-heading font-bold text-xl tracking-tight text-white">SmartSpend AI</span>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex gap-8">
+<a class="text-sm font-medium text-slate-300 hover:text-white transition-colors" href="#features">Features</a>
+<a class="text-sm font-medium text-slate-300 hover:text-white transition-colors" href="#how-it-works">How it Works</a>
+<a class="text-sm font-medium text-slate-300 hover:text-white transition-colors" href="#testimonials">Stories</a>
+</nav>
+<!-- CTA -->
+<div class="flex items-center gap-4">
+<a class="hidden sm:block text-sm font-medium text-white hover:text-accent transition-colors" href="#">Log In</a>
+<button class="bg-primary hover:bg-primary-hover text-white text-sm font-bold py-2.5 px-5 rounded-lg transition-all duration-300 shadow-[0_0_15px_-3px_rgba(10,125,127,0.4)] hover:shadow-[0_0_20px_-3px_rgba(10,125,127,0.6)]">
+                        Get Started
+                    </button>
+</div>
+</div>
+</div>
+</header>
+<main class="relative flex flex-col items-center pt-20">
+<!-- Hero Section -->
+<section class="relative w-full py-20 lg:py-32 px-4 overflow-hidden">
+<!-- Background Glows -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10 pointer-events-none mix-blend-screen"></div>
+<div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+<div class="flex flex-col gap-6 text-center lg:text-left z-10">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-dark border border-surface-border w-fit mx-auto lg:mx-0">
+<span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+<span class="text-xs font-medium text-accent uppercase tracking-wider">v2.0 Now Live</span>
+</div>
+<h1 class="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight text-white">
+                        Your Finances, <br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">Automated by AI.</span>
+</h1>
+<p class="text-lg text-slate-400 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                        Stop manual entry. Let our intelligent engine capture receipts, categorize expenses, and secure your future with bank-grade precision.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
+<button class="bg-primary hover:bg-primary-hover text-white text-base font-bold h-12 px-8 rounded-xl transition-all shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group">
+                            Start for Free
+                            <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<button class="bg-surface-dark hover:bg-[#252525] border border-surface-border text-white text-base font-medium h-12 px-8 rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg text-slate-400">play_circle</span>
+                            View Demo
+                        </button>
+</div>
+<div class="pt-8 flex items-center justify-center lg:justify-start gap-6 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+<!-- Logos replaced with text for simplicity/compliance -->
+<span class="text-sm font-semibold text-slate-500">TRUSTED BY TEAMS AT</span>
+<div class="flex gap-4 text-slate-400 font-heading font-bold">
+<span>ACME</span>
+<span>CORP</span>
+<span>GLOBEX</span>
+</div>
+</div>
+</div>
+<!-- Hero Visual -->
+<div class="relative w-full aspect-square max-w-[600px] mx-auto lg:mr-0 perspective-1000">
+<!-- Main Card Visual -->
+<div class="relative z-10 w-full h-full bg-surface-dark/50 backdrop-blur-sm border border-surface-border rounded-2xl overflow-hidden shadow-2xl animate-float">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-50"></div>
+<!-- Mock Interface Header -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-surface-border bg-[#151515]">
+<div class="flex gap-2">
+<div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+</div>
+<div class="text-[10px] font-mono text-slate-500 uppercase">Dashboard • Live</div>
+</div>
+<!-- Abstract Data Visualization -->
+<div class="p-8 flex flex-col gap-6 h-full" data-alt="Abstract interface showing a spending graph with an upward trend and expense categories">
+<div class="flex justify-between items-end">
+<div>
+<div class="text-sm text-slate-400">Total Balance</div>
+<div class="text-3xl font-heading font-bold text-white">$124,592.00</div>
+</div>
+<div class="text-accent text-sm font-bold flex items-center gap-1 bg-accent/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-sm">trending_up</span> +12.4%
+                                </div>
+</div>
+<!-- Fake Graph -->
+<div class="h-32 w-full flex items-end gap-2 mt-4">
+<div class="w-full bg-primary/20 rounded-t-sm h-[40%] hover:bg-primary/40 transition-all duration-500 cursor-pointer group relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Mon: $420</div>
+</div>
+<div class="w-full bg-primary/20 rounded-t-sm h-[60%] hover:bg-primary/40 transition-all duration-500 cursor-pointer group relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Tue: $640</div>
+</div>
+<div class="w-full bg-primary/20 rounded-t-sm h-[30%] hover:bg-primary/40 transition-all duration-500 cursor-pointer group relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Wed: $310</div>
+</div>
+<div class="w-full bg-primary/20 rounded-t-sm h-[80%] hover:bg-primary/40 transition-all duration-500 cursor-pointer group relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark border border-surface-border px-2 py-1 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">Thu: $890</div>
+</div>
+<div class="w-full bg-primary rounded-t-sm h-[55%] relative shadow-[0_0_15px_rgba(10,125,127,0.5)]"></div>
+<div class="w-full bg-surface-border/30 rounded-t-sm h-[0%]"></div> <!-- Future -->
+</div>
+<!-- List Items -->
+<div class="space-y-3 mt-4">
+<div class="flex items-center gap-3 p-3 rounded-lg bg-surface-border/20 border border-surface-border/50">
+<div class="p-2 rounded bg-orange-500/20 text-orange-400">
+<span class="material-symbols-outlined text-lg">receipt_long</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="text-sm font-medium text-white truncate">AWS Infrastructure</div>
+<div class="text-xs text-slate-500">Cloud Services</div>
+</div>
+<div class="text-sm font-bold text-white">-$2,400.00</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Badge -->
+<div class="absolute -bottom-6 -left-6 z-20 bg-surface-dark border border-surface-border p-4 rounded-xl shadow-xl flex items-center gap-3 animate-bounce-slow">
+<div class="relative w-10 h-10 flex items-center justify-center rounded-full bg-accent/20 text-accent">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<div>
+<div class="text-xs text-slate-400 uppercase font-bold tracking-wider">AI Insight</div>
+<div class="text-sm font-medium text-white">Subscription optimized</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Features -->
+<section class="w-full py-20 px-4 bg-[#111111]" id="features">
+<div class="max-w-7xl mx-auto flex flex-col gap-10">
+<div class="text-center max-w-2xl mx-auto">
+<h2 class="font-heading text-3xl md:text-4xl font-bold text-white mb-4">Everything you need to master money</h2>
+<p class="text-slate-400">Our bento-box grid of tools puts you in control with AI precision.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[minmax(280px,auto)]">
+<!-- Feature 1: Large Scan -->
+<div class="md:col-span-2 relative group overflow-hidden rounded-2xl border border-surface-border bg-surface-dark p-8 flex flex-col justify-between hover:border-primary/50 transition-colors duration-300">
+<div class="relative z-10 flex flex-col gap-2">
+<div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-2">
+<span class="material-symbols-outlined text-2xl">document_scanner</span>
+</div>
+<h3 class="text-2xl font-bold text-white">AI Invoice Scanning</h3>
+<p class="text-slate-400 max-w-md">Instantly turn receipts into data. Our smart engine captures every detail automatically, recognizing vendors, dates, and amounts with 99.8% accuracy.</p>
+</div>
+<!-- Visualization: Scanning Effect -->
+<div class="absolute top-0 right-0 h-full w-1/3 min-w-[200px] bg-gradient-to-l from-black/20 to-transparent pointer-events-none"></div>
+<div class="absolute right-0 bottom-0 w-[300px] h-[200px] opacity-30 md:opacity-50">
+<div class="absolute inset-0 bg-cover bg-center rounded-tl-2xl border-t border-l border-surface-border" data-alt="Wireframe receipt representation" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD-nhksMo-qS-j48FKsV2oGxLJlG5ZvnjQrEf_DIv5LDPf5tigvAvFlEjm2M6lc4YGHCn1ssQ1i_gZTR6_41iu1wH5jbl244c9HkaThMkQseJtBai0NPyujlIWQ6YnPMMa8kxYldaqrHPsYsy77ZB22uU0z-ejBZJP66KUJ8tJpGauaXeFWZhKk0MnLaFqEDC54w6SVfhPAaYe19dOkfj25f1KFUJDrH5QwIlAiOR52tQjOVCHp3COQb8fOAmvZ4rtXSiVH7ndl8hb5')"></div>
+<!-- Scanning Line -->
+<div class="absolute top-0 left-0 w-full h-[2px] bg-accent shadow-[0_0_15px_#00C4CC] animate-[scan_3s_ease-in-out_infinite]"></div>
+</div>
+</div>
+<!-- Feature 2: Encryption -->
+<div class="md:col-span-1 relative group overflow-hidden rounded-2xl border border-surface-border bg-surface-dark p-8 flex flex-col">
+<div class="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 mb-6">
+<span class="material-symbols-outlined text-2xl">shield_lock</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Bank-Grade Encryption</h3>
+<p class="text-slate-400 text-sm">Your data is protected with AES-256 encryption. We never sell your personal information.</p>
+<div class="mt-auto pt-6 flex justify-center">
+<span class="material-symbols-outlined text-6xl text-emerald-500/10 group-hover:text-emerald-500/20 transition-colors">lock</span>
+</div>
+</div>
+<!-- Feature 3: Budget Tracking -->
+<div class="md:col-span-1 relative group overflow-hidden rounded-2xl border border-surface-border bg-surface-dark p-8 flex flex-col">
+<div class="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-400 mb-6">
+<span class="material-symbols-outlined text-2xl">pie_chart</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Real-time Budgets</h3>
+<p class="text-slate-400 text-sm">Visualize spending against your goals with dynamic charts that update instantly.</p>
+<div class="mt-6 h-24 w-full flex items-end justify-between gap-1 opacity-50">
+<div class="w-full bg-orange-500/20 h-[40%] rounded-t"></div>
+<div class="w-full bg-orange-500/40 h-[70%] rounded-t"></div>
+<div class="w-full bg-orange-500 h-[50%] rounded-t"></div>
+<div class="w-full bg-orange-500/20 h-[30%] rounded-t"></div>
+</div>
+</div>
+<!-- Feature 4: Integration -->
+<div class="md:col-span-2 relative group overflow-hidden rounded-2xl border border-surface-border bg-surface-dark p-8 flex flex-col md:flex-row items-center gap-8">
+<div class="flex-1">
+<div class="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 mb-6">
+<span class="material-symbols-outlined text-2xl">hub</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Connects with 5,000+ Banks</h3>
+<p class="text-slate-400">Seamlessly syncs with your accounts via Plaid for a holistic financial view.</p>
+</div>
+<div class="flex-1 w-full">
+<!-- Bank Logo Grid Abstraction -->
+<div class="grid grid-cols-3 gap-3 opacity-60" data-alt="Grid of abstract bank logos">
+<div class="h-10 bg-white/5 rounded flex items-center justify-center"><span class="text-[10px] text-white/50">CHASE</span></div>
+<div class="h-10 bg-white/5 rounded flex items-center justify-center"><span class="text-[10px] text-white/50">BOA</span></div>
+<div class="h-10 bg-white/5 rounded flex items-center justify-center"><span class="text-[10px] text-white/50">WELLS</span></div>
+<div class="h-10 bg-white/5 rounded flex items-center justify-center"><span class="text-[10px] text-white/50">CITI</span></div>
+<div class="h-10 bg-white/5 rounded flex items-center justify-center"><span class="text-[10px] text-white/50">AMEX</span></div>
+<div class="h-10 bg-white/5 rounded flex items-center justify-center"><span class="text-[10px] text-white/50">+4995</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works Section -->
+<section class="w-full py-24 px-4 bg-background-dark relative" id="how-it-works">
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent"></div>
+<div class="max-w-6xl mx-auto relative z-10">
+<div class="text-center mb-16">
+<h2 class="font-heading text-3xl md:text-4xl font-bold text-white">From Receipt to Report in Seconds</h2>
+<p class="text-slate-400 mt-4">Three simple steps to financial clarity.</p>
+</div>
+<div class="relative grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Connector Line (Desktop) -->
+<div class="hidden md:block absolute top-12 left-[16%] right-[16%] h-[2px] bg-gradient-to-r from-surface-border via-primary/50 to-surface-border -z-10"></div>
+<!-- Step 1 -->
+<div class="flex flex-col items-center text-center gap-4 group">
+<div class="w-24 h-24 rounded-2xl bg-surface-dark border border-surface-border flex items-center justify-center shadow-lg group-hover:border-primary/50 transition-colors duration-300 relative">
+<div class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-surface-dark border border-surface-border flex items-center justify-center font-bold text-slate-500 text-sm">1</div>
+<span class="material-symbols-outlined text-4xl text-slate-300 group-hover:text-primary transition-colors">center_focus_strong</span>
+</div>
+<h3 class="text-xl font-bold text-white mt-2">Snap &amp; Scan</h3>
+<p class="text-slate-400 text-sm max-w-[250px]">Simply take a photo of your receipt or forward an email invoice to your dedicated SmartSpend address.</p>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center text-center gap-4 group">
+<div class="w-24 h-24 rounded-2xl bg-surface-dark border border-surface-border flex items-center justify-center shadow-lg group-hover:border-primary/50 transition-colors duration-300 relative">
+<div class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-surface-dark border border-surface-border flex items-center justify-center font-bold text-slate-500 text-sm">2</div>
+<span class="material-symbols-outlined text-4xl text-slate-300 group-hover:text-accent transition-colors">auto_fix_high</span>
+</div>
+<h3 class="text-xl font-bold text-white mt-2">AI Analysis</h3>
+<p class="text-slate-400 text-sm max-w-[250px]">Our engine extracts merchant, date, tax, and total. It automatically categorizes the expense based on history.</p>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center text-center gap-4 group">
+<div class="w-24 h-24 rounded-2xl bg-surface-dark border border-surface-border flex items-center justify-center shadow-lg group-hover:border-primary/50 transition-colors duration-300 relative">
+<div class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-surface-dark border border-surface-border flex items-center justify-center font-bold text-slate-500 text-sm">3</div>
+<span class="material-symbols-outlined text-4xl text-slate-300 group-hover:text-emerald-400 transition-colors">verified</span>
+</div>
+<h3 class="text-xl font-bold text-white mt-2">Review &amp; Save</h3>
+<p class="text-slate-400 text-sm max-w-[250px]">Quickly verify the details (or let Auto-Pilot do it) and sync the data to your main dashboard instantly.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="w-full py-20 px-4 bg-[#0f0f0f]" id="testimonials">
+<div class="max-w-7xl mx-auto">
+<h2 class="font-heading text-3xl font-bold text-white text-center mb-12">Trusted by freelance pros</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="p-6 rounded-xl bg-surface-dark border border-surface-border hover:border-surface-border/80 transition-all">
+<div class="flex gap-1 text-accent mb-4">
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+</div>
+<p class="text-slate-300 mb-6 leading-relaxed">"The AI scanning is actually magic. I used to spend hours on Sunday inputs. Now it takes seconds."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-slate-700 bg-cover bg-center" data-alt="Portrait of Alex M" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAhEutyb1T-AN5QoB4GmFRAs5Aq2WsZbXeQodo9HIhzgEoi6WpZHevLm6s5LVkR37IdbgPwLdursFnnxsg2ekJxto4Y-gb5gbwpyWbbTITih12DBp0Q4TNfHLVPpXWMp0U6K63Akb7QWM_R4ML-6ETdVMHOK0hqqQdNsq48JqqP3tVeYzZLtLt_zE63tN7ef2hqYeiRhZ9Q5UoG4qVpC9-mMh-RUTlJ3f1viE74TbhSBtM24EyZocEXnKEjpvL1ythinQ-yMt7aNdrN')"></div>
+<div>
+<div class="text-white font-bold text-sm">Alex M.</div>
+<div class="text-slate-500 text-xs">UX Designer</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="p-6 rounded-xl bg-surface-dark border border-surface-border hover:border-surface-border/80 transition-all">
+<div class="flex gap-1 text-accent mb-4">
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+</div>
+<p class="text-slate-300 mb-6 leading-relaxed">"Security was my main concern. The encryption standards here are better than my actual bank's app."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-slate-700 bg-cover bg-center" data-alt="Portrait of Sarah L" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAR2tKOM88mgBlBYKP8mWO6MctD7Kk7BexQTkQDia1N5TBDNUQ9_-smC03y4jsDU6KgmS_MuRgtShb6Yzk1ECgTZKnrIMZkYpYgNhTG0namTywC_F2TzJv01ggnuH21jafagjaRWLPyZqBYMBGAtMnbtL1OZMF9W03DQhOJYVdlSx5WCng5Kh7dsZQcI020bYIe8NF86JD_ubUo5EsgcJAdqgQMyxsaMUj_rGhYNrffvs6bgRIDOY2C8mFw7t3Ht3nsB1Wfqp7amF2K')"></div>
+<div>
+<div class="text-white font-bold text-sm">Sarah L.</div>
+<div class="text-slate-500 text-xs">Small Business Owner</div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="p-6 rounded-xl bg-surface-dark border border-surface-border hover:border-surface-border/80 transition-all">
+<div class="flex gap-1 text-accent mb-4">
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+<span class="material-symbols-outlined filled-icon text-lg">star</span>
+</div>
+<p class="text-slate-300 mb-6 leading-relaxed">"Finally, a budgeting tool that doesn't feel like a spreadsheet from 1999. The interface is stunning."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-slate-700 bg-cover bg-center" data-alt="Portrait of David K" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAvr3C36Mi1cRwLWXEuwv-H79YFhkWpTgm_nsAP7RzARWyzeKqTwIrhTkqHvAP21Q8GpGEGFvwkjBwJYvwLR2xz09op3Z139eSnCnClmdQtPK6lWpqDDl98khsL0jdeQaHdHWpL5vwDt3TijKTOVMvHB6a7nYuNw9I3GxuNNPPVVPOlQUdgH-TmbuzW1zb4xjilO82sqWi8_IUnbuIjeBbkym-r7Snx8kbTO15G64tw2qO5O2SfPZQvD3GGtJZ_tZFln3A2QHXE-Ty5')"></div>
+<div>
+<div class="text-white font-bold text-sm">David K.</div>
+<div class="text-slate-500 text-xs">Software Engineer</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Footer -->
+<section class="w-full py-20 px-4 bg-gradient-to-b from-background-dark to-[#051111] border-t border-surface-border">
+<div class="max-w-4xl mx-auto text-center flex flex-col items-center gap-8">
+<h2 class="font-heading text-4xl md:text-5xl font-bold text-white">Ready to automate your future?</h2>
+<p class="text-slate-400 text-lg max-w-xl">Join 50,000+ users who have saved an average of 12 hours per month on finance management.</p>
+<button class="bg-primary hover:bg-primary-hover text-white text-lg font-bold h-14 px-10 rounded-xl transition-all shadow-lg hover:shadow-primary/40 flex items-center justify-center gap-3">
+                    Get Started Now
+                    <span class="material-symbols-outlined">rocket_launch</span>
+</button>
+<p class="text-xs text-slate-500">No credit card required for 14-day trial.</p>
+</div>
+</section>
+</main>
+<footer class="bg-[#050505] border-t border-surface-border pt-16 pb-8 px-4 text-sm">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
+<div class="col-span-2 lg:col-span-2">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-6 h-6 rounded bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">account_balance_wallet</span>
+</div>
+<span class="font-heading font-bold text-lg text-white">SmartSpend AI</span>
+</div>
+<p class="text-slate-500 max-w-xs mb-6">
+                        The world's most intelligent expense tracker. Built for modern professionals who value their time.
+                    </p>
+<div class="flex gap-4">
+<a class="text-slate-400 hover:text-white transition-colors" href="#"><span class="sr-only">Twitter</span>
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+</a>
+<a class="text-slate-400 hover:text-white transition-colors" href="#"><span class="sr-only">GitHub</span>
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" fill-rule="evenodd"></path></svg>
+</a>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<h4 class="font-bold text-white mb-2">Product</h4>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Features</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Pricing</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">API</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Changelog</a>
+</div>
+<div class="flex flex-col gap-3">
+<h4 class="font-bold text-white mb-2">Company</h4>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">About</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Careers</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Blog</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+<div class="flex flex-col gap-3">
+<h4 class="font-bold text-white mb-2">Legal</h4>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">GDPR Compliance</a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#">Security</a>
+</div>
+</div>
+<div class="border-t border-surface-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-slate-600 text-xs">© 2023 SmartSpend AI Inc. All rights reserved.</p>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-slate-500 text-xs">All Systems Operational</span>
+</div>
+</div>
+</div>
+</footer>
+<style>
+        @keyframes scan {
+            0%, 100% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            50% { top: 100%; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        .animate-bounce-slow {
+            animation: float 4s ease-in-out infinite reverse;
+        }
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+    </style>
+</body></html>

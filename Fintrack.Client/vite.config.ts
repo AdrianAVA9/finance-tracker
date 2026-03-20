@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { fileURLToPath, URL } from 'node:url';
 
 import { defineConfig } from 'vite';
@@ -46,6 +47,46 @@ export default defineConfig({
             '^/weatherforecast': {
                 target,
                 secure: false
+            },
+            '^/register': {
+                target,
+                secure: false
+            },
+            '^/login': {
+                target,
+                secure: false
+            },
+            '^/refresh': {
+                target,
+                secure: false
+            },
+            '^/confirmEmail': {
+                target,
+                secure: false
+            },
+            '^/resendConfirmationEmail': {
+                target,
+                secure: false
+            },
+            '^/forgotPassword': {
+                target,
+                secure: false
+            },
+            '^/resetPassword': {
+                target,
+                secure: false
+            },
+            '^/manage/2fa': {
+                target,
+                secure: false
+            },
+            '^/manage/info': {
+                target,
+                secure: false
+            },
+            '^/api': {
+                target,
+                secure: false
             }
         },
         port: 5173,
@@ -53,5 +94,11 @@ export default defineConfig({
             key: fs.readFileSync(keyFilePath),
             cert: fs.readFileSync(certFilePath),
         }
+    },
+    test: {
+        environment: 'jsdom',
+        globals: true,
+        setupFiles: [],
+        root: fileURLToPath(new URL('./', import.meta.url)),
     }
 })

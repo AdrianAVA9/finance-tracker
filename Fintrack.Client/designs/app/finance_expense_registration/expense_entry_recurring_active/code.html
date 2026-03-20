@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f6b7a",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#0a0d0e",
+                        "card-dark": "#1c2426",
+                        "border-dark": "#293e42",
+                        "text-muted": "#a0adb0",
+                        "text-main": "#e0e5e7",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #293e42;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-text-main min-h-screen font-display">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-dark bg-background-dark/80 backdrop-blur-md sticky top-0 z-50 px-6 md:px-10 py-3">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+</div>
+<h2 class="text-text-main text-lg font-bold leading-tight tracking-tight">FinanceApp</h2>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-xl bg-card-dark border border-border-dark text-text-main hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/30" data-alt="User profile avatar showing a smiling person" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAhHTVaAcqPOya0EYI6s4UTN5wtchpg8nMAuYrlGRRCESw9Y1QB9RUHEHzm0xyxOy4oNf2Fix1WhH5g6p2Grk187JeIoeCGwnQ3fYmhOSUwKODaw1i5yubw_3p5ek5dGXJ5CGDMFzxzkhSAPiv5YBR5baeVOFhhKu-Z59tRHjKWMo2pLaYTo2TGTeyxyQNIlSvaUUNz8k0ggK79ddibTodgVlSQ4NrlLU7oN7EIth6WS9YX-LaRqWC7wyZiu3vcl4y72SoRfzejEy8l");'>
+</div>
+</div>
+</header>
+<main class="flex flex-col items-center justify-center p-4 md:p-8">
+<div class="w-full max-w-[520px] flex flex-col gap-6">
+<!-- Header Section -->
+<div class="flex flex-col gap-1">
+<h1 class="text-2xl font-bold text-text-main">Log Expense</h1>
+<p class="text-text-muted text-sm">Registro rápido de transacciones</p>
+</div>
+<!-- AI Scan Prompt (Prominent Action) -->
+<div class="group relative p-1 rounded-2xl bg-gradient-to-r from-primary/40 to-transparent">
+<button class="w-full flex items-center justify-center gap-3 py-4 px-6 bg-primary text-white rounded-xl font-bold text-lg shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.01] active:scale-[0.99] transition-all">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span>📸 Escanear Factura con IA</span>
+</button>
+</div>
+<!-- Form Container (Centered Card) -->
+<div class="bg-card-dark border border-border-dark rounded-xl shadow-2xl overflow-hidden">
+<div class="p-6 flex flex-col gap-6">
+<!-- Expense/Income Toggle -->
+<div class="flex p-1 bg-background-dark rounded-full border border-border-dark">
+<button class="flex-1 py-2 text-sm font-bold rounded-full bg-primary text-white shadow-sm">Gasto</button>
+<button class="flex-1 py-2 text-sm font-semibold text-text-muted hover:text-text-main transition-colors">Ingreso</button>
+</div>
+<div class="grid grid-cols-1 gap-5">
+<!-- Comercio -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-text-main flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary">store</span> Comercio
+                            </label>
+<input class="w-full bg-background-dark border border-border-dark rounded-lg py-3 px-4 text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none placeholder:text-text-muted/50" placeholder="Ej: AutoMercado" type="text"/>
+</div>
+<!-- Monto Total -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-text-main flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary">payments</span> Monto Total
+                            </label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-bold">₡</span>
+<input class="w-full bg-background-dark border border-border-dark rounded-lg py-3 pl-10 pr-4 text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none text-xl font-bold" placeholder="0.00" type="number"/>
+</div>
+</div>
+<!-- Row: Fecha & Categoría -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Fecha -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-text-main flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary">calendar_today</span> Fecha
+                                </label>
+<input class="w-full bg-background-dark border border-border-dark rounded-lg py-3 px-4 text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none [color-scheme:dark]" type="date" value="2023-10-27"/>
+</div>
+<!-- Categoría -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-text-main flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary">category</span> Categoría
+                                </label>
+<div class="relative group">
+<button class="w-full bg-background-dark border border-border-dark rounded-lg py-3 px-4 text-text-main flex items-center justify-between text-left hover:border-primary transition-colors">
+<span class="flex items-center gap-2">
+<span class="text-lg">🍔</span>
+<span class="truncate">Comida</span>
+</span>
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary">expand_more</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Nota -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-text-main flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-text-muted">sticky_note_2</span> Nota <span class="text-[10px] text-text-muted uppercase tracking-widest ml-1">(Opcional)</span>
+</label>
+<textarea class="w-full bg-background-dark border border-border-dark rounded-lg py-3 px-4 text-text-main focus:ring-1 focus:ring-primary focus:border-primary transition-all outline-none resize-none" placeholder="Detalles adicionales..." rows="2"></textarea>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<!-- Recurring Expense Section -->
+<div class="px-6 py-4 border-t border-border-dark/50 bg-primary/5">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">repeat</span>
+<span class="text-sm font-semibold text-text-main">Convertir en un gasto recurrente</span>
+</div>
+<!-- Active Toggle Switch -->
+<button class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary transition-colors focus:outline-none">
+<span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-6"></span>
+</button>
+</div>
+<!-- Recurring Fields (Visible when active) -->
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-2">
+<label class="text-[11px] font-bold text-text-muted uppercase tracking-wider">Frecuencia</label>
+<div class="relative">
+<select class="w-full bg-background-dark border border-border-dark rounded-lg py-2 px-3 text-sm text-text-main focus:ring-1 focus:ring-primary focus:border-primary appearance-none outline-none">
+<option selected="" value="mensual">Mensual</option>
+<option value="semanal">Semanal</option>
+<option value="anual">Anual</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-lg">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[11px] font-bold text-text-muted uppercase tracking-wider">Próximo cobro</label>
+<input class="w-full bg-background-dark border border-border-dark rounded-lg py-2 px-3 text-sm text-text-main focus:ring-1 focus:ring-primary focus:border-primary outline-none [color-scheme:dark]" type="date" value="2023-11-27"/>
+</div>
+</div>
+</div><div class="p-6 pt-2 flex flex-col gap-4 border-t border-border-dark bg-background-dark/30">
+<div class="flex flex-col sm:flex-row gap-3">
+<button class="flex-1 py-3.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined text-xl">save</span> Guardar
+                        </button>
+<button class="flex-1 py-3.5 bg-card-dark border border-border-dark hover:border-primary/50 text-text-main rounded-lg font-semibold transition-all">
+                            Guardar y agregar otro
+                        </button>
+</div>
+<button class="flex items-center justify-center gap-2 py-2 text-xs font-medium text-text-muted hover:text-primary transition-colors group">
+<span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">call_split</span>
+                        ➗ Desglosar en múltiples categorías
+                    </button>
+</div>
+</div>
+<!-- Visual Cue for Recently added (Optional Context) -->
+<div class="flex items-center justify-between px-2 text-text-muted">
+<span class="text-xs uppercase tracking-widest font-semibold">Últimos movimientos</span>
+<span class="material-symbols-outlined text-sm">history</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-4 bg-card-dark/50 border border-border-dark/50 rounded-xl">
+<div class="flex items-center gap-3">
+<div class="size-10 bg-background-dark rounded-lg flex items-center justify-center text-xl">🚗</div>
+<div>
+<p class="text-sm font-bold text-text-main">Gasolinera Uno</p>
+<p class="text-[10px] text-text-muted">Hace 2 horas</p>
+</div>
+</div>
+<p class="font-bold text-text-main">₡24,500</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Background Decoration -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none overflow-hidden">
+<div class="absolute -top-24 -left-24 size-96 bg-primary/5 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-0 right-0 size-[500px] bg-primary/10 blur-[150px] rounded-full opacity-50"></div>
+</div>
+</body></html>
