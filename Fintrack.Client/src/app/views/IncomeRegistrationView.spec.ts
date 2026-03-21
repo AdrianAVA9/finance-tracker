@@ -38,7 +38,7 @@ describe('IncomeRegistrationView.vue', () => {
     expect(api.get).toHaveBeenCalledWith('/api/v1/incomes/categories')
     const options = wrapper.findAll('option')
     expect(options.length).toBe(2)
-    expect(options[0].text()).toContain('Salario')
+    expect(options[0]?.text()).toContain('Salario')
   })
 
   it('shows recurrence fields only when toggle is on', async () => {

@@ -46,7 +46,7 @@ describe('ExpenseRegistrationForm.vue', () => {
     
     const emitted = wrapper.emitted('submit')
     expect(emitted).toBeTruthy()
-    expect(emitted![0][0]).toMatchObject({
+    expect(emitted?.[0]?.[0]).toMatchObject({
       merchant: 'Test Merchant',
       totalAmount: 100,
       items: [
