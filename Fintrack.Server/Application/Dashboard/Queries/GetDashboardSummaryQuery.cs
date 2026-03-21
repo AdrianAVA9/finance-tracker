@@ -51,7 +51,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
         public async Task<DashboardSummaryDto> Handle(GetDashboardSummaryQuery request, CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
-            var currentMonthStart = new DateTime(now.Year, now.Month, 1);
+            var currentMonthStart = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
             var lastMonthStart = currentMonthStart.AddMonths(-1);
             var lastMonthEnd = currentMonthStart.AddDays(-1);
 

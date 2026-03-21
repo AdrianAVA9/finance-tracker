@@ -1,3 +1,4 @@
+using System;
 using MediatR;
 using Fintrack.Server.Data;
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +46,7 @@ internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, 
         // Optimization: only fetching for categories that have budgets
         var categoryIds = userBudgets.Select(b => b.CategoryId).ToList();
         
-        var startDate = new DateTime(request.Year, request.Month, 1);
+        var startDate = new DateTime(request.Year, request.Month, 1, 0, 0, 0, DateTimeKind.Utc);
         var endDate = startDate.AddMonths(1);
 
         var spentItems = await _dbContext.ExpenseItems
