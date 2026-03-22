@@ -1,5 +1,4 @@
 # Visual Studio
-*.sln
 *.sln.docstates
 .vs/
 bin/
