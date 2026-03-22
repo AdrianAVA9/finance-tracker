@@ -7,7 +7,7 @@
           <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent text-white">
             <span class="material-symbols-outlined text-lg">account_balance_wallet</span>
           </div>
-          <span class="font-heading font-bold text-xl tracking-tight text-white">Fintrack</span>
+          <span class="font-heading font-bold text-xl tracking-tight text-white">CeroBase</span>
         </div>
         <!-- Desktop Nav -->
         <nav class="hidden md:flex gap-8">

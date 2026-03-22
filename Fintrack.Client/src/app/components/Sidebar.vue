@@ -22,7 +22,7 @@ const sidebarStore = useSidebarStore();
                     <span class="material-symbols-outlined">account_balance_wallet</span>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold leading-none tracking-tight">Fintrack</h1>
+                    <h1 class="text-lg font-bold leading-none tracking-tight">CeroBase</h1>
                     <span class="text-xs font-medium text-primary dark:text-accent-lime">Pro Plan</span>
                 </div>
             </div>

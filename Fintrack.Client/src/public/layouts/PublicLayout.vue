@@ -2,7 +2,7 @@
   <div class="public-layout">
     <header class="glass">
       <nav class="container">
-        <div class="logo">Fintrack</div>
+        <div class="logo">CeroBase</div>
         <div class="links">
           <router-link to="/">Home</router-link>
           <router-link to="/pricing">Pricing</router-link>
@@ -16,7 +16,7 @@
     </main>
 
     <footer>
-      <p>&copy; 2026 Fintrack. All rights reserved.</p>
+      <p>&copy; 2026 CeroBase. All rights reserved.</p>
     </footer>
   </div>
 </template>

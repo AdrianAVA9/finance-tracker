@@ -16,7 +16,7 @@
             <span class="material-symbols-outlined text-4xl text-slate-300 group-hover:text-primary transition-colors">center_focus_strong</span>
           </div>
           <h3 class="text-xl font-bold text-white mt-2">Toma la Foto y Escanea</h3>
-          <p class="text-slate-400 text-sm max-w-[250px]">Simplemente toma una foto de tu recibo o reenvía una factura por correo a tu dirección dedicada de Fintrack.</p>
+          <p class="text-slate-400 text-sm max-w-[250px]">Simplemente toma una foto de tu recibo o reenvía una factura por correo a tu dirección dedicada de CeroBase.</p>
         </div>
         <!-- Step 2 -->
         <div class="flex flex-col items-center text-center gap-4 group">
