@@ -22,7 +22,7 @@
               <div class="w-6 h-6 rounded bg-primary flex items-center justify-center text-white">
                 <span class="material-symbols-outlined text-sm">account_balance_wallet</span>
               </div>
-              <span class="font-heading font-bold text-lg text-white">Fintrack</span>
+              <span class="font-heading font-bold text-lg text-white">CeroBase</span>
             </div>
             <p class="text-slate-500 max-w-xs mb-6">
               El rastreador de gastos más inteligente del mundo. Construido para profesionales modernos que valoran su tiempo.
@@ -59,7 +59,7 @@
           </div>
         </div>
         <div class="border-t border-surface-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p class="text-slate-600 text-xs">© 2023 Fintrack Inc. Todos los derechos reservados.</p>
+          <p class="text-slate-600 text-xs">© 2023 CeroBase Inc. Todos los derechos reservados.</p>
           <div class="flex items-center gap-2">
             <div class="w-2 h-2 rounded-full bg-green-500"></div>
             <span class="text-slate-500 text-xs">Todos los sistemas operativos</span>

@@ -59,7 +59,7 @@ const getPasswordStrength = () => {
                         <div class="flex h-10 w-10 items-center justify-center rounded-md bg-[#191971]">
                             <span class="material-symbols-outlined text-white">shield_person</span>
                         </div>
-                        <span class="text-2xl font-bold tracking-tight text-white">Fintrack</span>
+                        <span class="text-2xl font-bold tracking-tight text-white">CeroBase</span>
                     </div>
 
                     <h1 class="mb-6 text-5xl font-extrabold leading-[1.1] tracking-tight text-white lg:text-6xl">
@@ -99,7 +99,7 @@ const getPasswordStrength = () => {
                     <div class="flex h-8 w-8 items-center justify-center rounded-md bg-[#191971]">
                         <span class="material-symbols-outlined text-sm text-white">shield_person</span>
                     </div>
-                    <span class="text-xl font-bold text-white">Fintrack</span>
+                    <span class="text-xl font-bold text-white">CeroBase</span>
                 </div>
 
                 <!-- Form Card -->

@@ -353,6 +353,6 @@ const getCategoryDashOffset = (index: number) => {
     </div>
 
     <footer class="mt-12 mb-6 text-center">
-        <p class="text-xs text-slate-400 dark:text-slate-600 font-medium">© 2024 Fintrack Inc. Todos los derechos reservados.</p>
+        <p class="text-xs text-slate-400 dark:text-slate-600 font-medium">© 2024 CeroBase Inc. Todos los derechos reservados.</p>
     </footer>
 </template>

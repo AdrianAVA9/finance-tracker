@@ -42,7 +42,7 @@ const handleSubmit = async () => {
             <div class="bg-[#1e6a7b]/20 p-3 rounded-full mb-4">
               <span class="material-symbols-outlined text-[#1e6a7b] text-3xl">shield_lock</span>
             </div>
-            <h1 class="text-slate-100 text-2xl font-bold tracking-tight">Fintrack</h1>
+            <h1 class="text-slate-100 text-2xl font-bold tracking-tight">CeroBase</h1>
             <p class="text-slate-400 text-sm mt-2 text-center">Ingresa tu correo electrónico para recibir un enlace de recuperación.</p>
           </div>
 
