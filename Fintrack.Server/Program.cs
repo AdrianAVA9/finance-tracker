@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Asp.Versioning;
 using Fintrack.Server.Models;
@@ -11,6 +12,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Fintrack.Server.Infrastructure.Data.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Enable Azure App Service Logging
+builder.Logging.AddAzureWebAppDiagnostics();
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
