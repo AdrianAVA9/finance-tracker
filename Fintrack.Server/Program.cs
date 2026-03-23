@@ -13,6 +13,26 @@ using Fintrack.Server.Infrastructure.Data.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DefaultCors", policy =>
+    {
+        policy.WithOrigins("https://cerobase.com", "http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Required for cookies
+    });
+});
+
+// Configure Identity Cookie for Cross-Site (SameSite=None)
+// This is necessary because frontend is on cerobase.com and backend is on azurewebsites.net
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
 // Enable Azure App Service Logging
 builder.Logging.AddAzureWebAppDiagnostics();
 
@@ -89,6 +109,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("DefaultCors");
 
 app.UseAuthorization();
 
