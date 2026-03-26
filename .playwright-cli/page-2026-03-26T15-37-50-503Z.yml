@@ -1,0 +1,274 @@
+- generic [active] [ref=e1]:
+  - heading "The Laravel Modular Architecture Implementation in Brief" [level=1] [ref=e2]
+  - paragraph [ref=e3]:
+    - link "Mohammed Muwanga" [ref=e4] [cursor=pointer]:
+      - /url: https://medium.com/u/eb5d28e6dbe6
+    - text: on 2025-02-07
+  - article [ref=e5]:
+    - generic [ref=e6]:
+      - figure [ref=e7]:
+        - img [ref=e8]
+      - paragraph [ref=e9]:
+        - link "Laravel" [ref=e10] [cursor=pointer]:
+          - /url: https://laravel.com
+        - text: ", by default, follows the"
+        - strong [ref=e11]:
+          - link "Monolithic Architecture" [ref=e12] [cursor=pointer]:
+            - /url: https://www.ibm.com/think/topics/monolithic-architecture
+        - text: where all application logic (controllers, models, services, etc.) resides in the
+        - code [ref=e13]: app/
+        - text: directory. However, as projects grow, maintaining a
+        - strong [ref=e14]: large codebase
+        - text: within a monolithic structure becomes challenging.
+      - paragraph [ref=e15]:
+        - text: To solve this, Laravel supports
+        - strong [ref=e16]:
+          - link "Modular Architecture" [ref=e17] [cursor=pointer]:
+            - /url: https://en.wikipedia.org/wiki/Modular_Product_Architecture
+        - text: ", where your application is split into multiple"
+        - strong [ref=e18]: independent modules
+        - text: . Each module contains its own
+        - strong [ref=e19]:
+          - link "controllers" [ref=e20] [cursor=pointer]:
+            - /url: https://laravel.com/docs/11.x/controllers
+        - text: ", models, views,"
+        - link "routes" [ref=e21] [cursor=pointer]:
+          - /url: https://laravel.com/docs/11.x/routing
+        - text: ", and"
+        - strong [ref=e22]:
+          - link "configurations" [ref=e23] [cursor=pointer]:
+            - /url: https://laravel.com/docs/11.x/configuration
+        - text: ", thus making it more"
+        - strong [ref=e24]: scalable, maintainable, and reusable
+        - text: .
+      - paragraph [ref=e25]:
+        - text: This approach is ideal for complex applications, such as an
+        - strong [ref=e26]:
+          - link "Office Furniture" [ref=e27] [cursor=pointer]:
+            - /url: https://officemaster.ae/
+        - strong [ref=e28]: Online System
+        - text: ", where we can separate functionalities like"
+        - strong [ref=e29]: Inventory Management, Orders, Payments, and User Accounts
+        - text: into different modules.
+      - paragraph [ref=e30]: "Here we’ll explore:"
+      - list [ref=e31]:
+        - listitem [ref=e32]:
+          - strong [ref=e33]: What is Modular Architecture?
+        - listitem [ref=e34]:
+          - strong [ref=e35]: Why Use Modular Architecture in Laravel?
+        - listitem [ref=e36]:
+          - strong [ref=e37]: Implementing Modular Architecture in Laravel (Step-by-Step Guide)
+        - listitem [ref=e38]:
+          - strong [ref=e39]: "Example: Modularizing an Online Office Furniture System"
+        - listitem [ref=e40]:
+          - strong [ref=e41]: Advantages and Challenges of Laravel Modular Architecture
+      - heading "What is Modular Architecture?" [level=2] [ref=e42]
+      - paragraph [ref=e43]:
+        - text: Modular architecture is a software design approach where an application is divided into
+        - strong [ref=e44]: self-contained modules
+        - text: ", each handling a specific feature. Each module operates independently while interacting with others when needed."
+      - paragraph [ref=e45]:
+        - text: For instance, in an
+        - strong [ref=e46]:
+          - link "online office furniture" [ref=e47] [cursor=pointer]:
+            - /url: https://officemaster.ae/
+        - strong [ref=e48]: system
+        - text: ", we can have separate modules for:"
+      - list [ref=e49]:
+        - listitem [ref=e50]:
+          - strong [ref=e51]: Product Management
+          - text: (Handling office furniture products)
+        - listitem [ref=e52]:
+          - strong [ref=e53]: Order Management
+          - text: (Processing orders and tracking deliveries)
+        - listitem [ref=e54]:
+          - strong [ref=e55]: User Management
+          - text: (Customer
+          - link "accounts or admins" [ref=e56] [cursor=pointer]:
+            - /url: https://muwangaxyz.medium.com/choosing-between-database-tables-separate-vs-single-for-admins-and-users-97673e8de457
+          - text: ", and vendors)"
+        - listitem [ref=e57]:
+          - strong [ref=e58]: Payment Gateway
+          - text: (Managing transactions securely)
+        - listitem [ref=e59]:
+          - strong [ref=e60]: Warehouse Management
+          - text: (Tracking inventory across locations)
+      - paragraph [ref=e61]:
+        - text: Each module will have its
+        - strong [ref=e62]: own controllers, models, views, and routes
+        - text: ", ensuring better separation of concerns."
+      - heading "Why Use Modular Architecture in Laravel?" [level=2] [ref=e63]
+      - paragraph [ref=e64]:
+        - text: Traditional monolithic applications store everything inside Laravel’s default
+        - strong [ref=e65]: MVC (Model-View-Controller)
+        - text: structure, making it hard to scale as the codebase grows. Modular architecture solves this by grouping related features into
+        - strong [ref=e66]: separate modules
+        - text: .
+      - heading "Modular Architecture Key Benefits:" [level=3] [ref=e67]
+      - paragraph [ref=e68]:
+        - text: ✔
+        - strong [ref=e69]: "Scalability:"
+        - text: Adding new features doesn’t affect the entire system, you only need to concentrate on one module at a time. ✔
+        - strong [ref=e70]: "Code Reusability:"
+        - text: Modules can be reused across multiple projects. For instance; the payments or authentication modules can be reused in other projects. ✔
+        - strong [ref=e71]: "Team Collaboration:"
+        - text: Different teams can work on separate modules without conflicts. ✔
+        - strong [ref=e72]: "Easy Maintenance:"
+        - text: Bugs or updates in one module don’t impact others, they’re accommodated and solved in isolation. Each module is self-contained with reduced dependencies. ✔
+        - strong [ref=e73]: "Better Organization:"
+        - text: The project remains structured and easy to navigate. ✔
+        - strong [ref=e74]: Easy Testing
+        - text: — Modules can be tested independently.
+      - heading "Implementing Modular Architecture in Laravel (Step-by-Step Guide)" [level=2] [ref=e75]
+      - paragraph [ref=e76]:
+        - text: Laravel doesn’t provide built-in modular support, but we can implement it using
+        - strong [ref=e77]: custom modules
+        - text: or
+        - strong [ref=e78]: packages like
+        - strong [ref=e79]:
+          - link "nwidart/laravel-modules" [ref=e80] [cursor=pointer]:
+            - /url: https://nwidart.com/laravel-modules/v6/installation-and-setup
+        - text: . Below is a step-by-step guide using
+        - strong [ref=e81]: nwidart/laravel-modules
+        - text: .
+      - 'heading "Step 1: Install Laravel & Nwidart Package" [level=3] [ref=e82]'
+      - paragraph [ref=e83]: "Ensure you have a Laravel project ready. If not, install Laravel:"
+      - generic [ref=e84]: composer create-project laravel/laravel office-furniture-system cd office-furniture-system
+      - paragraph [ref=e85]:
+        - text: Now install the
+        - code [ref=e86]: nwidart/laravel-modules
+        - text: "package:"
+      - generic [ref=e87]: composer require nwidart/laravel-modules
+      - 'heading "Step 2: Generate a Module" [level=3] [ref=e88]'
+      - paragraph [ref=e89]:
+        - text: Let’s create a
+        - code [ref=e90]: Product
+        - text: "module for managing office furniture products:"
+      - generic [ref=e91]: php artisan module:make Product
+      - paragraph [ref=e92]:
+        - text: This creates a new module inside
+        - code [ref=e93]: Modules/Product
+        - text: ", which contains:"
+      - generic [ref=e94]: "Modules/ ├── Product/ │ ├── Config/ # Configuration files │ ├── Database/ # Migrations, factories, seeders │ ├── Http/ # Controllers, middleware │ ├── Models/ # Eloquent models │ ├── Routes/ # Module-specific routes │ ├── Resources/ # Views, translations │ ├── Services/ # Business logic (optional)"
+      - 'heading "Step 3: Define Routes for the Product Module" [level=3] [ref=e95]'
+      - paragraph [ref=e96]:
+        - text: In
+        - code [ref=e97]: Modules/Product/Routes/web.php
+        - text: ":"
+      - generic [ref=e98]: "use Modules\\Product\\Http\\Controllers\\ProductController; Route::prefix('product')->group(function () { Route::get('/', [ProductController::class, 'index']); Route::get('/{id}', [ProductController::class, 'show']); });"
+      - 'heading "Step 4: Create a Product Controller" [level=3] [ref=e99]'
+      - paragraph [ref=e100]:
+        - text: Generate a controller inside the
+        - code [ref=e101]: Product
+        - text: "module:"
+      - generic [ref=e102]: php artisan module:make-controller ProductController Product
+      - paragraph [ref=e103]:
+        - text: Modify
+        - code [ref=e104]: Modules/Product/Http/Controllers/ProductController.php
+        - text: ":"
+      - generic [ref=e105]: "namespace Modules\\Product\\Http\\Controllers; use Illuminate\\Http\\Request; use Illuminate\\Routing\\Controller; use Modules\\Product\\Models\\Product; class ProductController extends Controller { public function index() { return response()->json(Product::all()); } public function show($id) { return response()->json(Product::findOrFail($id)); } }"
+      - 'heading "Step 5: Define the Product Model" [level=3] [ref=e106]'
+      - paragraph [ref=e107]:
+        - text: In
+        - code [ref=e108]: Modules/Product/Models/Product.php
+        - text: ":"
+      - generic [ref=e109]: "namespace Modules\\Product\\Models; use Illuminate\\Database\\Eloquent\\Model; class Product extends Model { protected $fillable = ['name', 'description', 'price', 'stock']; }"
+      - 'heading "Step 6: Create Migrations for Products" [level=3] [ref=e110]'
+      - paragraph [ref=e111]: "Generate a migration:"
+      - generic [ref=e112]: php artisan module:make-migration create_products_table Product
+      - paragraph [ref=e113]:
+        - text: Modify
+        - code [ref=e114]: Modules/Product/Database/Migrations/xxxx_xx_xx_xxxxxx_create_products_table.php
+        - text: ": — replace the “"
+        - code [ref=e115]: xxxx_xx_xx_xxxxxx"
+        - text: with your directory file path details.
+      - generic [ref=e116]: "public function up() { Schema::create('products', function (Blueprint $table) { $table->id(); $table->string('name'); $table->text('description')->nullable(); $table->decimal('price', 10, 2); $table->integer('stock'); $table->timestamps(); }); }"
+      - paragraph [ref=e117]: "Run the migration:"
+      - generic [ref=e118]: php artisan module:migrate Product
+      - 'heading "Step 7: Load Module Automatically" [level=3] [ref=e119]'
+      - paragraph [ref=e120]:
+        - text: To ensure Laravel loads modules dynamically, add this to
+        - code [ref=e121]: config/app.php
+        - text: ":"
+      - generic [ref=e122]: "'providers' => [ Nwidart\\Modules\\LaravelModulesServiceProvider::class, ],"
+      - paragraph [ref=e123]:
+        - text: And in
+        - code [ref=e124]: composer.json
+        - text: ", add:"
+      - generic [ref=e125]: "\"autoload\": { \"psr-4\": { \"App\\\\\": \"app/\", \"Modules\\\\\": \"Modules/\" } } }"
+      - paragraph [ref=e126]: "Run:"
+      - generic [ref=e127]: composer dump-autoload
+      - paragraph [ref=e128]:
+        - text: Now, visiting
+        - code [ref=e129]: /product
+        - text: returns all products, and
+        - code [ref=e130]: "/product/{id}"
+        - text: fetches a specific product using the
+        - code [ref=e131]: id
+        - text: .
+      - heading "Modularizing an Online Office Furniture System in Laravel" [level=2] [ref=e132]
+      - paragraph [ref=e133]: "For our online office furniture system, we can create multiple modules:"
+      - heading "1. Product Module" [level=3] [ref=e134]
+      - list [ref=e135]:
+        - listitem [ref=e136]:
+          - text: Manages office furniture items (
+          - link "desks" [ref=e137] [cursor=pointer]:
+            - /url: https://officemaster.ae/product-category/desks/
+          - text: ","
+          - link "chairs" [ref=e138] [cursor=pointer]:
+            - /url: https://officemaster.ae/product-category/chairs/
+          - text: ", cabinets)"
+        - listitem [ref=e139]:
+          - text: "Routes:"
+          - code [ref=e140]: /product
+          - text: ","
+          - code [ref=e141]: "/product/{id}"
+      - heading "2. Order Module" [level=3] [ref=e142]
+      - list [ref=e143]:
+        - listitem [ref=e144]: Handles customer orders and status tracking
+        - listitem [ref=e145]:
+          - text: "Routes:"
+          - code [ref=e146]: /order
+          - text: ","
+          - code [ref=e147]: "/order/{id}"
+      - heading "3. User Module" [level=3] [ref=e148]
+      - list [ref=e149]:
+        - listitem [ref=e150]: Manages customers, admins, and vendors
+        - listitem [ref=e151]:
+          - text: "Routes:"
+          - code [ref=e152]: /user/profile
+          - text: ","
+          - code [ref=e153]: /user/orders
+      - heading "4. Payment Module" [level=3] [ref=e154]
+      - list [ref=e155]:
+        - listitem [ref=e156]: Integrates payment gateways (PayPal, Stripe)
+        - listitem [ref=e157]:
+          - text: "Routes:"
+          - code [ref=e158]: /payment/process
+          - text: ","
+          - code [ref=e159]: /payment/status
+      - paragraph [ref=e160]: Each module is independently developed and deployed.
+      - heading "Challenges of Laravel Modular Architecture" [level=2] [ref=e161]
+      - paragraph [ref=e162]:
+        - text: ❌
+        - strong [ref=e163]: Initial Setup Complexity
+        - text: — Requires extra configuration compared to the usual monolithic approach. ❌
+        - strong [ref=e164]: Inter-Module Communication
+        - text: — Sharing data between modules needs APIs or event-based communication. ❌
+        - strong [ref=e165]: Code Duplication Risk
+        - text: — If not managed properly, common logic might be duplicated across modules.
+      - heading "Best Way to Use" [level=2] [ref=e166]
+      - paragraph [ref=e167]:
+        - text: Use Laravel’s modular architecture
+        - strong [ref=e168]: for large-scale applications
+        - text: as its
+        - strong [ref=e169]: a powerful approach to
+        - text: splitting features into
+        - strong [ref=e170]: independent modules. With this strategic system design,
+        - text: the system becomes
+        - strong [ref=e171]: scalable, maintainable, and team-friendly
+        - text: .
+      - paragraph [ref=e172]:
+        - text: With tools like
+        - code [ref=e173]: nwidart/laravel-modules
+        - text: ", implementing modularity is seamless, making Laravel an ideal framework for structured, efficient application development."
