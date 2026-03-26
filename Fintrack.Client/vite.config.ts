@@ -1,6 +1,5 @@
 /// <reference types="vitest" />
 import { fileURLToPath, URL } from 'node:url';
-
 import { defineConfig } from 'vitest/config';
 import plugin from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -8,6 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import child_process from 'child_process';
 import { env } from 'process';
+import { cloudflare } from "@cloudflare/vite-plugin";
 
 const baseFolder =
     env.APPDATA !== undefined && env.APPDATA !== ''
@@ -39,6 +39,7 @@ const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_H
 export default defineConfig({
     plugins: [
         plugin(),
+        cloudflare(),
         VitePWA({
             registerType: 'autoUpdate',
             injectRegister: 'auto',
