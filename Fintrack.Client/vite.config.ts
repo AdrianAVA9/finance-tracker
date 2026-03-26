@@ -39,7 +39,6 @@ const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_H
 export default defineConfig({
     plugins: [
         plugin(),
-        cloudflare(),
         VitePWA({
             registerType: 'autoUpdate',
             injectRegister: 'auto',
@@ -106,7 +105,8 @@ export default defineConfig({
                     }
                 ]
             }
-        })
+        }),
+        cloudflare()
     ],
     resolve: {
         alias: {
