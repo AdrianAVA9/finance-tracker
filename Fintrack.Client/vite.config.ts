@@ -18,7 +18,9 @@ const certificateName = "fintrack.client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
-if (!env.CI && (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath))) {
+const isCI = !!(env.CI || env.CF_PAGES || env.GITHUB_ACTIONS);
+
+if (!isCI && (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath))) {
     if (0 !== child_process.spawnSync('dotnet', [
         'dev-certs',
         'https',
@@ -42,7 +44,7 @@ export default defineConfig({
         VitePWA({
             registerType: 'autoUpdate',
             injectRegister: 'auto',
-            includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
+            includeAssets: ['favicon.ico'],
             manifest: {
                 name: 'CeroBase',
                 short_name: 'CeroBase',
@@ -161,7 +163,7 @@ export default defineConfig({
             }
         },
         port: 5173,
-        https: (env.CI || !fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) 
+        https: (isCI || !fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) 
             ? undefined 
             : {
                 key: fs.readFileSync(keyFilePath),
