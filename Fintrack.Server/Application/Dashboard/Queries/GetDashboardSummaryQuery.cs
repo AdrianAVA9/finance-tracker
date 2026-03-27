@@ -19,12 +19,15 @@ namespace Fintrack.Server.Application.Dashboard.Queries
         double ExpenseChangePercentage,
         List<MonthlyDataDto> MonthlyData,
         List<CategorySummaryDto> TopSpendingCategories,
-        List<TransactionDto> RecentTransactions
+        List<TransactionDto> RecentTransactions,
+        List<BudgetSummaryDto> TopBudgets
     );
 
     public record MonthlyDataDto(string Month, decimal Income, decimal Expense);
 
     public record CategorySummaryDto(string CategoryName, decimal Amount, double Percentage, string? Color);
+
+    public record BudgetSummaryDto(string CategoryName, decimal TotalBudget, decimal SpentAmount, decimal RemainingAmount, double Percentage, string? Icon, string? Color);
 
     public record TransactionDto(
         string Id,
@@ -190,6 +193,35 @@ namespace Fintrack.Server.Application.Dashboard.Queries
                 .Take(10)
                 .ToList();
 
+            // 7. Top Budgets (Current Month)
+            var currentBudgets = await _dbContext.Budgets
+                .Include(b => b.Category)
+                .Where(b => b.UserId == request.UserId && b.Month == now.Month && b.Year == now.Year)
+                .ToListAsync(cancellationToken);
+
+            var categorySpendingMap = categorySpendingItems
+                .GroupBy(ei => ei.CategoryId)
+                .ToDictionary(g => g.Key, g => g.Sum(ei => ei.ItemAmount));
+
+            var topBudgets = currentBudgets.Select(b =>
+            {
+                var spent = categorySpendingMap.GetValueOrDefault(b.CategoryId, 0m);
+                var remaining = b.Amount - spent;
+                var percentage = b.Amount > 0 ? (double)(spent / b.Amount) * 100 : 0;
+                
+                return new BudgetSummaryDto(
+                    b.Category?.Name ?? "Unknown",
+                    b.Amount,
+                    spent,
+                    remaining,
+                    percentage,
+                    b.Category?.Icon,
+                    b.Category?.Color
+                );
+            })
+            .OrderByDescending(b => b.Percentage)
+            .ToList();
+
             return new DashboardSummaryDto(
                 totalBalance,
                 monthlyIncome,
@@ -198,7 +230,8 @@ namespace Fintrack.Server.Application.Dashboard.Queries
                 expenseChange,
                 monthlyData,
                 topSpendingCategories,
-                recentTransactions
+                recentTransactions,
+                topBudgets
             );
         }
     }
