@@ -2,6 +2,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import api from '@/services/api'
 import CategoryBudgetModal from '@/app/components/budgets/CategoryBudgetModal.vue'
+import BudgetItemCard from '@/app/components/budgets/BudgetItemCard.vue'
 
 interface Budget {
   id: number
@@ -217,78 +218,26 @@ watch([selectedMonth, selectedYear], loadBudgets)
         </div>
 
         <!-- Categories List -->
-        <div class="flex flex-col gap-3 min-h-[400px]">
-          <!-- Header Row -->
-          <div class="hidden md:grid grid-cols-12 gap-4 px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            <div class="col-span-4">Categoría</div>
-            <div class="col-span-4">Progreso</div>
-            <div class="col-span-3 text-right">Gastado / Límite</div>
-            <div class="col-span-1 text-right">Acciones</div>
-          </div>
-
+        <div class="flex flex-col gap-6 min-h-[400px]">
           <div v-if="isLoading" class="flex flex-col items-center justify-center py-20 gap-4">
             <div class="animate-spin size-8 border-4 border-primary border-t-transparent rounded-full"></div>
             <p class="text-text-muted">Cargando presupuestos...</p>
           </div>
 
-          <div v-else-if="filteredBudgets.length === 0" class="flex flex-col items-center justify-center py-20 bg-card-dark rounded-xl border border-dashed border-border-dark">
+          <div v-else-if="filteredBudgets.length === 0" class="flex flex-col items-center justify-center py-20 bg-card-dark rounded-3xl border border-dashed border-border-dark">
             <span class="material-symbols-outlined text-6xl text-text-muted mb-4 opacity-20">inventory_2</span>
             <p class="text-text-muted font-bold">No hay presupuestos registrados para este mes.</p>
-            <button @click="openAddModal" class="mt-4 text-primary font-bold hover:underline">Registrar el primero</button>
+            <button @click="openAddModal" class="mt-4 text-primary font-bold hover:underline font-display uppercase tracking-widest text-xs">Registrar el primero</button>
           </div>
 
-          <!-- Items -->
-          <div 
-            v-for="budget in filteredBudgets" 
-            :key="budget.id"
-            class="group bg-card-light dark:bg-card-dark rounded-xl p-4 shadow-sm border border-transparent hover:border-primary/30 transition-all duration-200"
-          >
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-              <div class="col-span-1 md:col-span-4 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <span class="material-symbols-outlined">{{ budget.categoryIcon || 'category' }}</span>
-                </div>
-                <div class="flex flex-col">
-                  <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ budget.categoryName }}</h3>
-                  <p class="text-xs text-slate-500 dark:text-slate-400">{{ budget.categoryGroup }}</p>
-                </div>
-              </div>
-
-              <!-- Progress -->
-              <div class="col-span-1 md:col-span-4 flex flex-col justify-center gap-1.5">
-                <div class="flex justify-between md:hidden text-sm font-medium">
-                  <span>Progreso</span>
-                  <span :class="budget.spentAmount > budget.limitAmount ? 'text-red-500' : 'text-primary'">
-                    {{ ((budget.spentAmount/budget.limitAmount)*100).toFixed(0) }}%
-                  </span>
-                </div>
-                <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                  <div 
-                    class="h-full transition-all duration-500"
-                    :class="getProgressColor(budget.spentAmount, budget.limitAmount)"
-                    :style="{ width: `${Math.min((budget.spentAmount/budget.limitAmount)*100, 100)}%` }"
-                  ></div>
-                </div>
-              </div>
-
-              <!-- Amounts -->
-              <div class="col-span-1 md:col-span-3 flex md:justify-end items-baseline gap-1">
-                <span class="text-lg font-bold" :class="budget.spentAmount > budget.limitAmount ? 'text-red-500' : 'text-slate-900 dark:text-white'">
-                  ₡{{ budget.spentAmount.toLocaleString() }}
-                </span>
-                <span class="text-sm text-slate-400">/ ₡{{ budget.limitAmount.toLocaleString() }}</span>
-              </div>
-
-              <!-- Actions -->
-              <div class="col-span-1 flex justify-end gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                <button @click="openEditModal(budget)" class="p-2 rounded-lg text-slate-400 hover:text-primary transition-colors">
-                  <span class="material-symbols-outlined text-xl">edit</span>
-                </button>
-                <button @click="deleteBudget(budget.id)" class="p-2 rounded-lg text-slate-400 hover:text-red-500 transition-colors">
-                  <span class="material-symbols-outlined text-xl">delete</span>
-                </button>
-              </div>
-            </div>
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <BudgetItemCard 
+              v-for="budget in filteredBudgets" 
+              :key="budget.id"
+              :budget="budget"
+              @edit="openEditModal"
+              @delete="deleteBudget"
+            />
           </div>
         </div>
 
