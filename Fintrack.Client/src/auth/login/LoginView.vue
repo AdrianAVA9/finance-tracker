@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useAuth } from '@/composables/useAuth';
 import { useRouter } from 'vue-router';
+import logo from '@/assets/logo.png';
 
 const { login } = useAuth();
 const router = useRouter();
@@ -42,7 +43,7 @@ const handleLogin = async () => {
             <!-- Content Overlay -->
             <div class="relative z-10 p-12 max-w-2xl text-left self-end mb-20">
                 <div class="flex items-center gap-3 mb-6">
-                    <span class="material-symbols-outlined text-4xl text-blue-400">security</span>
+                    <img :src="logo" alt="CeroBase Logo" class="w-12 h-12 rounded-xl" />
                     <p class="text-2xl font-bold tracking-wide">CeroBase</p>
                 </div>
                 <h2 class="text-4xl md:text-5xl font-bold leading-tight mb-4 text-white">
@@ -60,7 +61,7 @@ const handleLogin = async () => {
 
                 <!-- Mobile Logo (Visible only on small screens) -->
                 <div class="lg:hidden mb-8 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-3xl text-[#191971]">security</span>
+                    <img :src="logo" alt="CeroBase Logo" class="w-8 h-8 rounded-lg" />
                     <span class="text-xl font-bold">CeroBase</span>
                 </div>
 

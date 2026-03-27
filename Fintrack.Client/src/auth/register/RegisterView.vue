@@ -40,6 +40,7 @@ const getPasswordStrength = () => {
     return { label: 'Buena', width: 'w-3/4', color: 'bg-blue-400' };
 };
 
+import logo from '@/assets/logo.png';
 </script>
 
 <template>
@@ -56,9 +57,7 @@ const getPasswordStrength = () => {
                 <!-- Content -->
                 <div class="relative z-20 max-w-2xl">
                     <div class="mb-12 flex items-center gap-3">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-md bg-[#191971]">
-                            <span class="material-symbols-outlined text-white">shield_person</span>
-                        </div>
+                        <img :src="logo" alt="CeroBase Logo" class="w-12 h-12 rounded-xl" />
                         <span class="text-2xl font-bold tracking-tight text-white">CeroBase</span>
                     </div>
 
@@ -96,9 +95,7 @@ const getPasswordStrength = () => {
 
                 <!-- Mobile Logo (visible only on small screens) -->
                 <div class="mb-10 flex items-center gap-2 lg:hidden">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-md bg-[#191971]">
-                        <span class="material-symbols-outlined text-sm text-white">shield_person</span>
-                    </div>
+                    <img :src="logo" alt="CeroBase Logo" class="w-8 h-8 rounded-lg" />
                     <span class="text-xl font-bold text-white">CeroBase</span>
                 </div>
 

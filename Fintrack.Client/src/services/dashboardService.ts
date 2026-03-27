@@ -13,6 +13,16 @@ export interface CategorySummaryDto {
   color: string | null;
 }
 
+export interface BudgetSummaryDto {
+  categoryName: string;
+  totalBudget: number;
+  spentAmount: number;
+  remainingAmount: number;
+  percentage: number;
+  icon: string | null;
+  color: string | null;
+}
+
 export interface TransactionDto {
   id: string;
   description: string;
@@ -33,6 +43,7 @@ export interface DashboardSummaryDto {
   monthlyData: MonthlyDataDto[];
   topSpendingCategories: CategorySummaryDto[];
   recentTransactions: TransactionDto[];
+  topBudgets: BudgetSummaryDto[];
 }
 
 const dashboardService = {
