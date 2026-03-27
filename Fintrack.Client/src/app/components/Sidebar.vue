@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useSidebarStore } from '@/stores/useSidebarStore';
+import logo from '@/assets/logo.png';
 
 const sidebarStore = useSidebarStore();
 </script>
@@ -18,8 +19,8 @@ const sidebarStore = useSidebarStore();
         <div class="p-6 flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
                 <div
-                    class="size-10 rounded-xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-glow text-white">
-                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                    class="size-10 rounded-xl overflow-hidden shadow-glow">
+                    <img :src="logo" alt="CeroBase Logo" class="w-full h-full object-cover" />
                 </div>
                 <div>
                     <h1 class="text-lg font-bold leading-none tracking-tight">CeroBase</h1>

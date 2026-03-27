@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { usePasswordReset } from '@/composables/usePasswordReset';
+import logo from '@/assets/logo.png';
 
 const route = useRoute();
 const router = useRouter();
@@ -57,8 +58,8 @@ const handleSubmit = async () => {
 
       <!-- Header -->
       <div class="mb-8 flex flex-col items-center gap-4">
-        <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-[#1e6a7b]/10 text-[#1e6a7b]">
-          <span class="material-symbols-outlined text-3xl">lock_reset</span>
+        <div class="flex items-center justify-center w-12 h-12 rounded-xl overflow-hidden shadow-lg shadow-[#1e6a7b]/10">
+          <img :src="logo" alt="CeroBase Logo" class="w-full h-full object-cover" />
         </div>
         <div class="text-center">
           <h1 class="text-2xl font-bold tracking-tight text-white">Asegura tu Cuenta</h1>

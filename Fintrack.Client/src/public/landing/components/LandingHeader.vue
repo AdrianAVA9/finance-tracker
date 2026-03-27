@@ -1,11 +1,15 @@
+<script setup lang="ts">
+import logo from '@/assets/logo.png';
+</script>
+
 <template>
   <header class="fixed top-0 left-0 right-0 z-50 border-b border-surface-border bg-[#121212]/80 backdrop-blur-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 sm:h-20">
         <!-- Logo -->
         <div class="flex items-center gap-3">
-          <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent text-white">
-            <span class="material-symbols-outlined text-lg">account_balance_wallet</span>
+          <div class="flex items-center justify-center w-8 h-8 rounded-lg overflow-hidden">
+            <img :src="logo" alt="CeroBase Logo" class="w-full h-full object-cover" />
           </div>
           <span class="font-heading font-bold text-xl tracking-tight text-white">CeroBase</span>
         </div>
@@ -26,6 +30,3 @@
     </div>
   </header>
 </template>
-
-<script setup lang="ts">
-</script>

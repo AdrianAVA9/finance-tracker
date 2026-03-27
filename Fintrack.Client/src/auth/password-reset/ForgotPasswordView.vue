@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { usePasswordReset } from '@/composables/usePasswordReset';
+import logo from '@/assets/logo.png';
 
 const { isLoading, error, success, sendResetLink } = usePasswordReset();
 const email = ref('');
@@ -39,8 +40,8 @@ const handleSubmit = async () => {
         <template v-else>
           <!-- Logo/Brand Section -->
           <div class="flex flex-col items-center mb-8">
-            <div class="bg-[#1e6a7b]/20 p-3 rounded-full mb-4">
-              <span class="material-symbols-outlined text-[#1e6a7b] text-3xl">shield_lock</span>
+            <div class="w-16 h-16 rounded-2xl overflow-hidden mb-4 shadow-lg shadow-[#1e6a7b]/10">
+              <img :src="logo" alt="CeroBase Logo" class="w-full h-full object-cover" />
             </div>
             <h1 class="text-slate-100 text-2xl font-bold tracking-tight">CeroBase</h1>
             <p class="text-slate-400 text-sm mt-2 text-center">Ingresa tu correo electrónico para recibir un enlace de recuperación.</p>

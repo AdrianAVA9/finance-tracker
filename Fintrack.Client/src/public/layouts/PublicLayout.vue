@@ -1,8 +1,15 @@
+<script setup lang="ts">
+import logo from '@/assets/logo.png';
+</script>
+
 <template>
   <div class="public-layout">
     <header class="glass">
       <nav class="container">
-        <div class="logo">CeroBase</div>
+        <div class="logo">
+          <img :src="logo" alt="CeroBase Logo" class="logo-img" />
+          <span>CeroBase</span>
+        </div>
         <div class="links">
           <router-link to="/">Home</router-link>
           <router-link to="/pricing">Pricing</router-link>
@@ -44,9 +51,19 @@ header {
   }
 
   .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     font-weight: 700;
     font-size: 1.5rem;
     color: hsl(var(--color-primary));
+
+    .logo-img {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.5rem;
+      object-fit: cover;
+    }
   }
 
   .links {

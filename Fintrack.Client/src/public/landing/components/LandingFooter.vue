@@ -19,8 +19,8 @@
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
           <div class="col-span-2 lg:col-span-2">
             <div class="flex items-center gap-2 mb-4">
-              <div class="w-6 h-6 rounded bg-primary flex items-center justify-center text-white">
-                <span class="material-symbols-outlined text-sm">account_balance_wallet</span>
+              <div class="w-8 h-8 rounded-lg overflow-hidden">
+                <img :src="logo" alt="CeroBase Logo" class="w-full h-full object-cover" />
               </div>
               <span class="font-heading font-bold text-lg text-white">CeroBase</span>
             </div>
@@ -71,4 +71,5 @@
 </template>
 
 <script setup lang="ts">
+import logo from '@/assets/logo.png';
 </script>
