@@ -76,8 +76,9 @@ const formatDate = (dateString: string) => {
             </div>
             
             <div class="space-y-2">
-                <div v-for="budget in dashboardData.topBudgets" :key="budget.categoryName" 
-                     class="bg-[#1a1c20] p-3.5 rounded-xl space-y-3 hover:bg-[#222428] transition-colors">
+                <router-link v-for="budget in dashboardData.topBudgets" :key="budget.id" 
+                     :to="`/app/budgets/${budget.id}`"
+                     class="block bg-[#1a1c20] p-3.5 rounded-xl space-y-3 hover:bg-[#222428] transition-colors cursor-pointer group">
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-[#333539]"
@@ -88,11 +89,14 @@ const formatDate = (dateString: string) => {
                                 </span>
                             </div>
                             <div>
-                                <h4 class="font-bold text-sm text-[#e2e2e8]">{{ budget.categoryName }}</h4>
+                                <h4 class="font-bold text-sm text-[#e2e2e8] group-hover:text-white transition-colors">{{ budget.categoryName }}</h4>
                                 <p class="text-xs text-[#bacbbe] mt-0.5">{{ formatCurrency(budget.remainingAmount) }} remaining</p>
                             </div>
                         </div>
-                        <span class="font-headline font-bold text-sm text-[#e2e2e8]">{{ Math.round(budget.percentage) }}%</span>
+                        <div class="flex items-center gap-2">
+                             <span class="font-headline font-bold text-sm text-[#e2e2e8]">{{ Math.round(budget.percentage) }}%</span>
+                             <span class="material-symbols-outlined text-[#bacbbe] text-sm opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0">chevron_right</span>
+                        </div>
                     </div>
                     
                     <div class="w-full bg-[#333539] h-1.5 rounded-full overflow-hidden">
@@ -102,7 +106,7 @@ const formatDate = (dateString: string) => {
                                 backgroundColor: budget.color || '#05e699' 
                              }"></div>
                     </div>
-                </div>
+                </router-link>
                 
                 <!-- Empty State -->
                 <div v-if="dashboardData.topBudgets.length === 0" class="bg-[#1a1c20] p-4 rounded-xl text-center border border-white/5">
