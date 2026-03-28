@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '@/services/api'
-import CategoryBudgetModal from '@/app/components/budgets/CategoryBudgetModal.vue'
 import BudgetItemCard from '@/app/components/budgets/BudgetItemCard.vue'
 
 interface Budget {
@@ -15,6 +15,7 @@ interface Budget {
   spentAmount: number
 }
 
+const router = useRouter()
 const currentDate = new Date()
 const selectedMonth = ref(currentDate.getMonth() + 1)
 const selectedYear = ref(currentDate.getFullYear())
@@ -22,11 +23,8 @@ const expectedIncome = ref<number>(0)
 const budgets = ref<Budget[]>([])
 const isLoading = ref(false)
 const searchQuery = ref('')
-const sortBy = ref('Highest Budget')
+const sortBy = ref('Mayor Presupuesto')
 
-// Modal State
-const isModalOpen = ref(false)
-const selectedBudget = ref<Budget | null>(null)
 
 // Constants
 const months = [
@@ -82,13 +80,18 @@ const loadBudgets = async () => {
 }
 
 const openAddModal = () => {
-  selectedBudget.value = null
-  isModalOpen.value = true
+  router.push({ 
+    name: 'BudgetCreate', 
+    query: { month: selectedMonth.value.toString(), year: selectedYear.value.toString() } 
+  })
 }
 
 const openEditModal = (budget: Budget) => {
-  selectedBudget.value = budget
-  isModalOpen.value = true
+  router.push({ 
+    name: 'BudgetEdit', 
+    params: { id: budget.id.toString() },
+    query: { month: selectedMonth.value.toString(), year: selectedYear.value.toString() } 
+  })
 }
 
 const deleteBudget = async (id: number) => {
@@ -230,25 +233,6 @@ watch([selectedMonth, selectedYear], loadBudgets)
     <!-- Navigation Shadow element to compensate for bottom bar if any -->
     <div class="h-20 sm:hidden"></div>
 
-    <!-- Category Budget Modal -->
-    <transition
-      enter-active-class="transition duration-300 ease-out"
-      enter-from-class="opacity-0 scale-95"
-      enter-to-class="opacity-100 scale-100"
-      leave-active-class="transition duration-200 ease-in"
-      leave-from-class="opacity-100 scale-100"
-      leave-to-class="opacity-0 scale-95"
-    >
-      <CategoryBudgetModal
-        v-if="isModalOpen"
-        :isOpen="isModalOpen"
-        :budget="selectedBudget ? { id: selectedBudget.id, categoryId: selectedBudget.categoryId, limitAmount: selectedBudget.limitAmount } : undefined"
-        :month="selectedMonth"
-        :year="selectedYear"
-        @close="isModalOpen = false"
-        @saved="loadBudgets"
-      />
-    </transition>
 
     <!-- Floating Action Button (FAB) -->
     <button 
