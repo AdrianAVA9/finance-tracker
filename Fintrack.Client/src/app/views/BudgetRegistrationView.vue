@@ -115,156 +115,166 @@ watch([selectedMonth, selectedYear], loadBudgets)
 </script>
 
 <template>
-  <div class="flex flex-col h-full bg-background-light dark:bg-background-dark">
-    <!-- Header -->
-    <header class="w-full px-6 py-6 lg:px-10 flex flex-wrap items-end justify-between gap-4 shrink-0 z-10">
-      <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-2 text-primary text-sm font-bold tracking-wider uppercase">
-          <span class="w-2 h-2 rounded-full bg-accent-lime shadow-[0_0_8px_#66CC33]"></span>
-          Plan Activo
-        </div>
-        <div class="flex items-center gap-4">
-          <h2 class="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            {{ months[selectedMonth - 1] }} {{ selectedYear }}
-          </h2>
-          <!-- Month/Year Fast Switcher -->
-          <div class="flex items-center gap-1 bg-surface-dark/10 p-1 rounded-lg border border-border-dark/10">
-            <select v-model="selectedMonth" class="bg-transparent text-xs font-bold border-none outline-none cursor-pointer py-1 focus:ring-0">
-              <option v-for="(m, idx) in months" :key="idx" :value="idx + 1">{{ m }}</option>
-            </select>
-            <select v-model="selectedYear" class="bg-transparent text-xs font-bold border-none outline-none cursor-pointer py-1 focus:ring-0">
-              <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
-            </select>
+  <div class="space-y-6">
+    
+    <!-- Page Title -->
+    <section class="space-y-1 px-1">
+      <h1 class="font-headline text-3xl font-extrabold tracking-tighter text-on-surface">Planificación Mensual</h1>
+      <p class="text-sm font-medium text-on-surface-variant tracking-wide uppercase">
+        {{ months[selectedMonth - 1] }} {{ selectedYear }} • Análisis de Precisión
+      </p>
+    </section>
+
+    <!-- Hero Budget Card: Asymmetric Bento Style -->
+    <section class="grid grid-cols-1 gap-4">
+      <div class="bg-[#1a1c20] rounded-lg p-6 luminous-shadow relative overflow-hidden transition-all duration-500">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[60px] rounded-full -mr-16 -mt-16"></div>
+        
+        <div class="relative z-10 space-y-6">
+          <div class="flex justify-between items-start">
+            <div class="space-y-1">
+              <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">Balance por Asignar</p>
+              <h2 
+                class="font-headline text-5xl font-black tracking-tighter transition-colors duration-300 flex items-baseline gap-1"
+                :class="remainingColorClass"
+              >
+                <span v-if="remainingToAllocate < 0" class="translate-y-[-0.1em]">-</span>
+                <span class="whitespace-nowrap">₡{{ Math.abs(remainingToAllocate).toLocaleString() }}</span>
+              </h2>
+            </div>
+            <div 
+              class="px-3 py-1 rounded-full flex items-center gap-1 border border-white/5 transition-colors"
+              :class="isOverbudgeted ? 'bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary-container'"
+            >
+              <span class="material-symbols-outlined text-[14px]">{{ remainingIcon }}</span>
+              <span class="text-[10px] font-bold uppercase">{{ remainingStatusLabel }}</span>
+            </div>
+          </div>
+
+          <div class="pt-6 grid grid-cols-2 gap-8">
+            <div class="space-y-1">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Presupuesto Total</p>
+              <p class="text-lg font-bold text-on-surface">₡{{ totalBudgeted.toLocaleString() }}</p>
+            </div>
+            <div class="space-y-1">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Total Gastado</p>
+              <p class="text-lg font-bold text-on-surface">₡{{ totalSpent.toLocaleString() }}</p>
+            </div>
+          </div>
+
+          <!-- Global Progress -->
+          <div class="space-y-2 pt-2">
+            <div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+              <div 
+                class="h-full bg-gradient-to-r from-primary-fixed to-primary-container transition-all duration-1000 ease-out" 
+                :style="{ width: `${Math.min(spentPercentage, 100)}%` }"
+              ></div>
+            </div>
+            <div class="flex justify-between text-[10px] font-medium text-on-surface-variant uppercase tracking-tighter">
+              <span>{{ spentPercentage.toFixed(1) }}% de Presupuesto Consumido</span>
+              <span>₡{{ (totalBudgeted - totalSpent).toLocaleString() }} Restante</span>
+            </div>
           </div>
         </div>
-        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Gestiona tus límites de gasto y metas de ahorro.</p>
+      </div>
+    </section>
+
+
+    <!-- Categories Section -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between px-1">
+        <h3 class="font-headline text-xl font-bold tracking-tight text-on-surface">Categorías</h3>
+        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">{{ filteredBudgets.length }} Activas</p>
       </div>
 
-      <div class="flex gap-3">
-        <button class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-surface-dark text-slate-600 dark:text-slate-300 text-sm font-bold transition-all">
-          <span class="material-symbols-outlined text-xl text-primary">ios_share</span>
-          <span class="hidden sm:inline">Exportar Reporte</span>
-        </button>
-        <button 
-          @click="openAddModal"
-          class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-[#121416] text-sm font-bold shadow-lg shadow-primary/25 transition-all"
-        >
-          <span class="material-symbols-outlined text-xl">add</span>
-          <span>Agregar presupuesto</span>
-        </button>
+      <div class="flex flex-col gap-4">
+        <div v-if="isLoading" class="flex flex-col items-center justify-center py-20 gap-4">
+          <div class="w-10 h-1 bg-surface-container-highest rounded-full overflow-hidden relative">
+            <div class="absolute inset-0 bg-primary-container w-1/3 animate-[loading_1.5s_infinite]"></div>
+          </div>
+          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[.2em]">Sincronizando Datos</p>
+        </div>
+
+        <div v-else-if="filteredBudgets.length === 0" class="flex flex-col items-center justify-center py-16 bg-surface-container-low rounded-2xl border border-dashed border-white/5 text-center px-6">
+          <span class="material-symbols-outlined text-5xl text-on-surface-variant/20 mb-4">analytics</span>
+          <p class="text-sm font-bold text-on-surface-variant mb-1">Sin registros para el mes</p>
+          <p class="text-xs text-on-surface-variant/60 mb-6">Comienza tu planificación mensual agregando una categoría.</p>
+          <button @click="openAddModal" class="text-[10px] font-black text-primary-container uppercase tracking-[.2em] border border-primary-container/20 px-4 py-2 rounded-lg hover:bg-primary-container/5 transition-all">Inicia Aquí</button>
+        </div>
+
+        <div v-else class="grid grid-cols-1 gap-4">
+          <BudgetItemCard 
+            v-for="budget in filteredBudgets" 
+            :key="budget.id"
+            :budget="budget"
+            @edit="openEditModal"
+            @delete="deleteBudget"
+          />
+        </div>
       </div>
-    </header>
+    </section>
 
-    <!-- Scrollable Area -->
-    <div class="flex-1 overflow-y-auto px-6 pb-10 lg:px-10 scroll-smooth">
-      <div class="max-w-6xl mx-auto flex flex-col gap-8">
-        <!-- Stats Dashboard -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-          <!-- Total Budgeted -->
-          <div class="p-6 rounded-xl bg-surface-light dark:bg-card-dark shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col gap-4 relative overflow-hidden group">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-              <span class="material-symbols-outlined text-6xl text-primary">account_balance_wallet</span>
-            </div>
-            <div>
-              <p class="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Total Presupuestado</p>
-              <p class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">₡{{ totalBudgeted.toLocaleString() }}</p>
-            </div>
-            <div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full mt-auto">
-              <div class="bg-primary/50 h-1.5 rounded-full" style="width: 100%"></div>
-            </div>
-          </div>
-
-          <!-- Total Spent -->
-          <div class="p-6 rounded-xl bg-surface-light dark:bg-card-dark shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col gap-4 relative overflow-hidden group">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-              <span class="material-symbols-outlined text-6xl text-orange-400">credit_card</span>
-            </div>
-            <div>
-              <p class="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Total Gastado</p>
-              <p class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">₡{{ totalSpent.toLocaleString() }}</p>
-            </div>
-            <div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full mt-auto">
-              <div class="bg-orange-400 h-1.5 rounded-full" :style="{ width: `${Math.min(spentPercentage, 100)}%` }"></div>
-            </div>
-          </div>
-
-          <!-- Remaining -->
-          <div class="p-6 rounded-xl bg-surface-light dark:bg-card-dark shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col gap-4 relative overflow-hidden group">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-              <span class="material-symbols-outlined text-6xl" :class="remainingColorClass">{{ remainingIcon }}</span>
-            </div>
-            <div>
-              <p class="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Por Asignar</p>
-              <p class="text-3xl font-extrabold mt-1" :class="remainingColorClass">
-                {{ remainingToAllocate < 0 ? '-' : '' }}₡{{ Math.abs(remainingToAllocate).toLocaleString() }}
-              </p>
-            </div>
-            <div class="flex items-center gap-2 mt-auto">
-              <span class="text-xs font-bold px-2 py-1 rounded" :class="remainingStatusClass">{{ remainingStatusLabel }}</span>
-              <span class="text-slate-400 text-xs" v-if="expectedIncome > 0">
-                {{ Math.abs((remainingToAllocate/expectedIncome)*100).toFixed(0) }}% {{ isOverbudgeted ? 'por encima' : 'de ingresos libres' }}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Filter & Sort -->
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-2">
-          <div class="relative w-full sm:w-auto">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-            <input 
-              v-model="searchQuery"
-              class="pl-10 pr-4 py-2 rounded-lg bg-surface-light dark:bg-card-dark border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary w-full sm:w-64" 
-              placeholder="Buscar categorías..." 
-              type="text"
-            />
-          </div>
-          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Ordenar:</span>
-            <select v-model="sortBy" class="bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer">
-              <option>Mayor Presupuesto</option>
-              <option>Mayor Gasto</option>
-              <option>Nombre (A-Z)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Categories List -->
-        <div class="flex flex-col gap-6 min-h-[400px]">
-          <div v-if="isLoading" class="flex flex-col items-center justify-center py-20 gap-4">
-            <div class="animate-spin size-8 border-4 border-primary border-t-transparent rounded-full"></div>
-            <p class="text-text-muted">Cargando presupuestos...</p>
-          </div>
-
-          <div v-else-if="filteredBudgets.length === 0" class="flex flex-col items-center justify-center py-20 bg-card-dark rounded-3xl border border-dashed border-border-dark">
-            <span class="material-symbols-outlined text-6xl text-text-muted mb-4 opacity-20">inventory_2</span>
-            <p class="text-text-muted font-bold">No hay presupuestos registrados para este mes.</p>
-            <button @click="openAddModal" class="mt-4 text-primary font-bold hover:underline font-display uppercase tracking-widest text-xs">Registrar el primero</button>
-          </div>
-
-          <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            <BudgetItemCard 
-              v-for="budget in filteredBudgets" 
-              :key="budget.id"
-              :budget="budget"
-              @edit="openEditModal"
-              @delete="deleteBudget"
-            />
-          </div>
-        </div>
-
-
+    <!-- Bottom Insight Callout -->
+    <section v-if="budgets.length > 0" class="bg-surface-container-high/50 border border-white/5 rounded-2xl p-6 flex items-start gap-4 transition-all hover:bg-surface-container-high shadow-sm shadow-primary/5">
+      <span class="material-symbols-outlined text-primary-container animate-pulse" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+      <div class="space-y-2">
+        <h5 class="text-sm font-bold text-on-surface">Insight de Planificación</h5>
+        <p class="text-xs text-on-surface-variant leading-relaxed">
+          Actualmente tienes ₡{{ Math.abs(remainingToAllocate).toLocaleString() }} 
+          {{ isOverbudgeted ? 'por encima de tu capacidad' : 'libres para asignar' }}.
+          Recomendamos revisar tus categorías de mayor impacto para optimizar tu ahorro mensual.
+        </p>
       </div>
-    </div>
+    </section>
 
-    <!-- Modal -->
-    <CategoryBudgetModal 
-      :isOpen="isModalOpen"
-      :month="selectedMonth"
-      :year="selectedYear"
-      :budget="selectedBudget ? { id: selectedBudget.id, categoryId: selectedBudget.categoryId, limitAmount: selectedBudget.limitAmount } : undefined"
-      @close="isModalOpen = false"
-      @saved="loadBudgets"
-    />
+    <!-- Navigation Shadow element to compensate for bottom bar if any -->
+    <div class="h-20 sm:hidden"></div>
+
+    <!-- Category Budget Modal -->
+    <transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-95"
+    >
+      <CategoryBudgetModal
+        v-if="isModalOpen"
+        :isOpen="isModalOpen"
+        :budget="selectedBudget ? { id: selectedBudget.id, categoryId: selectedBudget.categoryId, limitAmount: selectedBudget.limitAmount } : undefined"
+        :month="selectedMonth"
+        :year="selectedYear"
+        @close="isModalOpen = false"
+        @saved="loadBudgets"
+      />
+    </transition>
+
+    <!-- Floating Action Button (FAB) -->
+    <button 
+      @click="openAddModal"
+      class="fixed bottom-32 right-8 w-14 h-14 flex items-center justify-center rounded-full bg-primary-container text-on-primary-container shadow-2xl shadow-primary-container/40 z-[100] hover:scale-110 active:scale-90 transition-all duration-300"
+      aria-label="Registrar Categoría"
+    >
+      <span class="material-symbols-outlined text-3xl font-black">add</span>
+    </button>
   </div>
 </template>
+
+<style scoped>
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+@keyframes loading {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+/* Glass effect for header */
+.glass-effect {
+  background: rgba(17, 19, 23, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+</style>

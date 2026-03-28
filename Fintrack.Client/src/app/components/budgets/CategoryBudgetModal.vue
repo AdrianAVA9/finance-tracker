@@ -89,7 +89,7 @@ onMounted(loadCategories)
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 blur-[100px] rounded-full pointer-events-none"></div>
 
         <!-- Card -->
-        <div class="bg-white dark:bg-surface-dark rounded-xl shadow-2xl border border-gray-100 dark:border-border-dark overflow-hidden flex flex-col">
+        <div class="bg-white dark:bg-surface-dark rounded-lg shadow-2xl border border-gray-100 dark:border-border-dark overflow-hidden flex flex-col">
           <!-- Header -->
           <div class="flex items-center justify-between px-5 pt-5 pb-1">
             <div>
