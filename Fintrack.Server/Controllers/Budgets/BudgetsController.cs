@@ -63,6 +63,20 @@ public class BudgetsController : ControllerBase
         await _sender.Send(command);
         return NoContent();
     }
+
+    [HttpGet("{id}/details")]
+    public async Task<IActionResult> GetDetails(int id, [FromQuery] int year, [FromQuery] int month)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        var query = new GetBudgetDetailsQuery(id, userId, month, year);
+        var result = await _sender.Send(query);
+
+        if (result == null) return NotFound();
+
+        return Ok(result);
+    }
 }
 
 public record UpsertBudgetsRequest(int Month, int Year, List<BudgetEntryDto> Budgets);

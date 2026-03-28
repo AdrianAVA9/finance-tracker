@@ -14,6 +14,7 @@ export interface CategorySummaryDto {
 }
 
 export interface BudgetSummaryDto {
+  id: number;
   categoryName: string;
   totalBudget: number;
   spentAmount: number;

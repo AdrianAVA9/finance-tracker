@@ -27,7 +27,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
 
     public record CategorySummaryDto(string CategoryName, decimal Amount, double Percentage, string? Color);
 
-    public record BudgetSummaryDto(string CategoryName, decimal TotalBudget, decimal SpentAmount, decimal RemainingAmount, double Percentage, string? Icon, string? Color);
+    public record BudgetSummaryDto(int Id, string CategoryName, decimal TotalBudget, decimal SpentAmount, decimal RemainingAmount, double Percentage, string? Icon, string? Color);
 
     public record TransactionDto(
         string Id,
@@ -210,6 +210,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
                 var percentage = b.Amount > 0 ? (double)(spent / b.Amount) * 100 : 0;
                 
                 return new BudgetSummaryDto(
+                    b.Id,
                     b.Category?.Name ?? "Unknown",
                     b.Amount,
                     spent,

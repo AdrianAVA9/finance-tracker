@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useActionSheetStore } from '@/stores/useActionSheetStore';
+
+const store = useActionSheetStore();
 </script>
 
 <template>
@@ -9,7 +12,7 @@
             active-class="text-[#05E699] after:content-[''] after:absolute after:-bottom-2 after:w-1 after:h-1 after:bg-[#05E699] after:rounded-full"
             exact-active-class="text-[#05E699] after:content-[''] after:absolute after:-bottom-2 after:w-1 after:h-1 after:bg-[#05E699] after:rounded-full">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
-            <span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Dashboard</span>
+            <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Inicio</span>
         </router-link>
         
         <!-- Activity -->
@@ -17,31 +20,34 @@
             class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors active:scale-90 transition-transform duration-200"
             active-class="text-[#05E699]">
             <span class="material-symbols-outlined">receipt_long</span>
-            <span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Actividad</span>
+            <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Actividad</span>
         </router-link>
 
         <!-- Add -->
-        <router-link to="/app/expenses/new"
-            class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors active:scale-90 transition-transform duration-200"
-            active-class="text-[#05E699]">
-            <span class="material-symbols-outlined">add_circle</span>
-            <span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Agregar</span>
-        </router-link>
+        <button 
+            @click="store.openNewEntry"
+            :class="[
+                'flex flex-col items-center justify-center transition-all duration-200 active:scale-90',
+                store.isNewEntryOpen ? 'text-[#05E699]' : 'text-[#9CA3AF] hover:text-[#05E699]'
+            ]">
+            <span class="material-symbols-outlined transition-transform duration-300" :class="{ 'rotate-45': store.isNewEntryOpen }">add_circle</span>
+            <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Agregar</span>
+        </button>
 
         <!-- Budgets -->
         <router-link to="/app/budgets"
             class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors active:scale-90 transition-transform duration-200"
             active-class="text-[#05E699]">
             <span class="material-symbols-outlined">account_balance_wallet</span>
-            <span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Presupuestos</span>
+            <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Presupuesto</span>
         </router-link>
 
-        <!-- Profile -->
+        <!-- Profile / Cuentas -->
         <router-link to="/app/settings"
             class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors active:scale-90 transition-transform duration-200"
             active-class="text-[#05E699]">
-            <span class="material-symbols-outlined">person</span>
-            <span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Perfil</span>
+            <span class="material-symbols-outlined">wallet</span>
+            <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Cuentas</span>
         </router-link>
     </nav>
 </template>
