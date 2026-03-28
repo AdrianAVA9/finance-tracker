@@ -18,7 +18,7 @@ interface Budget {
 const currentDate = new Date()
 const selectedMonth = ref(currentDate.getMonth() + 1)
 const selectedYear = ref(currentDate.getFullYear())
-const expectedIncome = ref<number>(5000) // Mock default for design alignment
+const expectedIncome = ref<number>(0)
 const budgets = ref<Budget[]>([])
 const isLoading = ref(false)
 const searchQuery = ref('')
@@ -38,8 +38,15 @@ const years = [2024, 2025, 2026, 2027]
 // Computed Stats
 const totalBudgeted = computed(() => budgets.value.reduce((sum, b) => sum + b.limitAmount, 0))
 const totalSpent = computed(() => budgets.value.reduce((sum, b) => sum + b.spentAmount, 0))
-const remainingToAllocate = computed(() => Math.max(0, expectedIncome.value - totalBudgeted.value))
+const remainingToAllocate = computed(() => expectedIncome.value - totalBudgeted.value)
 const spentPercentage = computed(() => totalBudgeted.value > 0 ? (totalSpent.value / totalBudgeted.value) * 100 : 0)
+
+// Dynamic UI for Remaining Balance
+const isOverbudgeted = computed(() => remainingToAllocate.value < 0)
+const remainingColorClass = computed(() => isOverbudgeted.value ? 'text-red-500' : 'text-accent-lime')
+const remainingStatusLabel = computed(() => isOverbudgeted.value ? 'Excedido' : 'En Orden')
+const remainingStatusClass = computed(() => isOverbudgeted.value ? 'bg-red-500/10 text-red-500' : 'bg-accent-lime/10 text-accent-lime')
+const remainingIcon = computed(() => isOverbudgeted.value ? 'report_problem' : 'savings')
 
 // Filtered and Sorted Budgets
 const filteredBudgets = computed(() => {
@@ -65,7 +72,8 @@ const loadBudgets = async () => {
     const { data } = await api.get('/api/v1/budgets', {
       params: { month: selectedMonth.value, year: selectedYear.value }
     })
-    budgets.value = data
+    budgets.value = data.budgets
+    expectedIncome.value = data.monthlyIncome
   } catch (error) {
     console.error('Failed to load budgets', error)
   } finally {
@@ -183,15 +191,19 @@ watch([selectedMonth, selectedYear], loadBudgets)
           <!-- Remaining -->
           <div class="p-6 rounded-xl bg-surface-light dark:bg-card-dark shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col gap-4 relative overflow-hidden group">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-              <span class="material-symbols-outlined text-6xl text-accent-lime">savings</span>
+              <span class="material-symbols-outlined text-6xl" :class="remainingColorClass">{{ remainingIcon }}</span>
             </div>
             <div>
               <p class="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">Por Asignar</p>
-              <p class="text-3xl font-extrabold text-accent-lime mt-1">₡{{ remainingToAllocate.toLocaleString() }}</p>
+              <p class="text-3xl font-extrabold mt-1" :class="remainingColorClass">
+                {{ remainingToAllocate < 0 ? '-' : '' }}₡{{ Math.abs(remainingToAllocate).toLocaleString() }}
+              </p>
             </div>
             <div class="flex items-center gap-2 mt-auto">
-              <span class="bg-accent-lime/10 text-accent-lime text-xs font-bold px-2 py-1 rounded">En Orden</span>
-              <span class="text-slate-400 text-xs">{{ ((remainingToAllocate/expectedIncome)*100).toFixed(0) }}% de ingresos libres</span>
+              <span class="text-xs font-bold px-2 py-1 rounded" :class="remainingStatusClass">{{ remainingStatusLabel }}</span>
+              <span class="text-slate-400 text-xs" v-if="expectedIncome > 0">
+                {{ Math.abs((remainingToAllocate/expectedIncome)*100).toFixed(0) }}% {{ isOverbudgeted ? 'por encima' : 'de ingresos libres' }}
+              </span>
             </div>
           </div>
         </div>

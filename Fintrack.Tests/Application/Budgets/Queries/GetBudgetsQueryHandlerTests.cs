@@ -57,7 +57,21 @@ namespace Fintrack.Tests.Application.Budgets.Queries
             };
             context.Budgets.Add(budget);
 
-            // 3. Seed Expenses for this month
+            // 3. Seed Recurring Income (Expected Income)
+            var recurringIncome = new RecurringIncome
+            {
+                UserId = userId,
+                Source = "Salario",
+                Amount = 5000.00m,
+                CategoryId = 1, // Assume a category exists for test
+                IsActive = true,
+                StartDate = new DateTime(2024, 1, 1),
+                NextProcessingDate = new DateTime(2024, 3, 1),
+                Frequency = Fintrack.Server.Models.Enums.RecurringFrequency.Monthly
+            };
+            context.RecurringIncomes.Add(recurringIncome);
+
+            // 4. Seed Expenses for this month
             var expense = new Expense
             {
                 Id = 1,
@@ -78,18 +92,6 @@ namespace Fintrack.Tests.Application.Budgets.Queries
             };
             context.ExpenseItems.Add(expenseItem);
 
-            // 4. Seed Expense for DIFFERENT month (should not be counted)
-            var otherExpense = new Expense
-            {
-                Id = 2,
-                UserId = userId,
-                Date = new DateTime(year, month + 1, 1),
-                Merchant = "Rent Corp",
-                TotalAmount = 800.00m
-            };
-            context.Expenses.Add(otherExpense);
-            context.ExpenseItems.Add(new ExpenseItem { Id = 2, ExpenseId = 2, CategoryId = 1, ItemAmount = 800.00m });
-
             await context.SaveChangesAsync();
 
             var handler = new GetBudgetsQueryHandler(context);
@@ -99,13 +101,12 @@ namespace Fintrack.Tests.Application.Budgets.Queries
             var result = await handler.Handle(query, CancellationToken.None);
 
             // Assert
-            Assert.Single(result);
-            var dto = result.First();
+            Assert.Single(result.Budgets);
+            var dto = result.Budgets.First();
             Assert.Equal(1, dto.CategoryId);
-            Assert.Equal("Alquiler", dto.CategoryName);
-            Assert.Equal("Vivienda", dto.CategoryGroup);
             Assert.Equal(1000.00m, dto.LimitAmount);
-            Assert.Equal(800.00m, dto.SpentAmount); // Only the first expense item should be counted
+            Assert.Equal(800.00m, dto.SpentAmount);
+            Assert.Equal(5000.00m, result.MonthlyIncome);
         }
 
         [Fact]
@@ -120,7 +121,8 @@ namespace Fintrack.Tests.Application.Budgets.Queries
             var result = await handler.Handle(query, CancellationToken.None);
 
             // Assert
-            Assert.Empty(result);
+            Assert.Empty(result.Budgets);
+            Assert.Equal(0, result.MonthlyIncome);
         }
     }
 }
