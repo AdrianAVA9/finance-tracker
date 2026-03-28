@@ -96,7 +96,7 @@ onMounted(loadCategories);
 </script>
 
 <template>
-    <div class="max-w-xl mx-auto py-8 px-4">
+    <div class="w-full pb-6">
         <!-- Success Alert -->
         <Transition
             enter-active-class="transform transition duration-300 ease-out"
@@ -114,15 +114,15 @@ onMounted(loadCategories);
 
         <div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-800 rounded-2xl shadow-soft overflow-hidden">
             <!-- Header -->
-            <div class="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800">
+            <div class="p-5 border-b border-slate-100 dark:border-slate-800">
                 <h1 class="text-xs font-bold tracking-widest text-primary uppercase mb-1">Registro de Ingresos</h1>
-                <p class="text-sm text-slate-500 dark:text-text-secondary-dark">Complete los detalles para su nueva entrada de capital.</p>
+                <p class="text-[11px] text-slate-500 dark:text-text-secondary-dark">Complete los detalles para su nueva entrada de capital.</p>
             </div>
 
-            <form @submit.prevent="handleSave(false)" class="p-6 md:p-8 space-y-6">
+            <form @submit.prevent="handleSave(false)" class="p-5 space-y-4">
                 <!-- Amount Section -->
-                <div class="bg-slate-50 dark:bg-background-dark/50 border border-slate-200 dark:border-slate-800 rounded-xl p-6 text-center">
-                    <label class="block text-sm font-medium text-slate-500 mb-2">Monto del Ingreso</label>
+                <div class="bg-slate-50 dark:bg-background-dark/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-center">
+                    <label class="block text-xs font-medium text-slate-500 mb-1">Monto del Ingreso</label>
                     <div class="flex items-center justify-center gap-2">
                         <span class="text-4xl font-bold text-primary">+</span>
                         <span class="text-4xl font-bold text-slate-400 dark:text-slate-500">₡</span>
@@ -244,11 +244,11 @@ onMounted(loadCategories);
                 </div>
 
                 <!-- Actions -->
-                <div class="flex flex-col gap-3 pt-4">
+                <div class="flex flex-col gap-2 pt-2">
                     <button
                         type="submit"
                         :disabled="isSaving"
-                        class="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primary-hover transition-all shadow-glow active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        class="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primary-hover transition-all shadow-glow active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         <span v-if="isSaving" class="material-symbols-outlined animate-spin shadow-none">sync</span>
                         {{ isSaving ? 'Guardando...' : 'Guardar Ingreso' }}
@@ -257,7 +257,7 @@ onMounted(loadCategories);
                         @click="handleSave(true)"
                         type="button"
                         :disabled="isSaving"
-                        class="w-full bg-transparent border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-medium py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all"
+                        class="w-full bg-transparent border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-medium py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all"
                     >
                         Guardar y registrar otro
                     </button>
