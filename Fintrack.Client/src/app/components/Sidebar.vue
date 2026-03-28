@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useActionSheetStore } from '@/stores/useActionSheetStore';
+
+const store = useActionSheetStore();
 </script>
 
 <template>
@@ -21,12 +24,15 @@
         </router-link>
 
         <!-- Add -->
-        <router-link to="/app/expenses/new"
-            class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors active:scale-90 transition-transform duration-200"
-            active-class="text-[#05E699]">
-            <span class="material-symbols-outlined">add_circle</span>
+        <button 
+            @click="store.openNewEntry"
+            :class="[
+                'flex flex-col items-center justify-center transition-all duration-200 active:scale-90',
+                store.isNewEntryOpen ? 'text-[#05E699]' : 'text-[#9CA3AF] hover:text-[#05E699]'
+            ]">
+            <span class="material-symbols-outlined transition-transform duration-300" :class="{ 'rotate-45': store.isNewEntryOpen }">add_circle</span>
             <span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Agregar</span>
-        </router-link>
+        </button>
 
         <!-- Budgets -->
         <router-link to="/app/budgets"

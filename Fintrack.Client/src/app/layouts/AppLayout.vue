@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Sidebar from '@/app/components/Sidebar.vue';
 import Header from '@/app/components/Header.vue';
+import NewEntryActionSheet from '@/app/components/NewEntryActionSheet.vue';
 </script>
 
 <template>
@@ -12,5 +13,6 @@ import Header from '@/app/components/Header.vue';
     </main>
 
     <Sidebar />
+    <NewEntryActionSheet />
   </div>
 </template>

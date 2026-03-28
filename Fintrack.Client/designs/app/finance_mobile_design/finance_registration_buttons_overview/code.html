@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-surface": "#e2e2e8",
+              "on-primary-fixed": "#002112",
+              "on-tertiary-container": "#ac061b",
+              "on-background": "#e2e2e8",
+              "tertiary": "#ffdedc",
+              "primary-fixed-dim": "#00e296",
+              "on-error": "#690005",
+              "error": "#ffb4ab",
+              "on-primary": "#003822",
+              "surface-dim": "#111317",
+              "inverse-surface": "#e2e2e8",
+              "primary-fixed": "#4dffb1",
+              "surface-container-highest": "#333539",
+              "surface-bright": "#37393e",
+              "primary-container": "#05e699",
+              "on-primary-container": "#00623e",
+              "on-secondary-fixed-variant": "#065134",
+              "on-secondary-container": "#84c6a0",
+              "on-tertiary-fixed": "#410004",
+              "tertiary-fixed": "#ffdad7",
+              "on-tertiary": "#68000b",
+              "on-secondary": "#003822",
+              "outline-variant": "#3b4a40",
+              "tertiary-container": "#ffb8b3",
+              "surface-container": "#1e2024",
+              "background": "#111317",
+              "primary": "#77ffbb",
+              "surface-tint": "#00e296",
+              "on-error-container": "#ffdad6",
+              "surface-container-lowest": "#0c0e12",
+              "surface-container-low": "#1a1c20",
+              "secondary-container": "#0b5436",
+              "error-container": "#93000a",
+              "secondary-fixed": "#adf1c9",
+              "on-tertiary-fixed-variant": "#930014",
+              "on-surface-variant": "#bacbbe",
+              "surface": "#111317",
+              "surface-variant": "#333539",
+              "secondary-fixed-dim": "#92d5ae",
+              "inverse-on-surface": "#2f3035",
+              "tertiary-fixed-dim": "#ffb3ae",
+              "outline": "#849589",
+              "on-secondary-fixed": "#002112",
+              "surface-container-high": "#282a2e",
+              "on-primary-fixed-variant": "#005233",
+              "inverse-primary": "#006c46",
+              "secondary": "#92d5ae"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-blur-overlay {
+            background-color: rgba(18, 20, 24, 0.8);
+            backdrop-filter: blur(24px);
+        }
+        .glass-card {
+            background: rgba(30, 34, 40, 0.6);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body overflow-hidden">
+<!-- Mocked Dashboard Background (Underlay) -->
+<main class="fixed inset-0 z-0 p-6 flex flex-col gap-8 opacity-40 grayscale-[0.2]">
+<!-- TopAppBar Placeholder -->
+<header class="flex justify-between items-center h-16">
+<div class="text-xl font-black tracking-tighter text-primary-container font-headline">CERO</div>
+<div class="w-10 h-10 rounded-full bg-surface-container border border-outline-variant"></div>
+</header>
+<!-- Bento Grid Mockup -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="col-span-2 h-48 bg-surface-container rounded-3xl p-6">
+<div class="w-24 h-4 bg-surface-container-highest rounded mb-4"></div>
+<div class="w-48 h-10 bg-surface-container-highest rounded"></div>
+</div>
+<div class="h-48 bg-surface-container rounded-3xl p-6"></div>
+<div class="h-48 bg-surface-container rounded-3xl p-6"></div>
+</div>
+<!-- List Mockup -->
+<div class="space-y-4">
+<div class="h-16 bg-surface-container-low rounded-2xl"></div>
+<div class="h-16 bg-surface-container-low rounded-2xl"></div>
+<div class="h-16 bg-surface-container-low rounded-2xl"></div>
+<div class="h-16 bg-surface-container-low rounded-2xl"></div>
+</div>
+</main>
+<!-- THE OVERLAY LAYER -->
+<div class="fixed inset-0 z-50 bg-blur-overlay flex flex-col items-center justify-end pb-24 px-6">
+<!-- Header Label for Overlay -->
+<div class="mb-12 text-center">
+<h2 class="font-headline text-2xl font-bold tracking-tight text-white mb-2">New Entry</h2>
+<p class="text-on-surface-variant font-label text-sm uppercase tracking-[0.2em]">Select action type</p>
+</div>
+<!-- Quick Action Buttons Container -->
+<div class="w-full max-w-md space-y-4">
+<!-- 1. AI Scan (Prominent) -->
+<button class="w-full group relative flex items-center justify-between p-1 pr-6 bg-primary-container text-on-primary-container rounded-full overflow-hidden transition-transform active:scale-95 shadow-[0_0_40px_rgba(5,230,153,0.15)]">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-on-primary-container/10 rounded-full flex items-center justify-center m-1">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">document_scanner</span>
+</div>
+<div class="text-left">
+<span class="block font-headline font-bold text-lg leading-tight">AI Receipt Scan</span>
+<span class="block text-xs font-medium opacity-80 uppercase tracking-wider">Instant matching &amp; extraction</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-xl opacity-50 group-hover:translate-x-1 transition-transform">arrow_forward_ios</span>
+</button>
+<!-- 2. Manual Expense (Subtle) -->
+<button class="w-full group flex items-center justify-between p-1 pr-6 bg-surface-container text-on-surface rounded-full transition-all hover:bg-surface-container-highest active:scale-95">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-error-container/20 text-error rounded-full flex items-center justify-center m-1">
+<span class="material-symbols-outlined text-2xl">receipt_long</span>
+</div>
+<div class="text-left">
+<span class="block font-headline font-bold text-lg leading-tight">Manual Expense</span>
+<span class="block text-xs font-medium text-on-surface-variant uppercase tracking-wider">Log a single payment</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-xl text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+<!-- 3. Manual Income (Subtle) -->
+<button class="w-full group flex items-center justify-between p-1 pr-6 bg-surface-container text-on-surface rounded-full transition-all hover:bg-surface-container-highest active:scale-95">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-secondary-container/20 text-primary-fixed-dim rounded-full flex items-center justify-center m-1">
+<span class="material-symbols-outlined text-2xl">payments</span>
+</div>
+<div class="text-left">
+<span class="block font-headline font-bold text-lg leading-tight">Manual Income</span>
+<span class="block text-xs font-medium text-on-surface-variant uppercase tracking-wider">Record earnings &amp; deposits</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-xl text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+<!-- Additional Quick Options Row -->
+<div class="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-outline-variant/10">
+<button class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-surface-container-low text-on-surface-variant font-label text-xs uppercase tracking-widest hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">history_toggle_off</span>
+                    Recurring
+                </button>
+<button class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-surface-container-low text-on-surface-variant font-label text-xs uppercase tracking-widest hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">category</span>
+                    Budgeting
+                </button>
+</div>
+</div>
+</div>
+<!-- Close FAB -->
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[60]">
+<button class="w-16 h-16 rounded-full bg-white text-background flex items-center justify-center shadow-[0_12px_40px_rgba(0,0,0,0.5)] active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-3xl font-bold">close</span>
+</button>
+</div>
+<!-- Bottom Navigation Shell (Inactive/Backgrounded) -->
+<nav class="fixed bottom-0 w-full z-40 rounded-t-2xl bg-surface-container/90 backdrop-blur-2xl px-4 pb-8 pt-4 flex justify-around items-center grayscale opacity-30">
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined mb-1">account_balance_wallet</span>
+<span class="font-label text-[10px] uppercase tracking-widest">Vault</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined mb-1">receipt_long</span>
+<span class="font-label text-[10px] uppercase tracking-widest">Activity</span>
+</div>
+<!-- Gap for FAB -->
+<div class="w-16"></div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined mb-1">insert_chart</span>
+<span class="font-label text-[10px] uppercase tracking-widest">Insights</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="font-label text-[10px] uppercase tracking-widest">Settings</span>
+</div>
+</nav>
+</body></html>
