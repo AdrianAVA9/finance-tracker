@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import dashboardService, { type DashboardSummaryDto } from '@/services/dashboardService';
 
 const dashboardData = ref<DashboardSummaryDto | null>(null);
@@ -45,33 +45,7 @@ const formatDate = (dateString: string) => {
     }) + `, ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
 };
 
-const maxChartValue = computed(() => {
-    if (!dashboardData.value || dashboardData.value.monthlyData.length === 0) return 1000;
-    const values = dashboardData.value.monthlyData.flatMap(d => [d.income, d.expense]);
-    const max = Math.max(...values);
-    return max === 0 ? 1000 : max * 1.1; // 10% padding
-});
 
-const getBarHeight = (value: number) => {
-    return `${(value / maxChartValue.value) * 100}%`;
-};
-
-const getCategoryPercentage = (amount: number) => {
-    if (!dashboardData.value || dashboardData.value.monthlyExpenses === 0) return 0;
-    return Math.round((amount / dashboardData.value.monthlyExpenses) * 100);
-};
-
-const getCategoryDashOffset = (index: number) => {
-    if (!dashboardData.value) return 0;
-    let offset = 0;
-    for (let i = 0; i < index; i++) {
-        const cat = dashboardData.value.topSpendingCategories[i];
-        if (cat) {
-            offset += getCategoryPercentage(cat.amount);
-        }
-    }
-    return -offset;
-};
 </script>
 
 <template>
@@ -95,38 +69,10 @@ const getCategoryDashOffset = (index: number) => {
             </div>
         </section>
 
-        <!-- Spending Trend Chart Area -->
-        <section class="bg-[#1e2024] rounded-xl p-5 border border-white/5 relative overflow-hidden">
-            <div class="flex justify-between items-end mb-6">
-                <div>
-                    <h3 class="font-headline font-bold text-lg">Tendencia de Gastos</h3>
-                    <p class="text-xs text-[#bacbbe]">Análisis mensual</p>
-                </div>
-                <span :class="[
-                    dashboardData.expenseChangePercentage <= 0 ? 'text-[#05E699] bg-[#05E699]/10' : 'text-[#FF4D4D] bg-[#FF4D4D]/10',
-                    'text-xs font-bold px-2 py-1 rounded'
-                ]">
-                    {{ dashboardData.expenseChangePercentage > 0 ? '+' : '' }}{{ Math.round(dashboardData.expenseChangePercentage) }}%
-                </span>
-            </div>
-            
-            <!-- Asymmetric Data Visualization (using monthlyData) -->
-            <div class="h-32 flex items-end gap-2">
-                <div v-for="(item, index) in dashboardData.monthlyData.slice(-7)" :key="item.month" 
-                     :class="[
-                        'flex-1 rounded-t-lg',
-                        index === dashboardData.monthlyData.slice(-7).length - 1 ? 'bg-[#05E699] shadow-[0_0_20px_rgba(5,230,153,0.2)]' : 'bg-[#333539] opacity-40'
-                     ]"
-                     :style="{ height: getBarHeight(item.expense) }"
-                ></div>
-            </div>
-        </section>
-
         <!-- Top Budgets List -->
         <section class="space-y-4">
             <div class="flex justify-between items-center">
-                <h3 class="font-headline font-bold text-xl tracking-tight">Top Budgets</h3>
-                <router-link to="/app/budgets" class="text-[#bacbbe] text-sm font-medium">View All</router-link>
+                <h3 class="font-headline font-bold text-xl tracking-tight">Presupuestos</h3>
             </div>
             
             <div class="space-y-2">
@@ -193,10 +139,7 @@ const getCategoryDashOffset = (index: number) => {
             </div>
         </section>
 
-        <!-- FAB: Scan Invoice -->
-        <router-link to="/app/expenses/upload" class="fixed right-6 bottom-28 w-14 h-14 bg-[#05E699] text-[#003822] rounded-full shadow-[0_8px_32px_rgba(5,230,153,0.3)] flex items-center justify-center z-50 active:scale-90 transition-transform cursor-pointer">
-            <span class="material-symbols-outlined font-bold" style="font-variation-settings: 'FILL' 1;">document_scanner</span>
-        </router-link>
+
     </div>
 
     <!-- Loading State -->
