@@ -53,18 +53,32 @@ const formatDate = (dateString: string) => {
         <!-- Hero Balance Section -->
         <section class="space-y-1">
             <p class="text-[#bacbbe] font-label text-xs uppercase tracking-[0.2em] font-medium">Balance Total</p>
-            <h1 class="text-4xl font-extrabold font-headline tracking-tight text-[#F3F4F6]">
+            <h1 class="text-4xl font-extrabold font-headline tracking-tight"
+                :class="dashboardData.totalBalance < 0 ? 'text-[#FF4D4D]' : 'text-[#F3F4F6]'">
                 {{ formatCurrency(dashboardData.totalBalance) }}
             </h1>
             
-            <div class="flex gap-6 pt-4">
-                <div class="flex flex-col">
-                    <span class="text-[10px] text-[#bacbbe] uppercase font-bold tracking-wider">Ingresos</span>
-                    <span class="text-[#05E699] font-headline font-bold text-lg">+{{ formatCurrency(dashboardData.monthlyIncome) }}</span>
+            <div class="grid grid-cols-2 gap-3 pt-4">
+                <!-- Income Card -->
+                <div class="bg-[#1a1c20] p-3 rounded-lg border-l-[3px] border-[#05E699] flex flex-col justify-center min-w-0">
+                    <span class="text-[10px] text-[#bacbbe] uppercase font-bold tracking-widest">Ingresos</span>
+                    <div class="flex items-center gap-1 mt-0.5">
+                        <span class="material-symbols-outlined text-[#05E699] text-[16px]">arrow_upward</span>
+                        <span class="text-[#05E699] font-headline font-bold text-sm sm:text-base truncate">
+                            {{ formatCurrency(dashboardData.monthlyIncome) }}
+                        </span>
+                    </div>
                 </div>
-                <div class="flex flex-col">
-                    <span class="text-[10px] text-[#bacbbe] uppercase font-bold tracking-wider">Gastos</span>
-                    <span class="text-[#FF4D4D] font-headline font-bold text-lg">-{{ formatCurrency(dashboardData.monthlyExpenses) }}</span>
+
+                <!-- Expenses Card -->
+                <div class="bg-[#1a1c20] p-3 rounded-lg border-l-[3px] border-[#FF4D4D] flex flex-col justify-center min-w-0">
+                    <span class="text-[10px] text-[#bacbbe] uppercase font-bold tracking-widest">Gastos</span>
+                    <div class="flex items-center gap-1 mt-0.5">
+                        <span class="material-symbols-outlined text-[#FF4D4D] text-[16px]">arrow_downward</span>
+                        <span class="text-[#FF4D4D] font-headline font-bold text-sm sm:text-base truncate">
+                            -{{ formatCurrency(dashboardData.monthlyExpenses) }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </section>
