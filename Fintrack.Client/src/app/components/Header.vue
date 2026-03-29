@@ -16,7 +16,7 @@ const handleLogout = async () => {
     <header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#111317]/80 backdrop-blur-xl no-border bg-gradient-to-b from-[#111317] to-transparent">
         <div class="flex items-center gap-2">
             <img alt="CERO Logo" class="h-6 w-auto" :src="logo" />
-            <span class="text-xl font-black text-[#05E699] tracking-tighter font-['Manrope']">CERO</span>
+            <span class="text-xl font-black text-[#05E699] tracking-tighter font-['Manrope']">CEROBASE</span>
         </div>
         
         <div class="flex items-center gap-4">
