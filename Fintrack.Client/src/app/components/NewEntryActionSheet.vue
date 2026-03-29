@@ -22,7 +22,7 @@ const handleNavigation = (route: string) => {
             <div class="absolute inset-0 bg-[#111317]/80 backdrop-blur-[12px] transition-opacity" @click="close"></div>
             
             <!-- Modal Content -->
-            <div class="relative w-full max-w-md mx-auto bg-[#111317] rounded-t-[32px] p-6 pb-12 shadow-[0_-10px_60px_rgba(30,34,40,0.5)] border-t border-white/5" @click.stop>
+            <div class="relative w-full max-w-md mx-auto bg-[#111317] rounded-t-2xl p-6 pb-12 shadow-[0_-10px_60px_rgba(30,34,40,0.5)] border-t border-white/5" @click.stop>
                 
                 <!-- Header -->
                 <div class="mb-8">
@@ -85,7 +85,7 @@ const handleNavigation = (route: string) => {
                 <div class="flex justify-center mt-8 relative z-10">
                     <button 
                         @click="close"
-                        class="w-14 h-14 bg-[#1e2024] border border-white/10 hover:bg-[#2A2F37] rounded-[20px] flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-200 active:scale-90">
+                        class="w-14 h-14 bg-[#1e2024] border border-white/10 hover:bg-[#2A2F37] rounded-xl flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-200 active:scale-90">
                         <span class="material-symbols-outlined text-[#F3F4F6] text-2xl">close</span>
                     </button>
                 </div>

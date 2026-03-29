@@ -3,18 +3,13 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
 import CategorySelector from '@/app/components/common/CategorySelector.vue'
+import ConfirmationModal from '@/app/components/common/ConfirmationModal.vue'
 
 interface Category {
   id: number
   name: string
   icon?: string
-}
-
-interface BudgetEntry {
-  id: number
-  categoryId: number
-  categoryName: string
-  limitAmount: number
+  color?: string
 }
 
 const route = useRoute()
@@ -28,6 +23,8 @@ const selectedCategoryId = ref<number | null>(null)
 const limitAmount = ref<number | null>(null)
 const isLoading = ref(true)
 const isSubmitting = ref(false)
+const showDeleteConfirm = ref(false)
+const isDeleting = ref(false)
 
 // Use current date for context unless provided
 const month = ref(parseInt(route.query.month as string) || new Date().getMonth() + 1)
@@ -90,19 +87,19 @@ const handleSave = async () => {
 
 const handleDelete = async () => {
   if (!budgetId.value) return
-  
-  if (confirm('¿Estás seguro de que deseas eliminar este presupuesto? Esta acción es permanente.')) {
-    try {
-      isSubmitting.value = true
-      await api.delete(`/api/v1/budgets/${budgetId.value}`)
-      router.push('/app/budgets')
-    } catch (error) {
-      console.error('Failed to delete budget', error)
-    } finally {
-      isSubmitting.value = false
-    }
+  isDeleting.value = true
+  try {
+    await api.delete(`/api/v1/budgets/${budgetId.value}`)
+    router.push('/app/budgets')
+  } catch (error) {
+    console.error('Failed to delete budget', error)
+  } finally {
+    isDeleting.value = false
+    showDeleteConfirm.value = false
   }
 }
+
+const selectedCategory = computed(() => categories.value.find(c => c.id === selectedCategoryId.value))
 
 onMounted(async () => {
   await fetchCategories()
@@ -123,7 +120,7 @@ const formatCurrency = (value: number) => {
 
 const goBack = () => router.back()
 
-const months = [
+const monthsLabels = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ]
@@ -131,6 +128,37 @@ const months = [
 
 <template>
   <div class="space-y-10 pb-20">
+    <!-- Delete Confirmation Modal -->
+    <ConfirmationModal
+      :show="showDeleteConfirm"
+      title="¿Eliminar Presupuesto?"
+      description="Esta acción eliminará el límite establecido para esta categoría en este mes. No borrará tus gastos, pero perderás el seguimiento del presupuesto."
+      confirm-text="Eliminar Presupuesto"
+      cancel-text="Mantener"
+      :is-loading="isDeleting"
+      variant="danger"
+      @confirm="handleDelete"
+      @cancel="showDeleteConfirm = false"
+    >
+      <template #item-preview v-if="selectedCategory">
+        <div class="flex items-center gap-4 bg-surface-container-lowest/50 p-4 rounded-xl">
+          <div 
+            class="w-10 h-10 rounded-full flex items-center justify-center opacity-80"
+            :style="selectedCategory.color ? { backgroundColor: selectedCategory.color + '20', color: selectedCategory.color } : { backgroundColor: '#ffffff10' }"
+          >
+            <span class="material-symbols-outlined text-sm">{{ selectedCategory.icon || 'category' }}</span>
+          </div>
+          <div class="text-left flex-1">
+            <p class="text-sm font-bold text-on-surface">{{ selectedCategory.name }}</p>
+            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-label">{{ monthsLabels[month - 1] }} {{ year }}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-black text-on-surface">₡{{ limitAmount?.toLocaleString() || '0' }}</p>
+          </div>
+        </div>
+      </template>
+    </ConfirmationModal>
+
     <!-- Header Section -->
     <header class="flex items-center justify-between px-1">
       <div class="flex items-center gap-4">
@@ -146,7 +174,7 @@ const months = [
             {{ isEditMode ? 'Editar Presupuesto' : 'Configurar Presupuesto' }}
           </h1>
           <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
-            {{ months[month - 1] }} {{ year }} • Planificación de Precisión
+            {{ monthsLabels[month - 1] }} {{ year }} • Planificación de Precisión
           </p>
         </div>
       </div>
@@ -163,7 +191,7 @@ const months = [
       <!-- Hero Amount Input -->
       <section class="relative group">
         <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1">Límite Mensual</label>
-        <div class="bg-surface-container-low p-10 rounded-2xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-primary-container/[0.02] focus-within:border-primary-container/20">
+        <div class="bg-surface-container-low p-10 rounded-xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-primary-container/[0.02] focus-within:border-primary-container/20">
           <div class="flex items-baseline gap-2">
             <span class="font-headline text-4xl font-black text-primary-container">₡</span>
             <input 
@@ -192,7 +220,7 @@ const months = [
       </section>
 
       <!-- Threshold Alert (UI Only) -->
-      <section class="bg-surface-container-low p-6 rounded-2xl border border-white/[0.02]">
+      <section class="bg-surface-container-low p-6 rounded-xl border border-white/[0.02]">
         <div class="flex items-center justify-between">
           <div class="flex gap-4 items-center">
             <div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary-container">
@@ -234,7 +262,7 @@ const months = [
       <!-- Delete Action (Edit Mode Only) -->
       <div v-if="isEditMode" class="pt-12 border-t border-white/[0.03] space-y-6">
         <button 
-          @click="handleDelete"
+          @click="showDeleteConfirm = true"
           type="button"
           :disabled="isSubmitting"
           class="w-full group flex items-center justify-center gap-3 py-4 text-red-500 font-headline font-bold hover:bg-red-500/5 rounded-xl transition-all active:scale-[0.98] disabled:opacity-50"

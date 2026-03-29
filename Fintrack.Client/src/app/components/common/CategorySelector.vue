@@ -178,7 +178,7 @@ const close = () => {
                   <div class="h-px w-full bg-white/[0.03]"></div>
                 </div>
 
-                <div class="bg-surface-container-low rounded-2xl overflow-hidden border border-white/[0.02] shadow-sm">
+                <div class="bg-surface-container-low rounded-xl overflow-hidden border border-white/[0.02] shadow-sm">
                   <button 
                     v-for="cat in group.categories" 
                     :key="cat.id"

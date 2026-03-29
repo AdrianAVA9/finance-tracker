@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#77ffbb",
+              "on-primary-container": "#00623e",
+              "error-container": "#93000a",
+              "secondary": "#92d5ae",
+              "on-error": "#690005",
+              "on-secondary": "#003822",
+              "outline-variant": "#3b4a40",
+              "on-error-container": "#ffdad6",
+              "on-tertiary": "#68000b",
+              "on-primary-fixed": "#002112",
+              "inverse-surface": "#e2e2e8",
+              "on-secondary-container": "#84c6a0",
+              "surface-tint": "#00e296",
+              "on-secondary-fixed": "#002112",
+              "surface-bright": "#37393e",
+              "inverse-primary": "#006c46",
+              "tertiary": "#ffdedc",
+              "on-surface": "#e2e2e8",
+              "tertiary-container": "#ffb8b3",
+              "surface-variant": "#333539",
+              "inverse-on-surface": "#2f3035",
+              "primary-container": "#05e699",
+              "surface-container-low": "#1a1c20",
+              "tertiary-fixed": "#ffdad7",
+              "on-background": "#e2e2e8",
+              "error": "#ffb4ab",
+              "secondary-container": "#0b5436",
+              "on-primary-fixed-variant": "#005233",
+              "on-tertiary-container": "#ac061b",
+              "on-tertiary-fixed-variant": "#930014",
+              "tertiary-fixed-dim": "#ffb3ae",
+              "surface-dim": "#111317",
+              "primary-fixed-dim": "#00e296",
+              "surface-container-lowest": "#0c0e12",
+              "secondary-fixed-dim": "#92d5ae",
+              "on-secondary-fixed-variant": "#065134",
+              "surface-container": "#1e2024",
+              "background": "#111317",
+              "on-primary": "#003822",
+              "surface-container-highest": "#333539",
+              "surface-container-high": "#282a2e",
+              "surface": "#111317",
+              "primary-fixed": "#4dffb1",
+              "outline": "#849589",
+              "on-tertiary-fixed": "#410004",
+              "on-surface-variant": "#bacbbe",
+              "secondary-fixed": "#adf1c9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #111317;
+            color: #F3F4F6;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-shadow {
+            box-shadow: 0 40px 60px -20px rgba(5, 230, 153, 0.04);
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-surface-dim min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="w-full sticky top-0 z-50 no-border bg-[#111317] flex justify-between items-center px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl overflow-hidden bg-surface-container-high ring-1 ring-outline-variant/20">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close up portrait of a young professional man with a friendly expression in a modern office with soft cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOxVINVXflb3OlmLTMTmecvtaaoFNCXxe5I0hBKcELNk1wX0uj1Dx6Ng0cha9OoT1DFBbRTaxkRtY_mvjdqKbg-GFi9orri3CHG-52jjy6s67gvZ95CkQ3XOvb3RCZBl7-h7v92aeddvt75KaklJnjlWGK0Muio95lmhc5ymWbJJBNQOO9XNDZ2lDZSTpBInLFm8wuLV7WiBm7RpmBHq9yIjm5tjuGGWUD-Ipyb0nuj30CpFbHb3ObEf90-wwfYnB3Ee_qB8Z40P7J"/>
+</div>
+<h1 class="font-['Manrope'] font-bold text-xl tracking-tight text-[#05E699]">Activity</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container hover:bg-[#1E2228] transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[#9CA3AF]">search</span>
+</button>
+</header>
+<main class="px-6 space-y-8">
+<!-- Month Selector & Year Selection -->
+<section class="space-y-6">
+<div class="flex items-center gap-4">
+<!-- Year Switcher -->
+<div class="flex items-center bg-surface-container-lowest border border-outline-variant/10 px-2 py-1.5 rounded-xl">
+<button class="w-6 h-6 flex items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<span class="font-headline text-xs font-bold text-[#F3F4F6] px-1.5">2024</span>
+<button class="w-6 h-6 flex items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+<div class="h-6 w-[1px] bg-outline-variant/20"></div>
+<!-- Horizontal Month Scroll -->
+<div class="flex flex-1 gap-8 overflow-x-auto py-2 scroll-smooth">
+<button class="flex-shrink-0 font-headline text-sm font-semibold text-[#9CA3AF] opacity-40">Jan</button>
+<button class="flex-shrink-0 font-headline text-sm font-semibold text-[#9CA3AF] opacity-60">Feb</button>
+<button class="flex-shrink-0 font-headline text-sm font-semibold text-[#9CA3AF] opacity-80">Mar</button>
+<div class="flex flex-col items-center gap-1">
+<button class="flex-shrink-0 font-headline text-sm font-bold text-[#05E699]">Apr</button>
+<div class="w-1 h-1 rounded-full bg-[#05E699]"></div>
+</div>
+<button class="flex-shrink-0 font-headline text-sm font-semibold text-[#9CA3AF]">May</button>
+<button class="flex-shrink-0 font-headline text-sm font-semibold text-[#9CA3AF]">Jun</button>
+<button class="flex-shrink-0 font-headline text-sm font-semibold text-[#9CA3AF]">Jul</button>
+</div>
+</div>
+<!-- Segmented Control -->
+<div class="bg-surface-container-lowest p-1 rounded-xl flex">
+<button class="flex-1 py-2.5 rounded-lg text-sm font-medium bg-[#1E2228] text-[#F3F4F6] shadow-sm">All</button>
+<button class="flex-1 py-2.5 rounded-lg text-sm font-medium text-[#9CA3AF] hover:text-[#F3F4F6] transition-colors">Incomes</button>
+<button class="flex-1 py-2.5 rounded-lg text-sm font-medium text-[#9CA3AF] hover:text-[#F3F4F6] transition-colors">Expenses</button>
+</div>
+</section>
+<!-- Activity List -->
+<section class="space-y-8">
+<!-- Group 1: Today -->
+<div class="space-y-4">
+<h3 class="font-headline text-[11px] uppercase tracking-[0.2em] text-[#9CA3AF] font-bold">Today, 24 April</h3>
+<div class="space-y-3">
+<!-- Transaction Item -->
+<div class="group flex items-center justify-between p-4 rounded-2xl bg-surface-container-low hover:bg-[#2A2F37] transition-all hover:-translate-y-0.5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[#F3F4F6]" data-icon="shopping_bag">shopping_bag</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#F3F4F6] font-headline">Apple Store</p>
+<p class="text-xs text-[#9CA3AF] font-medium">Technology</p>
+</div>
+</div>
+<p class="font-headline font-extrabold text-[#FF4D4D] text-sm">- $1,299.00</p>
+</div>
+<!-- Transaction Item -->
+<div class="group flex items-center justify-between p-4 rounded-2xl bg-surface-container-low hover:bg-[#2A2F37] transition-all hover:-translate-y-0.5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[#F3F4F6]" data-icon="payments">payments</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#F3F4F6] font-headline">Salary Company X</p>
+<p class="text-xs text-[#9CA3AF] font-medium">Income</p>
+</div>
+</div>
+<p class="font-headline font-extrabold text-[#05E699] text-sm">+ $8,450.00</p>
+</div>
+<!-- Transaction Item -->
+<div class="group flex items-center justify-between p-4 rounded-2xl bg-surface-container-low hover:bg-[#2A2F37] transition-all hover:-translate-y-0.5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[#F3F4F6]" data-icon="coffee">coffee</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#F3F4F6] font-headline">Starbucks</p>
+<p class="text-xs text-[#9CA3AF] font-medium">Food &amp; Drinks</p>
+</div>
+</div>
+<p class="font-headline font-extrabold text-[#FF4D4D] text-sm">- $6.50</p>
+</div>
+</div>
+</div>
+<!-- Group 2: Yesterday -->
+<div class="space-y-4">
+<h3 class="font-headline text-[11px] uppercase tracking-[0.2em] text-[#9CA3AF] font-bold">Yesterday, 23 April</h3>
+<div class="space-y-3">
+<!-- Transaction Item -->
+<div class="group flex items-center justify-between p-4 rounded-2xl bg-surface-container-low hover:bg-[#2A2F37] transition-all hover:-translate-y-0.5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[#F3F4F6]" data-icon="directions_car">directions_car</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#F3F4F6] font-headline">Uber Technologies</p>
+<p class="text-xs text-[#9CA3AF] font-medium">Transport</p>
+</div>
+</div>
+<p class="font-headline font-extrabold text-[#FF4D4D] text-sm">- $24.80</p>
+</div>
+<!-- Transaction Item -->
+<div class="group flex items-center justify-between p-4 rounded-2xl bg-surface-container-low hover:bg-[#2A2F37] transition-all hover:-translate-y-0.5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[#F3F4F6]" data-icon="fitness_center">fitness_center</span>
+</div>
+<div>
+<p class="text-sm font-bold text-[#F3F4F6] font-headline">Equinox Fitness</p>
+<p class="text-xs text-[#9CA3AF] font-medium">Wellness</p>
+</div>
+</div>
+<p class="font-headline font-extrabold text-[#FF4D4D] text-sm">- $185.00</p>
+</div>
+</div>
+</div>
+<!-- Visual Break: Featured Insight -->
+<div class="relative overflow-hidden p-6 rounded-3xl bg-gradient-to-br from-[#1E2228] to-[#111317] border border-[#05E699]/10">
+<div class="relative z-10 space-y-2">
+<p class="text-[10px] font-bold text-[#05E699] uppercase tracking-widest">Monthly Insight</p>
+<h4 class="font-headline text-lg font-bold">You saved 12% more than last month.</h4>
+<p class="text-xs text-[#9CA3AF] max-w-[200px]">Strategic spending on essentials helped boost your portfolio liquidity.</p>
+</div>
+<div class="absolute -right-4 -bottom-4 w-32 h-32 bg-[#05E699]/5 rounded-full blur-3xl"></div>
+<span class="material-symbols-outlined absolute right-6 top-1/2 -translate-y-1/2 text-4xl text-[#05E699]/20" data-icon="trending_up">trending_up</span>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-3xl bg-[#1E2228]/80 backdrop-blur-xl shadow-[0_-8px_40px_rgba(5,230,153,0.05)] flex justify-around items-center px-4 pb-6 pt-3">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] px-4 py-2 hover:text-[#F3F4F6] transition-all scale-98 active:duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="grid_view">grid_view</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide">Home</span>
+</a>
+<!-- Activity (Active) -->
+<a class="flex flex-col items-center justify-center text-[#05E699] bg-[#05E699]/10 rounded-2xl px-4 py-2 hover:text-[#F3F4F6] transition-all scale-98 active:duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="swap_horiz">swap_horiz</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide">Activity</span>
+</a>
+<!-- Cards -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] px-4 py-2 hover:text-[#F3F4F6] transition-all scale-98 active:duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="credit_card">credit_card</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide">Cards</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] px-4 py-2 hover:text-[#F3F4F6] transition-all scale-98 active:duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide">Settings</span>
+</a>
+</nav>
+</body></html>
