@@ -2,6 +2,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
+import CategorySelector from '@/app/components/common/CategorySelector.vue'
 
 interface Category {
   id: number
@@ -179,23 +180,15 @@ const months = [
         </div>
       </section>
 
-      <!-- Category Select -->
+      <!-- Category Selector -->
       <section class="space-y-4">
         <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Categoría del Gasto</label>
-        <div class="relative group">
-          <select 
-            v-model="selectedCategoryId"
-            :disabled="isEditMode"
-            class="w-full appearance-none bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-primary-container/30 focus:ring-0 transition-all font-body text-on-surface font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            required
-          >
-            <option :value="null" disabled>Selecciona una categoría...</option>
-            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-          </select>
-          <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center gap-2">
-            <span class="material-symbols-outlined text-on-surface-variant text-xl">unfold_more</span>
-          </div>
-        </div>
+        <CategorySelector 
+          v-model="selectedCategoryId" 
+          :categories="categories" 
+          :disabled="isEditMode"
+          placeholder="Selecciona Categoría"
+        />
       </section>
 
       <!-- Threshold Alert (UI Only) -->

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import api from '@/services/api'
+import CategorySelector from '@/app/components/common/CategorySelector.vue'
 
 interface ExpenseItem {
   id: string
@@ -32,6 +33,7 @@ const items = ref<ExpenseItem[]>([
 ])
 
 // Categories Data
+const categories = ref<any[]>([])
 const groupedCategories = ref<Record<string, any[]>>({})
 
 const loadCategories = async () => {
@@ -42,6 +44,7 @@ const loadCategories = async () => {
       return
     }
     
+    categories.value = data
     const grouped = data.reduce((acc: Record<string, any[]>, category: any) => {
       const groupName = category.group?.name || 'Otras Categorías'
       if (!acc[groupName]) acc[groupName] = []
@@ -218,21 +221,11 @@ const saveExpense = () => {
                 <!-- Categoría -->
                 <section class="space-y-4">
                     <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Categoría</label>
-                    <div class="relative group h-full">
-                        <select 
-                            v-model="singleCategoryId" 
-                            class="w-full appearance-none bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-[#FF4D4D]/30 focus:ring-0 transition-all font-body text-on-surface font-semibold cursor-pointer" 
-                            required
-                        >
-                            <option :value="null" disabled>Seleccione una categoría</option>
-                            <optgroup v-for="(cats, groupName) in groupedCategories" :key="groupName" :label="groupName">
-                                <option v-for="cat in cats" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-                            </optgroup>
-                        </select>
-                        <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center gap-2">
-                            <span class="material-symbols-outlined text-on-surface-variant text-xl">unfold_more</span>
-                        </div>
-                    </div>
+                    <CategorySelector 
+                        v-model="singleCategoryId" 
+                        :categories="categories" 
+                        placeholder="Seleccione una categoría"
+                    />
                 </section>
             </div>
             
@@ -392,18 +385,12 @@ const saveExpense = () => {
                         </div>
                         
                         <div class="grid grid-cols-1 gap-4 pt-4 border-t border-white/[0.03]">
-                            <!-- Category Select -->
-                            <div class="relative">
-                                <select v-model="item.categoryId" class="w-full appearance-none bg-surface-container-high p-4 rounded-xl border border-white/[0.03] text-sm font-bold text-on-surface focus:ring-1 focus:ring-[#FF4D4D]/20 transition-all cursor-pointer" required>
-                                    <option :value="null" disabled>Seleccionar Categoría</option>
-                                    <optgroup v-for="(cats, groupName) in groupedCategories" :key="groupName" :label="groupName">
-                                        <option v-for="cat in cats" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-                                    </optgroup>
-                                </select>
-                                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                                    <span class="material-symbols-outlined text-on-surface-variant text-lg">unfold_more</span>
-                                </div>
-                            </div>
+                            <!-- Category Selector (Itemized) -->
+                            <CategorySelector 
+                                v-model="item.categoryId" 
+                                :categories="categories" 
+                                placeholder="Seleccionar Categoría"
+                            />
                             <!-- Description Input -->
                             <input 
                                 v-model="item.description" 
