@@ -18,13 +18,18 @@ public record BudgetDto(
     decimal SpentAmount
 );
 
+public record BudgetListDto(
+    List<BudgetDto> Budgets,
+    decimal MonthlyIncome
+);
+
 public record GetBudgetsQuery(
     string UserId,
     int Month,
     int Year
-) : IRequest<List<BudgetDto>>;
+) : IRequest<BudgetListDto>;
 
-internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, List<BudgetDto>>
+internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, BudgetListDto>
 {
     private readonly ApplicationDbContext _dbContext;
 
@@ -33,8 +38,18 @@ internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, 
         _dbContext = dbContext;
     }
 
-    public async Task<List<BudgetDto>> Handle(GetBudgetsQuery request, CancellationToken cancellationToken)
+    public async Task<BudgetListDto> Handle(GetBudgetsQuery request, CancellationToken cancellationToken)
     {
+        // 0. Fetch total expected Income for the month (based on recurring income)
+        var startDate = new DateTime(request.Year, request.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+        var endDate = startDate.AddMonths(1);
+
+        var monthlyIncome = await _dbContext.RecurringIncomes
+            .Where(ri => ri.UserId == request.UserId && 
+                        ri.IsActive && 
+                        ri.StartDate < endDate)
+            .SumAsync(ri => ri.Amount, cancellationToken);
+
         // 1. Fetch registered budgets for the month
         var userBudgets = await _dbContext.Budgets
             .Include(b => b.Category)
@@ -46,9 +61,6 @@ internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, 
         // Optimization: only fetching for categories that have budgets
         var categoryIds = userBudgets.Select(b => b.CategoryId).ToList();
         
-        var startDate = new DateTime(request.Year, request.Month, 1, 0, 0, 0, DateTimeKind.Utc);
-        var endDate = startDate.AddMonths(1);
-
         var spentItems = await _dbContext.ExpenseItems
             .Include(i => i.Expense)
             .Where(i => i.Expense.UserId == request.UserId && 
@@ -63,7 +75,7 @@ internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, 
             .ToDictionary(g => g.Key, g => g.Sum(x => x.ItemAmount));
 
         // 3. Map to DTOs
-        return userBudgets.Select(b => new BudgetDto(
+        var budgets = userBudgets.Select(b => new BudgetDto(
             b.Id,
             b.CategoryId,
             b.Category!.Name,
@@ -73,5 +85,7 @@ internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, 
             b.Amount,
             spentAmounts.GetValueOrDefault(b.CategoryId, 0)
         )).ToList();
+
+        return new BudgetListDto(budgets, monthlyIncome);
     }
 }

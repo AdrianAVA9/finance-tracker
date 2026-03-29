@@ -96,180 +96,201 @@ onMounted(loadCategories);
 </script>
 
 <template>
-    <div class="w-full pb-6">
-        <!-- Success Alert -->
+    <div class="space-y-10 pb-20">
+        <!-- Success Alert (Editorial Style) -->
         <Transition
-            enter-active-class="transform transition duration-300 ease-out"
-            enter-from-class="-translate-y-4 opacity-0"
+            enter-active-class="transform transition duration-500 ease-out"
+            enter-from-class="-translate-y-10 opacity-0"
             enter-to-class="translate-y-0 opacity-100"
-            leave-active-class="transition duration-200 ease-in"
+            leave-active-class="transition duration-300 ease-in"
             leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
+            leave-to-class="opacity-0 scale-95"
         >
-            <div v-if="showSuccess" class="mb-6 p-4 bg-accent-lime/10 border border-accent-lime/20 rounded-xl flex items-center gap-3 text-accent-lime">
+            <div v-if="showSuccess" class="fixed top-24 left-6 right-6 z-[110] p-4 bg-primary-container/10 border border-primary-container/20 backdrop-blur-xl rounded-2xl flex items-center gap-3 text-primary-container luminous-shadow">
                 <span class="material-symbols-outlined">check_circle</span>
-                <p class="text-sm font-medium">¡Ingreso registrado exitosamente!</p>
+                <p class="text-xs font-bold uppercase tracking-widest">Ingreso registrado exitosamente</p>
             </div>
         </Transition>
 
-        <div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-800 rounded-2xl shadow-soft overflow-hidden">
-            <!-- Header -->
-            <div class="p-5 border-b border-slate-100 dark:border-slate-800">
-                <h1 class="text-xs font-bold tracking-widest text-primary uppercase mb-1">Registro de Ingresos</h1>
-                <p class="text-[11px] text-slate-500 dark:text-text-secondary-dark">Complete los detalles para su nueva entrada de capital.</p>
+        <!-- Page Header -->
+        <header class="flex items-center justify-between px-1">
+            <div class="flex items-center gap-4">
+                <button 
+                    @click="router.back()"
+                    class="p-2 rounded-lg hover:bg-surface-container-high transition-colors text-on-surface-variant"
+                    aria-label="Volver"
+                >
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                <div class="space-y-1">
+                    <h1 class="font-headline text-2xl font-black tracking-tighter text-on-surface">Registro de Ingresos</h1>
+                    <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Nueva Entrada de Capital</p>
+                </div>
             </div>
+        </header>
 
-            <form @submit.prevent="handleSave(false)" class="p-5 space-y-4">
-                <!-- Amount Section -->
-                <div class="bg-slate-50 dark:bg-background-dark/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-center">
-                    <label class="block text-xs font-medium text-slate-500 mb-1">Monto del Ingreso</label>
-                    <div class="flex items-center justify-center gap-2">
-                        <span class="text-4xl font-bold text-primary">+</span>
-                        <span class="text-4xl font-bold text-slate-400 dark:text-slate-500">₡</span>
+        <form @submit.prevent="handleSave(false)" class="space-y-8 animate-fade-in-up">
+            <!-- Hero Amount Section -->
+            <section class="relative group">
+                <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1">Monto del Ingreso</label>
+                <div class="bg-surface-container-low p-10 rounded-2xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-primary-container/[0.02] focus-within:border-primary-container/20">
+                    <div class="flex items-baseline gap-2">
+                        <span class="font-headline text-4xl font-black text-primary-container">+</span>
+                        <span class="font-headline text-4xl font-black text-primary-container">₡</span>
                         <input
                             v-model="amount"
                             type="number"
                             step="0.01"
-                            class="bg-transparent border-none text-4xl font-bold text-slate-900 dark:text-white focus:ring-0 w-32 p-0 placeholder-slate-200 dark:placeholder-slate-700"
-                            placeholder="0.00"
+                            class="bg-transparent border-none text-center font-headline text-6xl font-black tracking-tighter focus:ring-0 text-on-surface w-full max-w-[280px] placeholder:text-on-surface-variant/20"
+                            placeholder="0"
                             required
                         />
                     </div>
                 </div>
+            </section>
 
-                <!-- Form Fields -->
-                <div class="grid grid-cols-1 gap-5">
-                    <!-- Source/Payer -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Fuente o Pagador</label>
+            <!-- Main Form Fields -->
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Source/Payer -->
+                <section class="space-y-4">
+                    <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Fuente o Pagador</label>
+                    <input
+                        v-model="source"
+                        type="text"
+                        class="w-full bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-primary-container/30 focus:ring-0 transition-all font-body text-on-surface font-semibold"
+                        placeholder="Ej. Salario Quincenal, Freelance..."
+                        required
+                    />
+                </section>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Date -->
+                    <section class="space-y-4">
+                        <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Fecha del Depósito</label>
                         <input
-                            v-model="source"
-                            type="text"
-                            class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-3 px-4 focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white"
-                            placeholder="Ej. Salario Quincenal, Freelance..."
+                            v-model="date"
+                            type="date"
+                            class="w-full bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-primary-container/30 focus:ring-0 transition-all font-body text-on-surface font-semibold [color-scheme:dark]"
                             required
                         />
-                    </div>
+                    </section>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Date -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Fecha del depósito</label>
-                            <input
-                                v-model="date"
-                                type="date"
-                                class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-3 px-4 focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white"
-                                required
-                            />
-                        </div>
-
-                        <!-- Category -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Categoría</label>
+                    <!-- Category -->
+                    <section class="space-y-4">
+                        <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Categoría</label>
+                        <div class="relative group h-full">
                             <select
                                 v-model="categoryId"
-                                class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-3 px-4 focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white"
+                                class="w-full appearance-none bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-primary-container/30 focus:ring-0 transition-all font-body text-on-surface font-semibold cursor-pointer"
                                 required
                             >
                                 <option v-for="cat in categories" :key="cat.id" :value="cat.id">
                                     {{ cat.name }}
                                 </option>
                             </select>
-                        </div>
-                    </div>
-
-                    <!-- Notes -->
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 font-normal">Notas <span class="text-slate-400">(Opcional)</span></label>
-                        <textarea
-                            v-model="notes"
-                            rows="2"
-                            class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-3 px-4 focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white resize-none"
-                            placeholder="Detalles adicionales..."
-                        ></textarea>
-                    </div>
-                </div>
-
-                <!-- Automation Toggle -->
-                <div class="border-t border-slate-100 dark:border-slate-800 pt-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-semibold dark:text-white">🔁 Automatización</span>
-                            <span class="text-xs text-slate-500">Convertir en ingreso recurrente</span>
-                        </div>
-                        <button
-                            type="button"
-                            @click="isRecurring = !isRecurring"
-                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
-                            :class="isRecurring ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700'"
-                        >
-                            <span
-                                class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
-                                :class="isRecurring ? 'translate-x-6' : 'translate-x-1'"
-                            />
-                        </button>
-                    </div>
-
-                    <!-- Recurrence Fields (Progressive Revelation) -->
-                    <Transition
-                        enter-active-class="transition duration-300 ease-out"
-                        enter-from-class="opacity-0 -translate-y-2 scale-95"
-                        enter-to-class="opacity-100 translate-y-0 scale-100"
-                        leave-active-class="transition duration-200 ease-in"
-                        leave-from-class="opacity-100 translate-y-0 scale-100"
-                        leave-to-class="opacity-0 -translate-y-2 scale-95"
-                    >
-                        <div v-if="isRecurring" class="bg-slate-50 dark:bg-background-dark/30 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="space-y-2">
-                                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Frecuencia</label>
-                                    <select
-                                        v-model="frequency"
-                                        class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white"
-                                    >
-                                        <option v-for="f in frequencies" :key="f.value" :value="f.value">{{ f.label }}</option>
-                                    </select>
-                                </div>
-                                <div class="space-y-2">
-                                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Próximo depósito</label>
-                                    <input
-                                        v-model="nextDate"
-                                        type="date"
-                                        class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white"
-                                    />
-                                </div>
+                            <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center gap-2">
+                                <span class="material-symbols-outlined text-on-surface-variant text-xl">unfold_more</span>
                             </div>
                         </div>
-                    </Transition>
+                    </section>
                 </div>
 
-                <!-- Actions -->
-                <div class="flex flex-col gap-2 pt-2">
-                    <button
-                        type="submit"
-                        :disabled="isSaving"
-                        class="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primary-hover transition-all shadow-glow active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                        <span v-if="isSaving" class="material-symbols-outlined animate-spin shadow-none">sync</span>
-                        {{ isSaving ? 'Guardando...' : 'Guardar Ingreso' }}
-                    </button>
-                    <button
-                        @click="handleSave(true)"
-                        type="button"
-                        :disabled="isSaving"
-                        class="w-full bg-transparent border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-medium py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all"
-                    >
-                        Guardar y registrar otro
-                    </button>
-                </div>
-            </form>
-        </div>
+                <!-- Notes -->
+                <section class="space-y-4">
+                    <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Notas <span class="opacity-40">(Opcional)</span></label>
+                    <textarea
+                        v-model="notes"
+                        rows="2"
+                        class="w-full bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-primary-container/30 focus:ring-0 transition-all font-body text-on-surface font-semibold resize-none"
+                        placeholder="Detalles adicionales..."
+                    ></textarea>
+                </section>
+            </div>
 
-        <!-- Footer -->
-        <footer class="mt-8 text-center">
-            <div class="inline-flex items-center gap-2 text-slate-400 dark:text-slate-600 text-[10px] font-medium uppercase tracking-widest">
+            <!-- Automation Toggle -->
+            <section class="bg-surface-container-low p-6 rounded-2xl border border-white/[0.02]">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex gap-4 items-center">
+                        <div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary-container">
+                            <span class="material-symbols-outlined text-2xl">sync</span>
+                        </div>
+                        <div class="space-y-0.5">
+                            <h4 class="text-sm font-bold text-on-surface">Automatización</h4>
+                            <p class="text-[10px] font-medium text-on-surface-variant uppercase tracking-wide">Ingreso Recurrente</p>
+                        </div>
+                    </div>
+                    <!-- Toggle Switch -->
+                    <label class="relative inline-flex items-center cursor-pointer group">
+                        <input
+                            type="checkbox"
+                            v-model="isRecurring"
+                            class="sr-only peer"
+                        />
+                        <div class="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container shadow-lg group-active:scale-95"></div>
+                    </label>
+                </div>
+
+                <!-- Recurrence Fields (Progressive Revelation) -->
+                <Transition
+                    enter-active-class="transition duration-300 ease-out"
+                    enter-from-class="opacity-0 -translate-y-2 scale-95"
+                    enter-to-class="opacity-100 translate-y-0 scale-100"
+                    leave-active-class="transition duration-200 ease-in"
+                    leave-from-class="opacity-100 translate-y-0 scale-100"
+                    leave-to-class="opacity-0 -translate-y-2 scale-95"
+                >
+                    <div v-if="isRecurring" class="mt-6 pt-6 border-t border-white/[0.03] grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-3">
+                            <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Frecuencia</label>
+                            <div class="relative">
+                                <select
+                                    v-model="frequency"
+                                    class="w-full appearance-none bg-surface-container-high p-4 rounded-xl border border-white/[0.03] text-sm font-bold text-on-surface focus:ring-1 focus:ring-primary-container/30 outline-none transition-all"
+                                >
+                                    <option v-for="f in frequencies" :key="f.value" :value="f.value">{{ f.label }}</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-xl">unfold_more</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Próximo Depósito</label>
+                            <input
+                                v-model="nextDate"
+                                type="date"
+                                class="w-full bg-surface-container-high p-4 rounded-xl border border-white/[0.03] text-sm font-bold text-on-surface focus:ring-1 focus:ring-primary-container/30 outline-none transition-all [color-scheme:dark]"
+                            />
+                        </div>
+                    </div>
+                </Transition>
+            </section>
+
+            <!-- Actions -->
+            <div class="pt-6 space-y-4">
+                <button
+                    type="submit"
+                    :disabled="isSaving"
+                    class="w-full bg-primary-container text-on-primary-container font-headline font-black py-5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all shadow-xl shadow-primary-container/20 disabled:opacity-50 flex items-center justify-center gap-3"
+                >
+                    <span v-if="isSaving" class="material-symbols-outlined animate-spin shadow-none">sync</span>
+                    <span v-else class="material-symbols-outlined">save</span>
+                    {{ isSaving ? 'Guardando...' : 'Guardar Ingreso' }}
+                </button>
+                <button
+                    @click="handleSave(true)"
+                    type="button"
+                    :disabled="isSaving"
+                    class="w-full bg-surface-container-high text-on-surface font-headline font-bold py-5 rounded-xl hover:bg-surface-variant active:scale-[0.98] transition-all"
+                >
+                    Guardar y Registrar Otro
+                </button>
+            </div>
+        </form>
+
+        <!-- Editorial Info -->
+        <footer class="mt-8 text-center flex flex-col items-center gap-2">
+            <div class="inline-flex items-center gap-2 text-on-surface-variant/40 text-[9px] font-bold uppercase tracking-[0.2em]">
                 <span class="material-symbols-outlined text-sm">lock</span>
-                <span>Secure Session Active • Sentinel App v2.4</span>
+                <span>Sentinel Secure v2.4 • Session Active</span>
             </div>
         </footer>
     </div>

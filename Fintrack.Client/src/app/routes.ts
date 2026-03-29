@@ -36,6 +36,18 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: 'Plan Presupuestario', subtitle: 'Define tus límites mensuales y mantén el control.' }
       },
       {
+        path: 'budgets/new',
+        name: 'BudgetCreate',
+        component: () => import('@/app/views/BudgetFormView.vue'),
+        meta: { title: 'Configurar Presupuesto', subtitle: 'Define tus límites de gasto.' }
+      },
+      {
+        path: 'budgets/:id/edit',
+        name: 'BudgetEdit',
+        component: () => import('@/app/views/BudgetFormView.vue'),
+        meta: { title: 'Ajustar Presupuesto', subtitle: 'Refina tus metas financieras.' }
+      },
+      {
         path: 'budgets/:id',
         name: 'BudgetDetails',
         component: () => import('@/app/views/BudgetDetailsView.vue'),

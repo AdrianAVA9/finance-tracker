@@ -1,12 +1,23 @@
 <template>
-    <div class="w-full pb-6">
-        <div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-800 rounded-2xl shadow-soft overflow-hidden">
-            <!-- Header -->
-            <div class="p-5 border-b border-slate-100 dark:border-slate-800">
-                <h1 class="text-xs font-bold tracking-widest text-[#FF4D4D] uppercase mb-1">Registro de Gastos</h1>
-                <p class="text-[11px] text-slate-500 dark:text-text-secondary-dark">Complete los detalles de su nuevo gasto.</p>
+    <div class="space-y-10 pb-20">
+        <!-- Page Header -->
+        <header class="flex items-center justify-between px-1">
+            <div class="flex items-center gap-4">
+                <button 
+                    @click="router.back()"
+                    class="p-2 rounded-lg hover:bg-surface-container-high transition-colors text-on-surface-variant"
+                    aria-label="Volver"
+                >
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                <div class="space-y-1">
+                    <h1 class="font-headline text-2xl font-black tracking-tighter text-on-surface">Registro de Gastos</h1>
+                    <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Control de Egresos</p>
+                </div>
             </div>
-            
+        </header>
+
+        <div class="animate-fade-in-up">
             <ExpenseRegistrationForm 
               :submitting="isSubmitting" 
               :error="errorMessage"

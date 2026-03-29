@@ -1,8 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary: #05E699;
+  --surface-dim: #111317;
+  --surface-container-low: #1a1c20;
+  --surface-container: #1e2024;
+  --surface-container-high: #282a2e;
+  --surface-container-highest: #333539;
+  --on-surface: #e2e2e8;
+  --on-surface-variant: #9CA3AF;
+}
+
 @layer base {
+  body {
+    @apply bg-surface-dim text-on-surface font-body;
+  }
+  
   /* Custom scrollbar for webkit */
   ::-webkit-scrollbar {
     width: 6px;
@@ -12,19 +29,21 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #293e42;
+    background: #282a2e;
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #1f6b7a;
+    background: #333539;
   }
 }
 
 @layer utilities {
+  .luminous-shadow {
+    box-shadow: 0 10px 40px -10px rgba(5, 230, 153, 0.08);
+  }
+
   .glass-effect {
-    background: rgba(43, 48, 54, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    @apply bg-surface-container/80 backdrop-blur-xl;
   }
 
   /* Chart animations */

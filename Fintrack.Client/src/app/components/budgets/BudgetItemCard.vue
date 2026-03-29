@@ -57,12 +57,9 @@ const spentRatio = computed(() => {
   return props.budget.spentAmount / props.budget.limitAmount
 })
 
-const percentage = computed(() => Math.round(spentRatio.value * 100))
-
 const progressColorClass = computed(() => {
-  if (spentRatio.value >= 1) return 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]'
-  if (spentRatio.value >= 0.8) return 'bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.3)]'
-  return 'bg-primary shadow-[0_0_8px_rgba(31,107,122,0.3)]'
+  if (spentRatio.value >= 1) return 'bg-red-500'
+  return 'bg-primary-container'
 })
 
 const formatCurrency = (amount: number) => {
@@ -72,27 +69,30 @@ const formatCurrency = (amount: number) => {
 
 <template>
   <div 
-    class="relative p-4 rounded-2xl bg-surface-light dark:bg-[#1e293b]/40 border border-slate-200 dark:border-slate-800/50 hover:border-primary/30 transition-all duration-300 shadow-sm"
+    class="group relative p-5 rounded-lg bg-[#1a1c20] hover:bg-[#222428] transition-all duration-300 transform hover:-translate-y-1 overflow-visible"
+    :class="{ 'z-[100]': isMenuOpen }"
   >
     <!-- Header: Icon, Name, and Menu -->
-    <div class="flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-primary grow-0 shrink-0">
-          <span class="material-symbols-outlined text-xl">{{ budget.categoryIcon || 'category' }}</span>
+    <div class="flex items-center gap-4 mb-5">
+      <div class="w-12 h-12 rounded-md bg-surface-container-highest flex items-center justify-center text-primary-container grow-0 shrink-0">
+        <span class="material-symbols-outlined text-2xl" :style="{ color: spentRatio >= 1 ? '#FF4D4D' : '#05E699' }">
+          {{ budget.categoryIcon || 'category' }}
+        </span>
+      </div>
+      
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between items-start">
+          <h4 class="font-headline font-semibold text-on-surface truncate">{{ budget.categoryName }}</h4>
+          <span class="text-sm font-bold text-on-surface whitespace-nowrap ml-2">₡{{ formatCurrency(budget.limitAmount) }}</span>
         </div>
-        <div class="flex flex-col min-w-0">
-          <h3 class="text-sm font-bold text-slate-900 dark:text-white truncate">{{ budget.categoryName }}</h3>
-          <p class="text-[9px] uppercase tracking-widest font-extrabold text-slate-500 dark:text-slate-500 truncate mt-0.5">
-            {{ budget.categoryGroup }}
-          </p>
-        </div>
+        <p class="text-[10px] text-on-surface-variant font-medium tracking-wide uppercase">{{ budget.categoryGroup || 'Categoría' }}</p>
       </div>
 
-      <!-- Compact Menu Button -->
+      <!-- Menu Button -->
       <div class="relative" ref="menuRef">
         <button 
           @click.stop="toggleMenu"
-          class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors"
+          class="p-1.5 rounded-lg hover:bg-surface-container-highest text-on-surface-variant transition-colors"
           aria-label="Más opciones"
         >
           <span class="material-symbols-outlined text-xl">more_vert</span>
@@ -109,12 +109,12 @@ const formatCurrency = (amount: number) => {
         >
           <div 
             v-if="isMenuOpen" 
-            class="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-30 py-1 overflow-hidden"
+            class="absolute right-0 top-full mt-2 w-36 bg-surface-container-highest border border-white/[0.03] rounded-lg shadow-2xl z-[60] py-1 overflow-hidden"
           >
-            <button @click="handleEdit" class="w-full text-left px-4 py-2 text-[13px] font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2">
+            <button @click="handleEdit" class="w-full text-left px-4 py-2.5 text-[12px] font-bold text-on-surface hover:bg-white/5 flex items-center gap-2">
               <span class="material-symbols-outlined text-lg">edit</span> Editar
             </button>
-            <button @click="handleDelete" class="w-full text-left px-4 py-2 text-[13px] font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center gap-2 border-t border-slate-100 dark:border-slate-800/50">
+            <button @click="handleDelete" class="w-full text-left px-4 py-2.5 text-[12px] font-bold text-red-500 hover:bg-red-500/10 flex items-center gap-2 border-t border-white/5">
               <span class="material-symbols-outlined text-lg">delete</span> Eliminar
             </button>
           </div>
@@ -123,18 +123,13 @@ const formatCurrency = (amount: number) => {
     </div>
 
     <!-- Progress Information -->
-    <div class="mt-4 space-y-2">
-      <div class="flex justify-between items-end">
-        <div class="flex items-baseline gap-1.5">
-          <span class="text-base font-black text-slate-900 dark:text-white">₡{{ formatCurrency(budget.spentAmount) }}</span>
-          <span class="text-[10px] text-slate-400 font-bold">/ ₡{{ formatCurrency(budget.limitAmount) }}</span>
-        </div>
-        <span class="text-[11px] font-black" :class="spentRatio >= 1 ? 'text-red-500' : 'text-primary'">
-          {{ percentage }}%
-        </span>
+    <div class="space-y-2">
+      <div class="flex justify-between text-[10px] font-bold text-on-surface-variant uppercase tracking-widest leading-none">
+        <span>Progreso</span>
+        <span class="text-on-surface">₡{{ formatCurrency(budget.spentAmount) }} / ₡{{ formatCurrency(budget.limitAmount) }}</span>
       </div>
       
-      <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+      <div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
         <div 
           class="h-full rounded-full transition-all duration-700 ease-out"
           :class="progressColorClass"
@@ -147,6 +142,6 @@ const formatCurrency = (amount: number) => {
 
 <style scoped>
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 </style>
