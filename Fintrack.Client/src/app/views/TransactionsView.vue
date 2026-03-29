@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import transactionService, { type TransactionDto } from '@/services/transactionService'
 import MonthPicker from '@/app/components/common/MonthPicker.vue'
 
 // State
+const router = useRouter()
 const transactions = ref<TransactionDto[]>([])
 const isLoading = ref(true)
 const selectedYear = ref(new Date().getFullYear())
@@ -70,6 +72,13 @@ const groupedTransactions = computed(() => {
 })
 
 // UI Actions
+const navigateToEdit = (tx: TransactionDto) => {
+  const routeName = tx.type === 'Income' ? 'IncomeEdit' : 'ExpenseEdit'
+  // Strip any type prefix (e.g., 'exp_3' -> '3')
+  const idValue = tx.id.includes('_') ? tx.id.split('_')[1] : tx.id
+  router.push({ name: routeName, params: { id: idValue } })
+}
+
 const toggleSearch = () => {
   isSearchOpen.value = !isSearchOpen.value
   if (!isSearchOpen.value) searchQuery.value = ''
@@ -184,7 +193,8 @@ const formatCurrency = (amount: number) => {
           <div 
             v-for="tx in group.items" 
             :key="tx.id"
-            class="group flex items-center justify-between p-5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all duration-300 hover:-translate-y-1 shadow-sm border border-white/[0.02]"
+            @click="navigateToEdit(tx)"
+            class="group flex items-center justify-between p-5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-all duration-300 hover:-translate-y-1 shadow-sm border border-white/[0.02] cursor-pointer"
           >
             <div class="flex items-center gap-5">
               <div 

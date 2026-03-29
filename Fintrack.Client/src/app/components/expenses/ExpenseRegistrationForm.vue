@@ -57,9 +57,7 @@ const loadCategories = async () => {
   }
 }
 
-onMounted(() => {
-  loadCategories()
-})
+// Initial load of categories has been moved into the consolidated onMounted hook below.
 
 // Computed Logic
 const runningSum = computed(() => {
@@ -118,17 +116,54 @@ const removeRow = (id: string) => {
 interface Props {
   submitting?: boolean
   error?: string
+  initialData?: any
 }
 
 const props = defineProps<Props>()
 
+const isEditMode = computed(() => !!props.initialData);
+
 const emit = defineEmits(['submit'])
+
+// Populate data if in edit mode
+onMounted(async () => {
+  // Consolidate all initialization logic here to avoid multiple API calls
+  await loadCategories()
+  
+  if (props.initialData) {
+    const data = props.initialData;
+    merchant.value = data.merchant;
+    totalAmount.value = data.totalAmount;
+    date.value = new Date(data.date).toISOString().split('T')[0];
+    note.value = data.note || '';
+    isRecurring.value = data.isRecurring;
+    if (isRecurring.value && data.recurringData) {
+      recurringFrequency.value = (data.recurringData.frequency || 'Monthly') as string;
+      nextBillingDate.value = data.recurringData.nextDate ? new Date(data.recurringData.nextDate).toISOString().split('T')[0] : '';
+    }
+    
+    // Handle items
+    if (data.items && data.items.length > 0) {
+      if (data.items.length > 1) {
+        isSplitInvoice.value = true;
+        items.value = data.items.map((item: any) => ({
+          id: crypto.randomUUID(),
+          categoryId: item.categoryId,
+          itemAmount: item.itemAmount,
+          description: item.description
+        }));
+      } else {
+        isSplitInvoice.value = false;
+        singleCategoryId.value = data.items[0].categoryId;
+      }
+    }
+  }
+})
 
 const saveExpense = () => {
   if (isSubmitDisabled.value) return
 
   const payload = {
-    type: transactionType.value,
     merchant: merchant.value,
     totalAmount: Number(totalAmount.value),
     date: date.value,
@@ -302,9 +337,10 @@ const saveExpense = () => {
             >
                 <span v-if="submitting" class="material-symbols-outlined animate-spin shadow-none">sync</span>
                 <span v-else class="material-symbols-outlined">receipt_long</span>
-                {{ submitting ? 'Guardando...' : 'Guardar Gasto' }}
+                {{ submitting ? 'Guardando...' : (isEditMode ? 'Actualizar Gasto' : 'Guardar Gasto') }}
             </button>
             <button
+                v-if="!isEditMode"
                 type="button"
                 :disabled="submitting"
                 class="w-full bg-surface-container-high text-on-surface font-headline font-bold py-5 rounded-xl hover:bg-surface-variant active:scale-[0.98] transition-all"

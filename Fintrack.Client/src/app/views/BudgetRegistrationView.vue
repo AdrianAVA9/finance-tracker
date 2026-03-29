@@ -3,6 +3,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import BudgetItemCard from '@/app/components/budgets/BudgetItemCard.vue'
+import ConfirmationModal from '@/app/components/common/ConfirmationModal.vue'
 
 interface Budget {
   id: number
@@ -24,6 +25,10 @@ const budgets = ref<Budget[]>([])
 const isLoading = ref(false)
 const searchQuery = ref('')
 const sortBy = ref('Mayor Presupuesto')
+
+const showDeleteConfirm = ref(false)
+const isDeleting = ref(false)
+const budgetToDelete = ref<Budget | null>(null)
 
 
 // Constants
@@ -94,14 +99,27 @@ const openEditModal = (budget: Budget) => {
   })
 }
 
-const deleteBudget = async (id: number) => {
-  if (!confirm('¿Estás seguro de que deseas eliminar este presupuesto?')) return
+const deleteBudget = (id: number) => {
+  const budget = budgets.value.find(b => b.id === id)
+  if (budget) {
+    budgetToDelete.value = budget
+    showDeleteConfirm.value = true
+  }
+}
 
+const handleDelete = async () => {
+  if (!budgetToDelete.value) return
+  
   try {
-    await api.delete(`/api/v1/budgets/${id}`)
+    isDeleting.value = true
+    await api.delete(`/api/v1/budgets/${budgetToDelete.value.id}`)
     await loadBudgets()
   } catch (error) {
     console.error('Failed to delete budget', error)
+  } finally {
+    isDeleting.value = false
+    showDeleteConfirm.value = false
+    budgetToDelete.value = null
   }
 }
 
@@ -119,6 +137,36 @@ watch([selectedMonth, selectedYear], loadBudgets)
 
 <template>
   <div class="space-y-6">
+    <!-- Delete Confirmation Modal -->
+    <ConfirmationModal
+      :show="showDeleteConfirm"
+      title="¿Eliminar Presupuesto?"
+      description="Esta acción eliminará el límite establecido para esta categoría en este mes. No borrará tus gastos, pero perderás el seguimiento del presupuesto."
+      confirm-text="Eliminar Presupuesto"
+      cancel-text="Mantener"
+      :is-loading="isDeleting"
+      variant="danger"
+      @confirm="handleDelete"
+      @cancel="showDeleteConfirm = false"
+    >
+      <template #item-preview v-if="budgetToDelete">
+        <div class="flex items-center gap-4 bg-surface-container-lowest/50 p-4 rounded-xl text-left">
+          <div 
+            class="w-10 h-10 rounded-full flex items-center justify-center opacity-80"
+            :style="budgetToDelete.categoryColor ? { backgroundColor: budgetToDelete.categoryColor + '20', color: budgetToDelete.categoryColor } : { backgroundColor: '#ffffff10' }"
+          >
+            <span class="material-symbols-outlined text-sm">{{ budgetToDelete.categoryIcon || 'category' }}</span>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-bold text-on-surface">{{ budgetToDelete.categoryName }}</p>
+            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-label">{{ months[selectedMonth - 1] }} {{ selectedYear }}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-black text-on-surface">₡{{ budgetToDelete.limitAmount.toLocaleString() }}</p>
+          </div>
+        </div>
+      </template>
+    </ConfirmationModal>
     
     <!-- Page Title -->
     <section class="space-y-1 px-1">

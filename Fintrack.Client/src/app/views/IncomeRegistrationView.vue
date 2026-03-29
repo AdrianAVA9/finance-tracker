@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted, computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import api from '@/services/api';
 import CategorySelector from '@/app/components/common/CategorySelector.vue';
+import ConfirmationModal from '@/app/components/common/ConfirmationModal.vue';
 
 interface IncomeCategory {
     id: number;
@@ -12,6 +13,16 @@ interface IncomeCategory {
 }
 
 const router = useRouter();
+const route = useRoute();
+
+// Edit Mode Detection
+const incomeId = computed(() => {
+    const idParam = route.params.id as string;
+    if (!idParam) return null;
+    const match = idParam.match(/\d+/);
+    return match ? parseInt(match[0], 10) : null;
+});
+const isEditMode = computed(() => !!incomeId.value);
 
 // Form State
 const amount = ref<number | null>(null);
@@ -28,6 +39,8 @@ const categories = ref<IncomeCategory[]>([]);
 const isLoading = ref(false);
 const isSaving = ref(false);
 const showSuccess = ref(false);
+const showDeleteConfirm = ref(false);
+const isDeleting = ref(false);
 
 const frequencies = [
     { value: 'Daily', label: 'Diario' },
@@ -43,7 +56,7 @@ const loadCategories = async () => {
         isLoading.value = true;
         const response = await api.get('/api/v1/incomes/categories');
         categories.value = response.data;
-        if (categories.value.length > 0 && categories.value[0]) {
+        if (!isEditMode.value && categories.value.length > 0 && categories.value[0]) {
             categoryId.value = categories.value[0].id;
         }
     } catch (error) {
@@ -53,12 +66,34 @@ const loadCategories = async () => {
     }
 };
 
+const loadIncomeDetails = async () => {
+    if (!incomeId.value) return;
+    try {
+        isLoading.value = true;
+        const response = await api.get(`/api/v1/incomes/${incomeId.value}`);
+        const data = response.data;
+        amount.value = data.amount;
+        source.value = data.source;
+        date.value = new Date(data.date).toISOString().split('T')[0];
+        categoryId.value = data.categoryId;
+        notes.value = data.notes || '';
+        isRecurring.value = data.isRecurring;
+        frequency.value = data.frequency || 'Monthly';
+        nextDate.value = data.nextDate ? new Date(data.nextDate).toISOString().split('T')[0]! : '';
+    } catch (error) {
+        console.error('Failed to load income details', error);
+        router.push('/app/activity');
+    } finally {
+        isLoading.value = false;
+    }
+}
+
 const handleSave = async (andReset: boolean = false) => {
     if (!amount.value || !source.value || !categoryId.value || !date.value) return;
 
     try {
         isSaving.value = true;
-        await api.post('/api/v1/incomes', {
+        const payload = {
             source: source.value,
             amount: amount.value,
             categoryId: categoryId.value,
@@ -67,15 +102,21 @@ const handleSave = async (andReset: boolean = false) => {
             isRecurring: isRecurring.value,
             frequency: isRecurring.value ? frequency.value : null,
             nextDate: isRecurring.value && nextDate.value ? nextDate.value : null
-        });
+        };
+
+        if (isEditMode.value) {
+            await api.put(`/api/v1/incomes/${incomeId.value}`, payload);
+        } else {
+            await api.post('/api/v1/incomes', payload);
+        }
 
         showSuccess.value = true;
         setTimeout(() => (showSuccess.value = false), 3000);
 
-        if (andReset) {
+        if (andReset && !isEditMode.value) {
             resetForm();
         } else {
-            router.push('/app/dashboard');
+            router.push('/app/activity');
         }
     } catch (error) {
         console.error('Failed to save income', error);
@@ -83,6 +124,20 @@ const handleSave = async (andReset: boolean = false) => {
         isSaving.value = false;
     }
 };
+
+const handleDelete = async () => {
+    if (!incomeId.value) return;
+    try {
+        isDeleting.value = true;
+        await api.delete(`/api/v1/incomes/${incomeId.value}`);
+        router.push('/app/activity');
+    } catch (error) {
+        console.error('Failed to delete income', error);
+    } finally {
+        isDeleting.value = false;
+        showDeleteConfirm.value = false;
+    }
+}
 
 const resetForm = () => {
     amount.value = null;
@@ -93,7 +148,14 @@ const resetForm = () => {
     nextDate.value = '';
 };
 
-onMounted(loadCategories);
+const selectedCategory = computed(() => categories.value.find(c => c.id === categoryId.value));
+
+onMounted(async () => {
+    await loadCategories();
+    if (isEditMode.value) {
+        await loadIncomeDetails();
+    }
+});
 </script>
 
 <template>
@@ -109,9 +171,40 @@ onMounted(loadCategories);
         >
             <div v-if="showSuccess" class="fixed top-24 left-6 right-6 z-[110] p-4 bg-primary-container/10 border border-primary-container/20 backdrop-blur-xl rounded-xl flex items-center gap-3 text-primary-container luminous-shadow">
                 <span class="material-symbols-outlined">check_circle</span>
-                <p class="text-xs font-bold uppercase tracking-widest">Ingreso registrado exitosamente</p>
+                <p class="text-xs font-bold uppercase tracking-widest">{{ isEditMode ? 'Registro actualizado exitosamente' : 'Ingreso registrado exitosamente' }}</p>
             </div>
         </Transition>
+
+        <!-- Delete Confirmation Modal -->
+        <ConfirmationModal
+            :show="showDeleteConfirm"
+            title="¿Eliminar este ingreso?"
+            description="Esta acción es irreversible y tu balance mensual se verá afectado inmediatamente."
+            confirm-text="Eliminar Ingreso"
+            cancel-text="Mantener Ingreso"
+            :is-loading="isDeleting"
+            variant="danger"
+            @confirm="handleDelete"
+            @cancel="showDeleteConfirm = false"
+        >
+            <template #item-preview>
+                <div class="flex items-center gap-4 bg-surface-container-lowest/50 p-4 rounded-xl">
+                    <div 
+                        class="w-10 h-10 rounded-full flex items-center justify-center opacity-80"
+                        :style="selectedCategory ? { backgroundColor: selectedCategory.color + '20', color: selectedCategory.color } : { backgroundColor: '#ffffff10' }"
+                    >
+                        <span class="material-symbols-outlined text-sm">{{ selectedCategory?.icon || 'payments' }}</span>
+                    </div>
+                    <div class="text-left flex-1">
+                        <p class="text-sm font-bold text-on-surface">{{ source || 'Ingreso sin nombre' }}</p>
+                        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-label">{{ date }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-black text-[#05E699]">+₡{{ amount?.toLocaleString() || '0' }}</p>
+                    </div>
+                </div>
+            </template>
+        </ConfirmationModal>
 
         <!-- Page Header -->
         <header class="flex items-center justify-between px-1">
@@ -124,8 +217,8 @@ onMounted(loadCategories);
                     <span class="material-symbols-outlined">arrow_back</span>
                 </button>
                 <div class="space-y-1">
-                    <h1 class="font-headline text-2xl font-black tracking-tighter text-on-surface">Registro de Ingresos</h1>
-                    <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Nueva Entrada de Capital</p>
+                    <h1 class="font-headline text-2xl font-black tracking-tighter text-on-surface">{{ isEditMode ? 'Editar Ingreso' : 'Registro de Ingresos' }}</h1>
+                    <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">{{ isEditMode ? 'Ajustar Movimiento' : 'Nueva Entrada de Capital' }}</p>
                 </div>
             </div>
         </header>
@@ -274,6 +367,17 @@ onMounted(loadCategories);
                     class="w-full bg-surface-container-high text-on-surface font-headline font-bold py-5 rounded-xl hover:bg-surface-variant active:scale-[0.98] transition-all"
                 >
                     Guardar y Registrar Otro
+                </button>
+
+                <!-- New Delete Button Location -->
+                <button
+                    v-if="isEditMode"
+                    @click="showDeleteConfirm = true"
+                    type="button"
+                    class="w-full mt-4 bg-red-500/10 text-[#FF4D4D] font-headline font-black py-5 rounded-xl hover:bg-red-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-3 border border-red-500/10"
+                >
+                    <span class="material-symbols-outlined">delete</span>
+                    Eliminar Transacción
                 </button>
             </div>
         </form>

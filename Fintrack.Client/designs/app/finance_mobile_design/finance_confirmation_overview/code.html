@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#065134",
+              "on-secondary-fixed": "#002112",
+              "error-container": "#93000a",
+              "surface-container-high": "#282a2e",
+              "surface-tint": "#00e296",
+              "on-secondary-container": "#84c6a0",
+              "inverse-surface": "#e2e2e8",
+              "surface-dim": "#111317",
+              "outline-variant": "#3b4a40",
+              "on-tertiary": "#68000b",
+              "surface-container": "#1e2024",
+              "on-background": "#e2e2e8",
+              "inverse-primary": "#006c46",
+              "primary-fixed": "#4dffb1",
+              "tertiary-container": "#ffb8b3",
+              "surface-container-lowest": "#0c0e12",
+              "surface": "#111317",
+              "on-primary": "#003822",
+              "on-secondary": "#003822",
+              "tertiary-fixed": "#ffdad7",
+              "on-primary-fixed-variant": "#005233",
+              "on-surface-variant": "#bacbbe",
+              "inverse-on-surface": "#2f3035",
+              "on-error-container": "#ffdad6",
+              "tertiary": "#ffdedc",
+              "surface-variant": "#333539",
+              "on-primary-fixed": "#002112",
+              "on-error": "#690005",
+              "tertiary-fixed-dim": "#ffb3ae",
+              "outline": "#849589",
+              "surface-container-highest": "#333539",
+              "primary-container": "#05e699",
+              "primary-fixed-dim": "#00e296",
+              "on-tertiary-fixed-variant": "#930014",
+              "surface-container-low": "#1a1c20",
+              "secondary-fixed": "#adf1c9",
+              "primary": "#77ffbb",
+              "on-primary-container": "#00623e",
+              "error": "#ffb4ab",
+              "on-tertiary-fixed": "#410004",
+              "secondary-fixed-dim": "#92d5ae",
+              "on-surface": "#e2e2e8",
+              "background": "#111317",
+              "secondary-container": "#0b5436",
+              "secondary": "#92d5ae",
+              "on-tertiary-container": "#ac061b",
+              "surface-bright": "#37393e"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .luminous-shadow {
+            box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.4);
+        }
+        .glass-overlay {
+            backdrop-filter: blur(8px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-dim text-on-surface font-body antialiased">
+<!-- Background Activity Screen (Blurred) -->
+<main class="min-h-screen pb-32 blur-md pointer-events-none overflow-hidden">
+<!-- TopAppBar Placeholder -->
+<header class="flex justify-between items-center px-6 h-16 w-full fixed top-0 z-10 bg-gradient-to-b from-[#111317] to-transparent">
+<span class="text-xl font-black tracking-tighter text-primary-container font-headline">CERO</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest"></div>
+</header>
+<section class="pt-24 px-6">
+<div class="mb-8">
+<p class="text-on-surface-variant font-label text-xs uppercase tracking-widest mb-1">Activity</p>
+<h1 class="text-3xl font-bold font-headline tracking-tight text-on-surface">Recent Transactions</h1>
+</div>
+<div class="space-y-4">
+<!-- Transaction Item 1 -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">shopping_cart</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Apple Store</p>
+<p class="text-xs text-on-surface-variant">Electronics • 14:20</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-on-surface">-$1,299.00</p>
+<p class="text-xs text-on-surface-variant">Pending</p>
+</div>
+</div>
+<!-- Transaction Item 2 (The Target) -->
+<div class="bg-surface-container p-4 rounded-xl flex items-center justify-between outline outline-2 outline-error/20">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface">restaurant</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Le Bernardin</p>
+<p class="text-xs text-on-surface-variant">Dining • Yesterday</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-on-surface">-$450.00</p>
+<p class="text-xs text-on-surface-variant">Confirmed</p>
+</div>
+</div>
+<!-- Transaction Item 3 -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">account_balance_wallet</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Transfer from Vault</p>
+<p class="text-xs text-on-surface-variant">Savings • 2 days ago</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-primary-container">+$2,500.00</p>
+<p class="text-xs text-on-surface-variant">Success</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 z-[60] bg-[#111317]/70 glass-overlay flex items-end md:items-center justify-center">
+<!-- Modal Container (Bottom Sheet on Mobile) -->
+<div class="w-full max-w-lg bg-surface-container rounded-t-3xl md:rounded-3xl p-8 luminous-shadow animate-in slide-in-from-bottom duration-300">
+<!-- Handle for mobile visual -->
+<div class="w-12 h-1 bg-surface-container-highest rounded-full mx-auto mb-8 md:hidden"></div>
+<div class="flex flex-col items-center text-center">
+<!-- Icon Header -->
+<div class="mb-6 w-16 h-16 rounded-full bg-error-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-error !text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<!-- Content -->
+<h2 class="text-2xl font-extrabold font-headline text-on-surface tracking-tight mb-3">Delete Transaction?</h2>
+<p class="text-on-surface-variant body-md leading-relaxed mb-10 max-w-sm">
+                    Are you sure you want to delete this transaction? This action is permanent and will affect your monthly budget balance.
+                </p>
+<!-- Actions -->
+<div class="w-full space-y-3">
+<button class="w-full py-4 bg-error text-on-error font-bold rounded-xl active:scale-95 transition-transform duration-200">
+                        Delete
+                    </button>
+<button class="w-full py-4 bg-transparent text-on-surface font-semibold border border-outline-variant rounded-xl hover:bg-surface-container-high active:scale-95 transition-all duration-200">
+                        Keep Transaction
+                    </button>
+</div>
+</div>
+<!-- Transaction Preview Card inside Modal -->
+<div class="mt-8 pt-6 border-t border-outline-variant/20">
+<div class="flex items-center gap-4 bg-surface-container-lowest/50 p-4 rounded-xl">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">restaurant</span>
+</div>
+<div class="text-left flex-1">
+<p class="text-sm font-bold text-on-surface">Le Bernardin</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-label">Oct 24, 2023</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-error">-$450.00</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar (Hidden but mapped from JSON for shell consistency) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center pt-3 pb-8 px-4 bg-[#1E2228]/80 backdrop-blur-xl z-50 rounded-t-3xl pointer-events-none opacity-50">
+<div class="flex flex-col items-center justify-center text-[#9CA3AF]">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Wealth</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#9CA3AF]">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Trade</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#9CA3AF]">
+<span class="material-symbols-outlined">credit_card</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Cards</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#05E699] relative after:content-[''] after:absolute after:-bottom-1 after:w-1 after:h-1 after:bg-[#05E699] after:rounded-full">
+<span class="material-symbols-outlined">insert_chart</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Insights</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#9CA3AF]">
+<span class="material-symbols-outlined">lock</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Vault</span>
+</div>
+</nav>
+</body></html>

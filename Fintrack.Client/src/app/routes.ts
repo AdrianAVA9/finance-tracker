@@ -30,10 +30,22 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: 'Registrar Gasto', subtitle: 'Registra un nuevo gasto o sube un recibo desglosado.' }
       },
       {
+        path: 'expenses/:id/edit',
+        name: 'ExpenseEdit',
+        component: () => import('@/app/views/ExpenseRegistrationView.vue'),
+        meta: { title: 'Editar Gasto', subtitle: 'Modifica los detalles de tu gasto.' }
+      },
+      {
         path: 'incomes/new',
         name: 'IncomeRegistration',
         component: () => import('@/app/views/IncomeRegistrationView.vue'),
         meta: { title: 'Registro de Ingresos', subtitle: 'Complete los detalles para su nueva entrada de capital.' }
+      },
+      {
+        path: 'incomes/:id/edit',
+        name: 'IncomeEdit',
+        component: () => import('@/app/views/IncomeRegistrationView.vue'),
+        meta: { title: 'Editar Ingreso', subtitle: 'Ajusta los detalles de tu entrada de capital.' }
       },
       {
         path: 'budgets',
