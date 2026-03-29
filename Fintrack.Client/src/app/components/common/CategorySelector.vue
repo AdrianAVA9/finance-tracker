@@ -140,7 +140,7 @@ const close = () => {
           <header class="flex items-center justify-between px-6 pt-16 pb-6">
             <div class="space-y-1">
               <h2 class="font-headline text-2xl font-black tracking-tighter text-on-surface">Seleccionar Categoría</h2>
-              <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">Cero • Precision Index</p>
+              <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">CEROBASE • Precision Index</p>
             </div>
             <button 
               @click="close"
