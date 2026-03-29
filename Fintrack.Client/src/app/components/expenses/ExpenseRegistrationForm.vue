@@ -145,24 +145,24 @@ const saveExpense = () => {
 </script>
 
 <template>
-  <div class="w-full">
+  <div class="space-y-10">
     <!-- MAIN FORM CONTAINER -->
-    <form @submit.prevent="saveExpense" class="p-5 space-y-4">
+    <form @submit.prevent="saveExpense" class="space-y-10">
 
       <!-- Error Message Area -->
       <Transition
-        enter-active-class="transform transition duration-300 ease-out"
-        enter-from-class="-translate-y-4 opacity-0"
+        enter-active-class="transform transition duration-500 ease-out"
+        enter-from-class="-translate-y-10 opacity-0"
         enter-to-class="translate-y-0 opacity-100"
-        leave-active-class="transition duration-200 ease-in"
+        leave-active-class="transition duration-300 ease-in"
         leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
+        leave-to-class="opacity-0 scale-95"
       >
-        <div v-if="error" class="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3 text-red-500">
-          <span class="material-symbols-outlined mt-0.5">error</span>
-          <div>
-            <h4 class="text-sm font-bold">Error al guardar</h4>
-            <p class="text-xs mt-0.5 opacity-80">{{ error }}</p>
+        <div v-if="error" class="p-5 bg-red-500/10 border border-red-500/20 backdrop-blur-xl rounded-2xl flex items-start gap-4 text-red-500 luminous-shadow-red">
+          <span class="material-symbols-outlined mt-1">error</span>
+          <div class="space-y-1">
+            <h4 class="text-sm font-black uppercase tracking-widest">Error de Registro</h4>
+            <p class="text-[11px] font-bold opacity-80 leading-relaxed">{{ error }}</p>
           </div>
         </div>
       </Transition>
@@ -170,96 +170,105 @@ const saveExpense = () => {
       <!-- ============================== -->
       <!-- SIMPLE MODE WRAPPER -->
       <!-- ============================== -->
-      <div v-if="!isSplitInvoice" class="space-y-6">
+      <div v-if="!isSplitInvoice" class="space-y-10">
           
-        <!-- Amount Section -->
-        <div class="bg-slate-50 dark:bg-background-dark/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-center">
-            <label class="block text-xs font-medium text-slate-500 mb-1">Monto del Ingreso</label> <!-- WAIT, fixing it locally: -->
-            <label class="block text-xs font-medium text-slate-500 mb-1">Monto del Gasto</label>
-            <div class="flex items-center justify-center gap-2">
-                <span class="text-4xl font-bold text-[#FF4D4D]">-</span>
-                <span class="text-4xl font-bold text-slate-400 dark:text-slate-500">₡</span>
-                <input
-                    v-model="totalAmount"
-                    type="number"
-                    step="0.01"
-                    class="bg-transparent border-none text-4xl font-bold text-slate-900 dark:text-white focus:ring-0 w-32 p-0 placeholder-slate-200 dark:placeholder-slate-700"
-                    placeholder="0.00"
-                    required
-                />
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 gap-5">
-            <!-- Comercio -->
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Comercio</label>
-                <input
-                    v-model="merchant"
-                    type="text"
-                    class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-3 px-4 focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white"
-                    placeholder="Ej. AutoMercado, Gasolinera..."
-                    required
-                />
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Fecha -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Fecha del gasto</label>
+        <!-- Hero Amount Section -->
+        <section class="relative group">
+            <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1">Monto del Gasto</label>
+            <div class="bg-surface-container-low p-10 rounded-2xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-red-500/[0.02] focus-within:border-red-500/20">
+                <div class="flex items-baseline gap-2">
+                    <span class="font-headline text-4xl font-black text-[#FF4D4D]">-</span>
+                    <span class="font-headline text-4xl font-black text-[#FF4D4D]">₡</span>
                     <input
-                        v-model="date"
-                        type="date"
-                        class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-3 px-4 focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white [color-scheme:dark]"
+                        v-model="totalAmount"
+                        type="number"
+                        step="0.01"
+                        class="bg-transparent border-none text-center font-headline text-6xl font-black tracking-tighter focus:ring-0 text-on-surface w-full max-w-[280px] placeholder:text-on-surface-variant/20"
+                        placeholder="0"
                         required
                     />
                 </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 gap-8">
+            <!-- Comercio -->
+            <section class="space-y-4">
+                <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Comercio</label>
+                <input
+                    v-model="merchant"
+                    type="text"
+                    class="w-full bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-[#FF4D4D]/30 focus:ring-0 transition-all font-body text-on-surface font-semibold"
+                    placeholder="Ej. AutoMercado, Gasolinera..."
+                    required
+                />
+            </section>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Fecha -->
+                <section class="space-y-4">
+                    <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Fecha del Gasto</label>
+                    <input
+                        v-model="date"
+                        type="date"
+                        class="w-full bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-[#FF4D4D]/30 focus:ring-0 transition-all font-body text-on-surface font-semibold [color-scheme:dark]"
+                        required
+                    />
+                </section>
                 <!-- Categoría -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Categoría</label>
+                <section class="space-y-4">
+                    <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Categoría</label>
                     <div class="relative group h-full">
-                        <select v-model="singleCategoryId" class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-3 px-4 text-slate-900 dark:text-white appearance-none focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all cursor-pointer" required>
-                            <option :value="null" disabled>Categoría</option>
+                        <select 
+                            v-model="singleCategoryId" 
+                            class="w-full appearance-none bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-[#FF4D4D]/30 focus:ring-0 transition-all font-body text-on-surface font-semibold cursor-pointer" 
+                            required
+                        >
+                            <option :value="null" disabled>Seleccione una categoría</option>
                             <optgroup v-for="(cats, groupName) in groupedCategories" :key="groupName" :label="groupName">
                                 <option v-for="cat in cats" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
                             </optgroup>
                         </select>
-                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+                        <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center gap-2">
+                            <span class="material-symbols-outlined text-on-surface-variant text-xl">unfold_more</span>
+                        </div>
                     </div>
-                </div>
+                </section>
             </div>
             
             <!-- Nota -->
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 font-normal">Notas <span class="text-slate-400">(Opcional)</span></label>
+            <section class="space-y-4">
+                <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Notas <span class="opacity-40">(Opcional)</span></label>
                 <textarea
                     v-model="note"
                     rows="2"
-                    class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-3 px-4 focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white resize-none"
+                    class="w-full bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-[#FF4D4D]/30 focus:ring-0 transition-all font-body text-on-surface font-semibold resize-none"
                     placeholder="Detalles adicionales..."
                 ></textarea>
-            </div>
+            </section>
         </div>
 
         <!-- Automation Toggle -->
-        <div class="border-t border-slate-100 dark:border-slate-800 pt-6">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex flex-col">
-                    <span class="text-sm font-semibold dark:text-white">🔁 Automatización</span>
-                    <span class="text-xs text-slate-500">Convertir en gasto recurrente</span>
+        <section class="bg-surface-container-low p-6 rounded-2xl border border-white/[0.02]">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex gap-4 items-center">
+                    <div class="w-12 h-12 rounded-xl bg-[#FF4D4D]/10 flex items-center justify-center text-[#FF4D4D]">
+                        <span class="material-symbols-outlined text-2xl">sync</span>
+                    </div>
+                    <div class="space-y-0.5">
+                        <h4 class="text-sm font-bold text-on-surface">Automatización</h4>
+                        <p class="text-[10px] font-medium text-on-surface-variant uppercase tracking-wide">Gasto Recurrente</p>
+                    </div>
                 </div>
                 <!-- Toggle Switch -->
-                <button
-                    type="button"
-                    @click="isRecurring = !isRecurring"
-                    class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
-                    :class="isRecurring ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700'"
-                >
-                    <span
-                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
-                        :class="isRecurring ? 'translate-x-6' : 'translate-x-1'"
+                <label class="relative inline-flex items-center cursor-pointer group">
+                    <input
+                        type="checkbox"
+                        v-model="isRecurring"
+                        class="sr-only peer"
                     />
-                </button>
+                    <div class="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF4D4D] shadow-lg group-active:scale-95"></div>
+                </label>
             </div>
             
             <!-- Recurring Fields -->
@@ -271,47 +280,50 @@ const saveExpense = () => {
                 leave-from-class="opacity-100 translate-y-0 scale-100"
                 leave-to-class="opacity-0 -translate-y-2 scale-95"
             >
-                <div v-if="isRecurring" class="bg-slate-50 dark:bg-background-dark/30 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="space-y-2">
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Frecuencia</label>
-                            <div class="relative">
-                                <select v-model="recurringFrequency" class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white appearance-none">
-                                    <option value="Monthly">Mensual</option>
-                                    <option value="Weekly">Semanal</option>
-                                    <option value="Yearly">Anual</option>
-                                </select>
-                                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
-                            </div>
+                <div v-if="isRecurring" class="mt-6 pt-6 border-t border-white/[0.03] grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Frecuencia</label>
+                        <div class="relative">
+                            <select v-model="recurringFrequency" class="w-full appearance-none bg-surface-container-high p-4 rounded-xl border border-white/[0.03] text-sm font-bold text-on-surface focus:ring-1 focus:ring-red-500/30 outline-none transition-all">
+                                <option value="Monthly">Mensual</option>
+                                <option value="Weekly">Semanal</option>
+                                <option value="Yearly">Anual</option>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-xl">unfold_more</span>
                         </div>
-                        <div class="space-y-2">
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Próximo cobro</label>
-                            <input v-model="nextBillingDate" type="date" class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime outline-none transition-all dark:text-white [color-scheme:dark]" />
-                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Próximo Cobro</label>
+                        <input v-model="nextBillingDate" type="date" class="w-full bg-surface-container-high p-4 rounded-xl border border-white/[0.03] text-sm font-bold text-on-surface focus:ring-1 focus:ring-red-500/30 outline-none transition-all [color-scheme:dark]" />
                     </div>
                 </div>
             </Transition>
-        </div>
+        </section>
 
         <!-- Footer Actions (Simple Mode) -->
-        <div class="flex flex-col gap-2 pt-2">
+        <div class="pt-6 space-y-6 flex flex-col items-center">
             <button
                 type="submit"
                 :disabled="isSubmitDisabled || submitting"
-                class="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primary-hover transition-all shadow-glow active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                class="w-full bg-[#FF4D4D] text-white font-headline font-black py-5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all shadow-xl shadow-red-500/20 disabled:opacity-50 flex items-center justify-center gap-3"
             >
                 <span v-if="submitting" class="material-symbols-outlined animate-spin shadow-none">sync</span>
+                <span v-else class="material-symbols-outlined">receipt_long</span>
                 {{ submitting ? 'Guardando...' : 'Guardar Gasto' }}
             </button>
             <button
                 type="button"
                 :disabled="submitting"
-                class="w-full bg-transparent border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-medium py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all"
+                class="w-full bg-surface-container-high text-on-surface font-headline font-bold py-5 rounded-xl hover:bg-surface-variant active:scale-[0.98] transition-all"
             >
-                Guardar y agregar otro
+                Guardar y Agregar Otro
             </button>
-            <button type="button" @click="toggleSplitMode" class="w-fit self-center px-6 py-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors flex items-center gap-2 text-xs mt-2">
-                <span class="material-symbols-outlined text-sm">call_split</span>
+            <button 
+                type="button" 
+                @click="toggleSplitMode" 
+                class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant hover:text-on-surface transition-colors"
+            >
+                <span class="material-symbols-outlined text-lg">call_split</span>
                 Desglosar en múltiples categorías
             </button>
         </div>
@@ -320,102 +332,145 @@ const saveExpense = () => {
       <!-- ============================== -->
       <!-- ITEMIZED MODE WRAPPER -->
       <!-- ============================== -->
-      <div v-else class="space-y-6">
+      <div v-else class="space-y-10 animate-fade-in-up">
         
-        <!-- Header Card: Fixed context -->
-        <div class="bg-slate-50 dark:bg-background-dark/50 border border-slate-200 dark:border-slate-800 rounded-xl p-5 text-center flex flex-col items-center">
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Monto Total a Desglosar</span>
+        <!-- Header Summary Card -->
+        <div class="bg-surface-container-low p-8 rounded-3xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center text-center">
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant mb-3">Total a Desglosar</span>
             <div class="flex items-center justify-center gap-2">
-                <span class="text-3xl font-bold text-[#FF4D4D]">-</span>
-                <span class="text-3xl font-bold text-slate-400">₡</span>
-                <span class="text-3xl font-bold text-slate-900 dark:text-white">{{ totalAmount?.toFixed(2) || '0.00' }}</span>
+                <span class="font-headline text-2xl font-black text-[#FF4D4D]">-</span>
+                <span class="font-headline text-2xl font-black text-[#FF4D4D]">₡</span>
+                <span class="font-headline text-5xl font-black text-on-surface tracking-tighter">{{ totalAmount?.toLocaleString() || '0' }}</span>
             </div>
-            <p class="text-sm font-medium text-slate-700 dark:text-slate-300 mt-2">{{ merchant || 'Comercio no especificado' }} • {{ date }}</p>
+            <div class="mt-6 flex items-center gap-3 px-5 py-2 rounded-full bg-surface-container-high border border-white/[0.03]">
+                <span class="text-[10px] font-bold text-on-surface truncate max-w-[120px]">{{ merchant || 'Comercio' }}</span>
+                <span class="w-1 h-1 rounded-full bg-on-surface-variant/20"></span>
+                <span class="text-[10px] font-bold text-on-surface-variant">{{ date }}</span>
+            </div>
         </div>
 
-        <!-- Dynamic List Card -->
-        <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-            <div class="px-5 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-background-dark/30">
-                <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm">list_alt</span>
+        <!-- Dynamic List Section -->
+        <div class="space-y-6">
+            <h3 class="px-1 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">list_alt</span>
                 Ítems de la factura
-                </h3>
-            </div>
+            </h3>
           
-            <div class="p-5 flex flex-col gap-5">
+            <div class="space-y-4">
                 <!-- Dynamic Rows -->
-                <div v-for="(item, index) in items" :key="item.id" class="grid grid-cols-1 gap-4 sm:grid-cols-12 sm:gap-3 items-start group relative pb-4 border-b border-slate-100 dark:border-slate-800/50 last:border-0 last:pb-0">
-                    <div class="sm:col-span-4 flex flex-col gap-1.5">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Monto</label>
-                        <input v-model="item.itemAmount" class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-lg px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime" type="number" step="0.01" required />
-                    </div>
-                    
-                    <div class="sm:col-span-8 flex flex-col gap-1.5">
-                        <div class="flex justify-between items-center">
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Categoría / Detalle</label>
-                            <button type="button" @click="removeRow(item.id)" class="text-slate-300 hover:text-red-500 transition-colors bg-transparent border-none">
-                                <span class="material-symbols-outlined text-[16px]">close</span>
+                <div 
+                    v-for="(item, index) in items" 
+                    :key="item.id" 
+                    class="bg-surface-container p-6 rounded-2xl border border-white/[0.03] relative group transition-all duration-300 hover:bg-surface-container-high"
+                >
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1 space-y-4">
+                                <!-- Amount Input -->
+                                <div class="space-y-3">
+                                    <label class="block text-[9px] font-black text-on-surface-variant uppercase tracking-widest leading-none">Monto</label>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-lg font-black text-[#FF4D4D]">₡</span>
+                                        <input 
+                                            v-model="item.itemAmount" 
+                                            class="bg-transparent border-none p-0 text-xl font-black text-on-surface focus:ring-0 placeholder:text-on-surface-variant/20" 
+                                            type="number" 
+                                            step="0.01" 
+                                            placeholder="0.00"
+                                            required 
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <button 
+                                type="button" 
+                                @click="removeRow(item.id)" 
+                                class="p-2 rounded-lg hover:bg-red-500/10 text-on-surface-variant hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+                            >
+                                <span class="material-symbols-outlined text-xl">close</span>
                             </button>
                         </div>
-                        <div class="flex flex-col gap-2">
+                        
+                        <div class="grid grid-cols-1 gap-4 pt-4 border-t border-white/[0.03]">
+                            <!-- Category Select -->
                             <div class="relative">
-                                <select v-model="item.categoryId" class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-lg pl-3 pr-8 py-2.5 text-sm appearance-none outline-none focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime" required>
-                                    <option :value="null" disabled>Categoría</option>
+                                <select v-model="item.categoryId" class="w-full appearance-none bg-surface-container-high p-4 rounded-xl border border-white/[0.03] text-sm font-bold text-on-surface focus:ring-1 focus:ring-[#FF4D4D]/20 transition-all cursor-pointer" required>
+                                    <option :value="null" disabled>Seleccionar Categoría</option>
                                     <optgroup v-for="(cats, groupName) in groupedCategories" :key="groupName" :label="groupName">
                                         <option v-for="cat in cats" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
                                     </optgroup>
                                 </select>
-                                <span class="material-symbols-outlined absolute right-2 top-2.5 text-slate-400 pointer-events-none text-sm">expand_more</span>
+                                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <span class="material-symbols-outlined text-on-surface-variant text-lg">unfold_more</span>
+                                </div>
                             </div>
-                            <input v-model="item.description" class="w-full bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-accent-lime/20 focus:border-accent-lime" type="text" placeholder="Detalle (opcional)..." />
+                            <!-- Description Input -->
+                            <input 
+                                v-model="item.description" 
+                                class="w-full bg-surface-container-high p-4 rounded-xl border border-white/[0.03] text-sm font-bold text-on-surface focus:ring-1 focus:ring-primary-container/20 transition-all placeholder:text-on-surface-variant/20" 
+                                type="text" 
+                                placeholder="Detalle (ej. Manzanas, Camiseta...)" 
+                            />
                         </div>
                     </div>
                 </div>
 
                 <!-- Add Item Button -->
-                <button type="button" @click="addRow" class="w-full py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-lg text-slate-500 hover:text-primary hover:border-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 font-semibold text-sm">
-                <span class="material-symbols-outlined text-[18px]">add_circle</span>
-                Agregar otro ítem
+                <button 
+                    type="button" 
+                    @click="addRow" 
+                    class="w-full py-6 border-2 border-dashed border-white/[0.05] rounded-2xl text-on-surface-variant hover:text-on-surface hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-[0.2em]"
+                >
+                    <span class="material-symbols-outlined text-xl">add_circle</span>
+                    Agregar otro ítem
                 </button>
             </div>
           
-            <!-- Feedback Math Section -->
-            <div v-if="isMathMismatch" class="px-5 py-4 bg-red-50 dark:bg-red-950/20 border-t border-red-100 dark:border-red-900/30 flex items-center justify-between">
-                <div class="flex items-center gap-2 text-red-500">
-                    <span class="material-symbols-outlined text-sm">error</span>
-                    <span class="text-xs font-bold">
-                        {{ missingAmount > 0 ? `Faltan ₡${missingAmount.toFixed(2)} por asignar` : `Se excede por ₡${Math.abs(missingAmount).toFixed(2)}` }}
-                    </span>
-                </div>
-                <div class="text-red-400 text-[10px] font-medium hidden sm:block">
-                    Suma: ₡{{ runningSum.toFixed(2) }}
-                </div>
-            </div>
-            <div v-else class="px-5 py-4 bg-green-50 dark:bg-green-950/20 border-t border-green-100 dark:border-green-900/30 flex items-center justify-between">
-                <div class="flex items-center gap-2 text-green-500">
-                    <span class="material-symbols-outlined text-sm">check_circle</span>
-                    <span class="text-xs font-bold">Los montos coinciden</span>
+            <!-- Math Feedback Section -->
+            <div class="p-6 rounded-2xl transition-all duration-500" :class="isMathMismatch ? 'bg-red-500/5 border border-red-500/10' : 'bg-primary-container/5 border border-primary-container/10'">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center" :class="isMathMismatch ? 'bg-red-500/10 text-red-500' : 'bg-primary-container/10 text-primary-container'">
+                            <span class="material-symbols-outlined text-xl">{{ isMathMismatch ? 'priority_high' : 'check_circle' }}</span>
+                        </div>
+                        <div class="space-y-0.5">
+                            <h4 class="text-[10px] font-black uppercase tracking-widest" :class="isMathMismatch ? 'text-red-500' : 'text-primary-container'">
+                                {{ isMathMismatch ? 'Error de Suma' : 'Distribución Correcta' }}
+                            </h4>
+                            <p class="text-xs font-bold text-on-surface">
+                                {{ isMathMismatch 
+                                    ? (missingAmount > 0 ? `Faltan ₡${missingAmount.toFixed(2)} por asignar` : `Se excede por ₡${Math.abs(missingAmount).toFixed(2)}`) 
+                                    : 'Todos los montos coinciden' 
+                                }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Total Asignado</p>
+                        <p class="text-sm font-black text-on-surface">₡{{ runningSum.toFixed(2) }}</p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Actions Footer (Itemized Mode) -->
-        <div class="flex flex-col gap-2 pt-2">
+        <div class="pt-6 space-y-6 flex flex-col items-center">
             <button
                 type="submit"
                 :disabled="isSubmitDisabled || submitting"
-                class="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primary-hover transition-all shadow-glow active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                class="w-full bg-[#FF4D4D] text-white font-headline font-black py-5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all shadow-xl shadow-red-500/20 disabled:opacity-50 flex items-center justify-center gap-3"
             >
                 <span v-if="submitting" class="material-symbols-outlined animate-spin shadow-none">sync</span>
+                <span v-else class="material-symbols-outlined">receipt_long</span>
                 {{ submitting ? 'Guardando...' : 'Guardar Gasto Desglosado' }}
             </button>
             <button
                 @click="toggleSplitMode"
                 type="button"
                 :disabled="submitting"
-                class="w-fit self-center px-6 py-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors flex items-center gap-2 text-xs mt-2"
+                class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant hover:text-on-surface transition-colors"
             >
-                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                <span class="material-symbols-outlined text-lg">arrow_back</span>
                 Cancelar y volver a modo simple
             </button>
         </div>
@@ -424,3 +479,44 @@ const saveExpense = () => {
     </form>
   </div>
 </template>
+
+<style scoped>
+.luminous-shadow-sm {
+  box-shadow: 0 20px 40px -20px rgba(5, 230, 153, 0.05);
+}
+
+.luminous-shadow-red {
+  box-shadow: 0 20px 40px -20px rgba(255, 77, 77, 0.1);
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide spin arrows */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+select {
+  background-image: none !important;
+}
+</style>
