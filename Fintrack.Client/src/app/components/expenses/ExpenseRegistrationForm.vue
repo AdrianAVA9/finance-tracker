@@ -137,9 +137,9 @@ onMounted(async () => {
     date.value = new Date(data.date).toISOString().split('T')[0];
     note.value = data.note || '';
     isRecurring.value = data.isRecurring;
-    if (isRecurring.value && data.recurringData) {
-      recurringFrequency.value = (data.recurringData.frequency || 'Monthly') as string;
-      nextBillingDate.value = data.recurringData.nextDate ? new Date(data.recurringData.nextDate).toISOString().split('T')[0] : '';
+    if (isRecurring.value) {
+      recurringFrequency.value = (data.frequency || 'Monthly') as string;
+      nextBillingDate.value = data.nextDate ? new Date(data.nextDate).toISOString().split('T')[0]! : '';
     }
     
     // Handle items
