@@ -16,7 +16,7 @@ const store = useActionSheetStore();
         </router-link>
         
         <!-- Activity -->
-        <router-link to="/app/expenses"
+        <router-link to="/app/activity"
             class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors active:scale-90 transition-transform duration-200"
             active-class="text-[#05E699]">
             <span class="material-symbols-outlined">receipt_long</span>

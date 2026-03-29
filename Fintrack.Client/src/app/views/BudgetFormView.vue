@@ -163,7 +163,7 @@ const months = [
       <!-- Hero Amount Input -->
       <section class="relative group">
         <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1">Límite Mensual</label>
-        <div class="bg-surface-container-low p-10 rounded-2xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-primary-container/[0.02] focus-within:border-primary-container/20">
+        <div class="bg-surface-container-low p-10 rounded-xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-primary-container/[0.02] focus-within:border-primary-container/20">
           <div class="flex items-baseline gap-2">
             <span class="font-headline text-4xl font-black text-primary-container">₡</span>
             <input 
@@ -192,7 +192,7 @@ const months = [
       </section>
 
       <!-- Threshold Alert (UI Only) -->
-      <section class="bg-surface-container-low p-6 rounded-2xl border border-white/[0.02]">
+      <section class="bg-surface-container-low p-6 rounded-xl border border-white/[0.02]">
         <div class="flex items-center justify-between">
           <div class="flex gap-4 items-center">
             <div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary-container">

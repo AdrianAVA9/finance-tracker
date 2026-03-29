@@ -107,7 +107,7 @@ onMounted(loadCategories);
             leave-from-class="opacity-100"
             leave-to-class="opacity-0 scale-95"
         >
-            <div v-if="showSuccess" class="fixed top-24 left-6 right-6 z-[110] p-4 bg-primary-container/10 border border-primary-container/20 backdrop-blur-xl rounded-2xl flex items-center gap-3 text-primary-container luminous-shadow">
+            <div v-if="showSuccess" class="fixed top-24 left-6 right-6 z-[110] p-4 bg-primary-container/10 border border-primary-container/20 backdrop-blur-xl rounded-xl flex items-center gap-3 text-primary-container luminous-shadow">
                 <span class="material-symbols-outlined">check_circle</span>
                 <p class="text-xs font-bold uppercase tracking-widest">Ingreso registrado exitosamente</p>
             </div>
@@ -134,7 +134,7 @@ onMounted(loadCategories);
             <!-- Hero Amount Section -->
             <section class="relative group">
                 <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1">Monto del Ingreso</label>
-                <div class="bg-surface-container-low p-10 rounded-2xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-primary-container/[0.02] focus-within:border-primary-container/20">
+                <div class="bg-surface-container-low p-10 rounded-xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-primary-container/[0.02] focus-within:border-primary-container/20">
                     <div class="flex items-baseline gap-2">
                         <span class="font-headline text-4xl font-black text-primary-container">+</span>
                         <span class="font-headline text-4xl font-black text-primary-container">₡</span>
@@ -200,7 +200,7 @@ onMounted(loadCategories);
             </div>
 
             <!-- Automation Toggle -->
-            <section class="bg-surface-container-low p-6 rounded-2xl border border-white/[0.02]">
+            <section class="bg-surface-container-low p-6 rounded-xl border border-white/[0.02]">
                 <div class="flex items-center justify-between mb-2">
                     <div class="flex gap-4 items-center">
                         <div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary-container">

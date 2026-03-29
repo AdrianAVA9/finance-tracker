@@ -18,6 +18,12 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: 'Dashboard', subtitle: '¡Bienvenido de nuevo!' }
       },
       {
+        path: 'activity',
+        name: 'Activity',
+        component: () => import('@/app/views/TransactionsView.vue'),
+        meta: { title: 'Actividad', subtitle: 'Revisa tu historial de movimientos.' }
+      },
+      {
         path: 'expenses/new',
         name: 'ExpenseRegistration',
         component: () => import('@/app/views/ExpenseRegistrationView.vue'),

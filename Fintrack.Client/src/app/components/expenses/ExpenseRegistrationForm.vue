@@ -161,7 +161,7 @@ const saveExpense = () => {
         leave-from-class="opacity-100"
         leave-to-class="opacity-0 scale-95"
       >
-        <div v-if="error" class="p-5 bg-red-500/10 border border-red-500/20 backdrop-blur-xl rounded-2xl flex items-start gap-4 text-red-500 luminous-shadow-red">
+        <div v-if="error" class="p-5 bg-red-500/10 border border-red-500/20 backdrop-blur-xl rounded-xl flex items-start gap-4 text-red-500 luminous-shadow-red">
           <span class="material-symbols-outlined mt-1">error</span>
           <div class="space-y-1">
             <h4 class="text-sm font-black uppercase tracking-widest">Error de Registro</h4>
@@ -178,7 +178,7 @@ const saveExpense = () => {
         <!-- Hero Amount Section -->
         <section class="relative group">
             <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1">Monto del Gasto</label>
-            <div class="bg-surface-container-low p-10 rounded-2xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-red-500/[0.02] focus-within:border-red-500/20">
+            <div class="bg-surface-container-low p-10 rounded-xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-red-500/[0.02] focus-within:border-red-500/20">
                 <div class="flex items-baseline gap-2">
                     <span class="font-headline text-4xl font-black text-[#FF4D4D]">-</span>
                     <span class="font-headline text-4xl font-black text-[#FF4D4D]">₡</span>
@@ -242,7 +242,7 @@ const saveExpense = () => {
         </div>
 
         <!-- Automation Toggle -->
-        <section class="bg-surface-container-low p-6 rounded-2xl border border-white/[0.02]">
+        <section class="bg-surface-container-low p-6 rounded-xl border border-white/[0.02]">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex gap-4 items-center">
                     <div class="w-12 h-12 rounded-xl bg-[#FF4D4D]/10 flex items-center justify-center text-[#FF4D4D]">
@@ -328,7 +328,7 @@ const saveExpense = () => {
       <div v-else class="space-y-10 animate-fade-in-up">
         
         <!-- Header Summary Card -->
-        <div class="bg-surface-container-low p-8 rounded-3xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center text-center">
+        <div class="bg-surface-container-low p-8 rounded-2xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center text-center">
             <span class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant mb-3">Total a Desglosar</span>
             <div class="flex items-center justify-center gap-2">
                 <span class="font-headline text-2xl font-black text-[#FF4D4D]">-</span>
@@ -354,7 +354,7 @@ const saveExpense = () => {
                 <div 
                     v-for="(item, index) in items" 
                     :key="item.id" 
-                    class="bg-surface-container p-6 rounded-2xl border border-white/[0.03] relative group transition-all duration-300 hover:bg-surface-container-high"
+                    class="bg-surface-container p-6 rounded-xl border border-white/[0.03] relative group transition-all duration-300 hover:bg-surface-container-high"
                 >
                     <div class="grid grid-cols-1 gap-6">
                         <div class="flex items-start justify-between">
@@ -406,7 +406,7 @@ const saveExpense = () => {
                 <button 
                     type="button" 
                     @click="addRow" 
-                    class="w-full py-6 border-2 border-dashed border-white/[0.05] rounded-2xl text-on-surface-variant hover:text-on-surface hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-[0.2em]"
+                    class="w-full py-6 border-2 border-dashed border-white/[0.05] rounded-xl text-on-surface-variant hover:text-on-surface hover:border-white/10 hover:bg-white/[0.02] transition-all flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-[0.2em]"
                 >
                     <span class="material-symbols-outlined text-xl">add_circle</span>
                     Agregar otro ítem
@@ -414,7 +414,7 @@ const saveExpense = () => {
             </div>
           
             <!-- Math Feedback Section -->
-            <div class="p-6 rounded-2xl transition-all duration-500" :class="isMathMismatch ? 'bg-red-500/5 border border-red-500/10' : 'bg-primary-container/5 border border-primary-container/10'">
+            <div class="p-6 rounded-xl transition-all duration-500" :class="isMathMismatch ? 'bg-red-500/5 border border-red-500/10' : 'bg-primary-container/5 border border-primary-container/10'">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center" :class="isMathMismatch ? 'bg-red-500/10 text-red-500' : 'bg-primary-container/10 text-primary-container'">
