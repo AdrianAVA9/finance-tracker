@@ -90,20 +90,23 @@ const formatDate = (dateString: string) => {
                             </div>
                             <div>
                                 <h4 class="font-bold text-sm text-[#e2e2e8] group-hover:text-white transition-colors">{{ budget.categoryName }}</h4>
-                                <p class="text-xs text-[#bacbbe] mt-0.5">{{ formatCurrency(budget.remainingAmount) }} remaining</p>
+                                <p class="text-xs text-[#bacbbe] mt-0.5">{{ formatCurrency(budget.remainingAmount) }} restantes</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                             <span class="font-headline font-bold text-sm text-[#e2e2e8]">{{ Math.round(budget.percentage) }}%</span>
+                             <span class="font-headline font-bold text-sm" 
+                                   :class="budget.percentage > 100 ? 'text-[#FF4D4D]' : 'text-[#05E699]'">
+                                {{ Math.round(budget.percentage) }}%
+                             </span>
                              <span class="material-symbols-outlined text-[#bacbbe] text-sm opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0">chevron_right</span>
                         </div>
                     </div>
                     
                     <div class="w-full bg-[#333539] h-1.5 rounded-full overflow-hidden">
-                        <div class="h-full rounded-full" 
+                        <div class="h-full rounded-full transition-all duration-500" 
                              :style="{ 
                                 width: Math.min(budget.percentage, 100) + '%', 
-                                backgroundColor: budget.color || '#05e699' 
+                                backgroundColor: budget.percentage > 100 ? '#FF4D4D' : '#05E699' 
                              }"></div>
                     </div>
                 </router-link>
