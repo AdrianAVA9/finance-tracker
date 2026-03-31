@@ -16,12 +16,13 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, from, next) => {
-  const { isAuthenticated, checkSession } = useAuth();
+router.beforeEach((to, from, next) => {
+  const { isAuthenticated, isInitialized } = useAuth();
 
-  // Resolve auth state once before making any routing decision
-  if (!isAuthenticated.value) {
-    await checkSession();
+  // Allow the initial navigation to proceed without blocking
+  // App.vue will show a loading screen while !isInitialized
+  if (!isInitialized.value) {
+    return next();
   }
 
   const isAuthDomain   = to.path.startsWith('/auth'); // login, register, forgot/reset password

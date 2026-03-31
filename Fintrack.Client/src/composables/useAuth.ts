@@ -3,6 +3,7 @@ import api from '@/services/api';
 
 const user = ref<string | null>(null);
 const isLoading = ref(true);
+const isInitialized = ref(false);
 
 export function useAuth() {
   const isAuthenticated = computed(() => !!user.value);
@@ -17,6 +18,7 @@ export function useAuth() {
       user.value = null; // 401 Unauthorized means no valid cookie
     } finally {
       isLoading.value = false;
+      isInitialized.value = true;
     }
   };
 
@@ -64,6 +66,7 @@ export function useAuth() {
     user,
     isAuthenticated,
     isLoading,
+    isInitialized,
     checkSession,
     login,
     register,
