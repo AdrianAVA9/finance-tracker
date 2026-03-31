@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import transactionService, { type TransactionDto } from '@/services/transactionService'
 import MonthPicker from '@/app/components/common/MonthPicker.vue'
@@ -13,6 +13,7 @@ const selectedMonth = ref(new Date().getMonth() + 1) // 1-indexed
 const selectedType = ref('All')
 const isSearchOpen = ref(false)
 const searchQuery = ref('')
+const searchInput = ref<HTMLInputElement | null>(null)
 
 // Fetching
 const fetchTransactions = async () => {
@@ -46,9 +47,14 @@ const groupedTransactions = computed(() => {
   const locale = navigator.language || 'es-ES'
   
   filteredTransactions.value.forEach(tx => {
-    const date = new Date(tx.date)
+    // Parse date correctly as local to avoid UTC shifts
+    const [y, m, d] = tx.date.split('T')[0].split('-').map(Number)
+    const date = new Date(y, m - 1, d)
+    
     const today = new Date()
-    const yesterday = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    const yesterday = new Date(today)
     yesterday.setDate(today.getDate() - 1)
     
     let groupKey = ''
@@ -81,7 +87,13 @@ const navigateToEdit = (tx: TransactionDto) => {
 
 const toggleSearch = () => {
   isSearchOpen.value = !isSearchOpen.value
-  if (!isSearchOpen.value) searchQuery.value = ''
+  if (isSearchOpen.value) {
+    nextTick(() => {
+      searchInput.value?.focus()
+    })
+  } else {
+    searchQuery.value = ''
+  }
 }
 
 const selectType = (type: string) => {
@@ -94,8 +106,7 @@ watch([selectedYear, selectedMonth, selectedType], fetchTransactions)
 
 // Formatting
 const formatCurrency = (amount: number) => {
-  const locale = navigator.language || 'es-ES'
-  return new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(amount)
+  return new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(amount)
 }
 </script>
 
@@ -130,10 +141,10 @@ const formatCurrency = (amount: number) => {
           <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm group-focus-within:text-[#05E699] transition-colors">search</span>
           <input 
             v-model="searchQuery"
+            ref="searchInput"
             class="w-full bg-surface-container-lowest border-none rounded-xl py-4 pl-12 pr-4 text-sm font-bold font-headline focus:ring-1 focus:ring-[#05E699]/40 placeholder:text-on-surface-variant/20 shadow-xl" 
             placeholder="Buscar transacciones..." 
             type="text"
-            autofocus
           />
         </div>
       </div>

@@ -14,7 +14,7 @@ interface ExpenseItem {
 const transactionType = ref<'expense' | 'income'>('expense')
 const merchant = ref('')
 const totalAmount = ref<number | null>(null)
-const date = ref(new Date().toISOString().split('T')[0])
+const date = ref(new Date().toLocaleDateString('en-CA')) // YYYY-MM-DD
 const note = ref('')
 
 // Simple Mode
@@ -134,12 +134,12 @@ onMounted(async () => {
     const data = props.initialData;
     merchant.value = data.merchant;
     totalAmount.value = data.totalAmount;
-    date.value = new Date(data.date).toISOString().split('T')[0];
+    date.value = data.date.split('T')[0];
     note.value = data.note || '';
     isRecurring.value = data.isRecurring;
     if (isRecurring.value) {
       recurringFrequency.value = (data.frequency || 'Monthly') as string;
-      nextBillingDate.value = data.nextDate ? new Date(data.nextDate).toISOString().split('T')[0]! : '';
+      nextBillingDate.value = data.nextDate ? data.nextDate.split('T')[0] : '';
     }
     
     // Handle items
@@ -249,7 +249,7 @@ const saveExpense = () => {
                     <input
                         v-model="date"
                         type="date"
-                        class="w-full bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-[#FF4D4D]/30 focus:ring-0 transition-all font-body text-on-surface font-semibold [color-scheme:dark]"
+                        class="w-full max-w-full bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-[#FF4D4D]/30 focus:ring-0 transition-all font-body text-on-surface font-semibold [color-scheme:dark]"
                         required
                     />
                 </section>
@@ -322,7 +322,7 @@ const saveExpense = () => {
                     </div>
                     <div class="space-y-3">
                         <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Próximo Cobro</label>
-                        <input v-model="nextBillingDate" type="date" class="w-full bg-surface-container-high p-4 rounded-xl border border-white/[0.03] text-sm font-bold text-on-surface focus:ring-1 focus:ring-red-500/30 outline-none transition-all [color-scheme:dark]" />
+                        <input v-model="nextBillingDate" type="date" class="w-full max-w-full bg-surface-container-high p-4 rounded-xl border border-white/[0.03] text-sm font-bold text-on-surface focus:ring-1 focus:ring-red-500/30 outline-none transition-all [color-scheme:dark]" />
                     </div>
                 </div>
             </Transition>

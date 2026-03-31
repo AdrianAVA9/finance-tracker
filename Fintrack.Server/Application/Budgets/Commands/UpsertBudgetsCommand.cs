@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fintrack.Server.Application.Budgets.Commands;
 
-public record BudgetEntryDto(int CategoryId, decimal Amount);
+public record BudgetEntryDto(int CategoryId, decimal Amount, bool IsRecurrent = false);
 
 public record UpsertBudgetsCommand(
     string UserId,
@@ -40,6 +40,7 @@ internal sealed class UpsertBudgetsCommandHandler : IRequestHandler<UpsertBudget
             if (existingBudgets.TryGetValue(entry.CategoryId, out var existing))
             {
                 existing.Amount = entry.Amount;
+                existing.IsRecurrent = entry.IsRecurrent;
             }
             else
             {
@@ -48,6 +49,7 @@ internal sealed class UpsertBudgetsCommandHandler : IRequestHandler<UpsertBudget
                     UserId = request.UserId,
                     CategoryId = entry.CategoryId,
                     Amount = entry.Amount,
+                    IsRecurrent = entry.IsRecurrent,
                     Month = request.Month,
                     Year = request.Year
                 });

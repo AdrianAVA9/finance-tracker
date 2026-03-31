@@ -15,7 +15,8 @@ public record BudgetDto(
     string? CategoryColor,
     string? CategoryGroup,
     decimal LimitAmount,
-    decimal SpentAmount
+    decimal SpentAmount,
+    bool IsRecurrent
 );
 
 public record BudgetListDto(
@@ -57,6 +58,41 @@ internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, 
             .Where(b => b.UserId == request.UserId && b.Month == request.Month && b.Year == request.Year)
             .ToListAsync(cancellationToken);
 
+        // 1.1 Auto-copy recurrent budgets if none exist for this month
+        if (!userBudgets.Any())
+        {
+            var prevDate = startDate.AddMonths(-1);
+            var recurrentBudgets = await _dbContext.Budgets
+                .Where(b => b.UserId == request.UserId && 
+                            b.IsRecurrent && 
+                            b.Month == prevDate.Month && 
+                            b.Year == prevDate.Year)
+                .ToListAsync(cancellationToken);
+
+            if (recurrentBudgets.Any())
+            {
+                var newBudgets = recurrentBudgets.Select(rb => new Budget
+                {
+                    UserId = request.UserId,
+                    CategoryId = rb.CategoryId,
+                    Amount = rb.Amount,
+                    Month = request.Month,
+                    Year = request.Year,
+                    IsRecurrent = true
+                }).ToList();
+
+                _dbContext.Budgets.AddRange(newBudgets);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                // Refresh userBudgets list
+                userBudgets = await _dbContext.Budgets
+                    .Include(b => b.Category)
+                    .ThenInclude(c => c.Group)
+                    .Where(b => b.UserId == request.UserId && b.Month == request.Month && b.Year == request.Year)
+                    .ToListAsync(cancellationToken);
+            }
+        }
+
         // 2. Fetch spent amounts (expenses) for these categories in the same period
         // Optimization: only fetching for categories that have budgets
         var categoryIds = userBudgets.Select(b => b.CategoryId).ToList();
@@ -83,7 +119,8 @@ internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, 
             b.Category!.Color,
             b.Category?.Group?.Name,
             b.Amount,
-            spentAmounts.GetValueOrDefault(b.CategoryId, 0)
+            spentAmounts.GetValueOrDefault(b.CategoryId, 0),
+            b.IsRecurrent
         )).ToList();
 
         return new BudgetListDto(budgets, monthlyIncome);

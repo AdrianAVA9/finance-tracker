@@ -23,6 +23,7 @@ const selectedCategoryId = ref<number | null>(null)
 const limitAmount = ref<number | null>(null)
 const isLoading = ref(true)
 const isSubmitting = ref(false)
+const isRecurrent = ref(false)
 const showDeleteConfirm = ref(false)
 const isDeleting = ref(false)
 
@@ -53,6 +54,7 @@ const fetchBudgetDetails = async () => {
     if (budget) {
       selectedCategoryId.value = budget.categoryId
       limitAmount.value = budget.limitAmount
+      isRecurrent.value = budget.isRecurrent
     } else {
       console.warn('Budget not found in this month context')
       router.replace('/app/budgets')
@@ -74,7 +76,8 @@ const handleSave = async () => {
       year: year.value,
       budgets: [{
         categoryId: selectedCategoryId.value,
-        amount: limitAmount.value
+        amount: limitAmount.value,
+        isRecurrent: isRecurrent.value
       }]
     })
     router.push('/app/budgets')
@@ -199,12 +202,32 @@ const monthsLabels = [
               class="bg-transparent border-none text-center font-headline text-6xl font-black tracking-tighter focus:ring-0 text-on-surface w-full max-w-[280px] placeholder:text-on-surface-variant/20" 
               placeholder="0" 
               type="number" 
+              step="0.01"
               required
             />
           </div>
-          <div v-if="limitAmount" class="mt-6 px-4 py-1.5 rounded-full bg-primary-container/5 border border-primary-container/10">
+          <div v-if="limitAmount !== null" class="mt-6 px-4 py-1.5 rounded-full bg-primary-container/5 border border-primary-container/10">
             <span class="text-primary-container font-bold text-[10px] uppercase tracking-widest">Equivale a {{ formatCurrency(limitAmount) }}</span>
           </div>
+        </div>
+      </section>
+
+      <!-- Recurring Active Toggle -->
+      <section class="bg-surface-container-low p-6 rounded-xl border border-white/[0.02]">
+        <div class="flex items-center justify-between">
+          <div class="flex gap-4 items-center">
+            <div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary-container">
+              <span class="material-symbols-outlined text-2xl">event_repeat</span>
+            </div>
+            <div class="space-y-0.5">
+              <h4 class="text-sm font-bold text-on-surface">Presupuesto Recurrente</h4>
+              <p class="text-[10px] font-medium text-on-surface-variant uppercase tracking-wide">Activar automáticamente cada mes</p>
+            </div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer group">
+            <input type="checkbox" v-model="isRecurrent" class="sr-only peer">
+            <div class="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container shadow-lg group-active:scale-95"></div>
+          </label>
         </div>
       </section>
 
