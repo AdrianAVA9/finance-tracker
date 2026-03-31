@@ -69,7 +69,8 @@ const formatCurrency = (amount: number) => {
 
 <template>
   <div 
-    class="group relative p-5 rounded-lg bg-[#1a1c20] hover:bg-[#222428] transition-all duration-300 transform hover:-translate-y-1 overflow-visible"
+    @click="handleEdit"
+    class="group relative p-5 rounded-lg bg-[#1a1c20] hover:bg-[#222428] transition-all duration-300 transform hover:-translate-y-1 overflow-visible cursor-pointer"
     :class="{ 'z-[100]': isMenuOpen }"
   >
     <!-- Header: Icon, Name, and Menu -->

@@ -27,7 +27,7 @@ const isEditMode = computed(() => !!incomeId.value);
 // Form State
 const amount = ref<number | null>(null);
 const source = ref('');
-const date = ref(new Date().toISOString().split('T')[0]);
+const date = ref(new Date().toLocaleDateString('en-CA')); // YYYY-MM-DD format
 const categoryId = ref<number | null>(null);
 const notes = ref('');
 const isRecurring = ref(false);
@@ -74,12 +74,13 @@ const loadIncomeDetails = async () => {
         const data = response.data;
         amount.value = data.amount;
         source.value = data.source;
-        date.value = new Date(data.date).toISOString().split('T')[0];
+        // Fix date shift: ensure we take the date part from the string directly
+        date.value = data.date.split('T')[0];
         categoryId.value = data.categoryId;
         notes.value = data.notes || '';
         isRecurring.value = data.isRecurring;
         frequency.value = data.frequency || 'Monthly';
-        nextDate.value = data.nextDate ? new Date(data.nextDate).toISOString().split('T')[0]! : '';
+        nextDate.value = data.nextDate ? data.nextDate.split('T')[0] : '';
     } catch (error) {
         console.error('Failed to load income details', error);
         router.push('/app/activity');
@@ -142,7 +143,7 @@ const handleDelete = async () => {
 const resetForm = () => {
     amount.value = null;
     source.value = '';
-    date.value = new Date().toISOString().split('T')[0];
+    date.value = new Date().toLocaleDateString('en-CA');
     notes.value = '';
     isRecurring.value = false;
     nextDate.value = '';
@@ -264,7 +265,7 @@ onMounted(async () => {
                         <input
                             v-model="date"
                             type="date"
-                            class="w-full bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-primary-container/30 focus:ring-0 transition-all font-body text-on-surface font-semibold [color-scheme:dark]"
+                            class="w-full max-w-full bg-surface-container p-5 rounded-xl border border-white/[0.03] focus:border-primary-container/30 focus:ring-0 transition-all font-body text-on-surface font-semibold [color-scheme:dark]"
                             required
                         />
                     </section>

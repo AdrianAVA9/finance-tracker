@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import BudgetItemCard from '@/app/components/budgets/BudgetItemCard.vue'
 import ConfirmationModal from '@/app/components/common/ConfirmationModal.vue'
+import MonthPicker from '@/app/components/common/MonthPicker.vue'
 
 interface Budget {
   id: number
@@ -171,9 +172,12 @@ watch([selectedMonth, selectedYear], loadBudgets)
     <!-- Page Title -->
     <section class="space-y-1 px-1">
       <h1 class="font-headline text-3xl font-extrabold tracking-tighter text-on-surface">Planificación Mensual</h1>
-      <p class="text-sm font-medium text-on-surface-variant tracking-wide uppercase">
-        {{ months[selectedMonth - 1] }} {{ selectedYear }} • Análisis de Precisión
-      </p>
+      <div class="flex items-center justify-between">
+        <MonthPicker 
+          v-model:month="selectedMonth" 
+          v-model:year="selectedYear" 
+        />
+      </div>
     </section>
 
     <!-- Hero Budget Card: Asymmetric Bento Style -->
@@ -204,17 +208,17 @@ watch([selectedMonth, selectedYear], loadBudgets)
 
           <div class="pt-6 grid grid-cols-2 gap-8">
             <div class="space-y-1">
-              <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Presupuesto Total</p>
-              <p class="text-lg font-bold text-on-surface">₡{{ totalBudgeted.toLocaleString() }}</p>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Ingresos Esperados</p>
+              <p class="text-lg font-bold text-accent-lime">₡{{ expectedIncome.toLocaleString() }}</p>
             </div>
             <div class="space-y-1">
-              <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Total Gastado</p>
-              <p class="text-lg font-bold text-on-surface">₡{{ totalSpent.toLocaleString() }}</p>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Presupuesto Total</p>
+              <p class="text-lg font-bold text-on-surface">₡{{ totalBudgeted.toLocaleString() }}</p>
             </div>
           </div>
 
           <!-- Global Progress -->
-          <div class="space-y-2 pt-2">
+          <div class="space-y-2 pt-2 hidden">
             <div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
               <div 
                 class="h-full bg-gradient-to-r from-primary-fixed to-primary-container transition-all duration-1000 ease-out" 
