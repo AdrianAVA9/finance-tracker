@@ -48,8 +48,8 @@ const groupedTransactions = computed(() => {
   
   filteredTransactions.value.forEach(tx => {
     // Parse date correctly as local to avoid UTC shifts
-    const [y, m, d] = tx.date.split('T')[0].split('-').map(Number)
-    const date = new Date(y, m - 1, d)
+    const [y, m, d] = (tx.date.split('T')[0] || '').split('-').map(Number)
+    const date = new Date(y || 0, (m || 1) - 1, d || 1)
     
     const today = new Date()
     today.setHours(0, 0, 0, 0)

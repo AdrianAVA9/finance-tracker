@@ -44,7 +44,7 @@ export default defineConfig({
         VitePWA({
             registerType: 'autoUpdate',
             injectRegister: 'auto',
-            includeAssets: ['favicon.ico'],
+            includeAssets: ['favicon.ico', 'splash/*.jpg', 'splash/*.png'],
             manifest: {
                 name: 'CeroBase',
                 short_name: 'CeroBase',
