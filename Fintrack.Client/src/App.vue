@@ -1,7 +1,56 @@
 <script setup lang="ts">
-// Main App Entry
+import { onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuth } from '@/composables/useAuth';
+
+const { isInitialized, checkSession } = useAuth();
+const router = useRouter();
+
+onMounted(async () => {
+    if (!isInitialized.value) {
+        await checkSession();
+    }
+});
+
+// Re-evaluate routing once session is established
+watch(isInitialized, (initialized) => {
+    if (initialized) {
+        router.replace(router.currentRoute.value.fullPath);
+    }
+});
 </script>
 
 <template>
-  <router-view />
+  <Transition name="fade">
+    <div v-if="!isInitialized" 
+         class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0f172a] text-white">
+        <div class="flex flex-col items-center gap-6">
+            <div class="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20 animate-pulse">
+                <span class="material-symbols-outlined text-primary text-5xl">wallet</span>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+                <h1 class="text-2xl font-bold tracking-tight">CeroBase</h1>
+                <p class="text-slate-400 text-sm animate-pulse">Sincronizando tus finanzas...</p>
+            </div>
+            <div class="flex gap-1.5 mt-2">
+                <div class="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]"></div>
+                <div class="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]"></div>
+                <div class="w-2 h-2 rounded-full bg-primary animate-bounce"></div>
+            </div>
+        </div>
+    </div>
+    <router-view v-else />
+  </Transition>
 </template>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
