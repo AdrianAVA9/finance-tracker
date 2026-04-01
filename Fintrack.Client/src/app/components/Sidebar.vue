@@ -7,18 +7,13 @@ const store = useActionSheetStore();
 <template>
     <nav class="fixed bottom-0 w-full rounded-t-3xl z-50 bg-[#1E2228]/90 backdrop-blur-md no-border border-t border-white/5 shadow-[0_-4px_40px_rgba(5,230,153,0.05)] flex justify-around items-center px-4 pb-8 pt-3">
         <!-- Dashboard -->
-        <router-link to="/app/dashboard"
-            class="flex flex-col items-center justify-center relative active:scale-90 transition-transform duration-200"
-            active-class="text-[#05E699] after:content-[''] after:absolute after:-bottom-2 after:w-1 after:h-1 after:bg-[#05E699] after:rounded-full"
-            exact-active-class="text-[#05E699] after:content-[''] after:absolute after:-bottom-2 after:w-1 after:h-1 after:bg-[#05E699] after:rounded-full">
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+        <router-link to="/app/dashboard" class="sidebar-link">
+            <span class="material-symbols-outlined">dashboard</span>
             <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Inicio</span>
         </router-link>
         
         <!-- Activity -->
-        <router-link to="/app/activity"
-            class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors active:scale-90 transition-transform duration-200"
-            active-class="text-[#05E699]">
+        <router-link to="/app/activity" class="sidebar-link">
             <span class="material-symbols-outlined">receipt_long</span>
             <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Actividad</span>
         </router-link>
@@ -35,19 +30,34 @@ const store = useActionSheetStore();
         </button>
 
         <!-- Budgets -->
-        <router-link to="/app/budgets"
-            class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors active:scale-90 transition-transform duration-200"
-            active-class="text-[#05E699]">
+        <router-link to="/app/budgets" class="sidebar-link">
             <span class="material-symbols-outlined">account_balance_wallet</span>
             <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Presupuesto</span>
         </router-link>
 
         <!-- Profile / Cuentas -->
-        <router-link to="/app/settings"
-            class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#05E699] transition-colors active:scale-90 transition-transform duration-200"
-            active-class="text-[#05E699]">
+        <router-link to="/app/settings" class="sidebar-link">
             <span class="material-symbols-outlined">wallet</span>
             <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Cuentas</span>
         </router-link>
     </nav>
 </template>
+
+<style scoped>
+.sidebar-link {
+    @apply flex flex-col items-center justify-center relative transition-all duration-200 text-[#9CA3AF] hover:text-[#05E699] active:scale-90;
+}
+
+.router-link-exact-active {
+    @apply !text-[#05E699];
+}
+
+.router-link-exact-active::after {
+    content: '';
+    @apply absolute -bottom-3 w-1 h-1 bg-[#05E699] rounded-full shadow-[0_0_8px_#05E699];
+}
+
+.router-link-exact-active .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1 !important;
+}
+</style>
