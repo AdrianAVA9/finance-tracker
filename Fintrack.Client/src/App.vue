@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 import { useNetworkStatus } from '@/shared/composables/useNetworkStatus';
 import OfflineView from '@/shared/views/OfflineView.vue';
+import ReloadPrompt from '@/shared/ui/ReloadPrompt.vue';
 
 const { isInitialized, checkSession } = useAuth();
 const { isOnline } = useNetworkStatus();
@@ -72,6 +73,7 @@ watch(isInitialized, (initialized) => {
     <div v-else class="h-full">
         <OfflineView v-if="showOfflinePage" />
         <router-view v-else />
+        <ReloadPrompt />
     </div>
   </Transition>
 </template>
