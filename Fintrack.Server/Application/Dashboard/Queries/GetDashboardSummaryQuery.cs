@@ -40,7 +40,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
         string Type // "Income" or "Expense"
     );
 
-    public record GetDashboardSummaryQuery(string UserId) : IRequest<DashboardSummaryDto>;
+    public record GetDashboardSummaryQuery(string UserId, DateTimeOffset? ReferenceDate = null) : IRequest<DashboardSummaryDto>;
 
     public class GetDashboardSummaryQueryHandler : IRequestHandler<GetDashboardSummaryQuery, DashboardSummaryDto>
     {
@@ -53,8 +53,8 @@ namespace Fintrack.Server.Application.Dashboard.Queries
 
         public async Task<DashboardSummaryDto> Handle(GetDashboardSummaryQuery request, CancellationToken cancellationToken)
         {
-            var now = DateTime.UtcNow;
-            var currentMonthStart = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var referenceDate = request.ReferenceDate ?? DateTimeOffset.UtcNow;
+            var currentMonthStart = new DateTime(referenceDate.Year, referenceDate.Month, 1, 0, 0, 0, DateTimeKind.Utc);
             var lastMonthStart = currentMonthStart.AddMonths(-1);
             var lastMonthEnd = currentMonthStart.AddDays(-1);
 
@@ -196,7 +196,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
             // 7. Top Budgets (Current Month)
             var currentBudgets = await _dbContext.Budgets
                 .Include(b => b.Category)
-                .Where(b => b.UserId == request.UserId && b.Month == now.Month && b.Year == now.Year)
+                .Where(b => b.UserId == request.UserId && b.Month == referenceDate.Month && b.Year == referenceDate.Year)
                 .ToListAsync(cancellationToken);
 
             var categorySpendingMap = categorySpendingItems
