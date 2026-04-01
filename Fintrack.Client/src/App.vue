@@ -15,7 +15,19 @@ onMounted(async () => {
 // Re-evaluate routing once session is established
 watch(isInitialized, (initialized) => {
     if (initialized) {
-        router.replace(router.currentRoute.value.fullPath);
+        const { isAuthenticated } = useAuth();
+        const currentPath = router.currentRoute.value.path;
+        
+        const isAuthDomain = currentPath.startsWith('/auth');
+        const isAppDomain = currentPath.startsWith('/app');
+        const isPublicDomain = !isAuthDomain && !isAppDomain && !currentPath.startsWith('/admin');
+
+        // Force the same logic as router/index.ts since replace(currentPath) might be a no-op
+        if ((isPublicDomain || isAuthDomain) && isAuthenticated.value) {
+            router.replace('/app');
+        } else if (isAppDomain && !isAuthenticated.value) {
+            router.replace('/auth/login');
+        }
     }
 });
 </script>
