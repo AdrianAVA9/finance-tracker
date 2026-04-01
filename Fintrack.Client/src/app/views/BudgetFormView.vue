@@ -206,9 +206,6 @@ const monthsLabels = [
               required
             />
           </div>
-          <div v-if="limitAmount !== null" class="mt-6 px-4 py-1.5 rounded-full bg-primary-container/5 border border-primary-container/10">
-            <span class="text-primary-container font-bold text-[10px] uppercase tracking-widest">Equivale a {{ formatCurrency(limitAmount) }}</span>
-          </div>
         </div>
       </section>
 
@@ -242,24 +239,7 @@ const monthsLabels = [
         />
       </section>
 
-      <!-- Threshold Alert (UI Only) -->
-      <section class="bg-surface-container-low p-6 rounded-xl border border-white/[0.02]">
-        <div class="flex items-center justify-between">
-          <div class="flex gap-4 items-center">
-            <div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary-container">
-              <span class="material-symbols-outlined text-2xl">notifications_active</span>
-            </div>
-            <div class="space-y-0.5">
-              <h4 class="text-sm font-bold text-on-surface">Alarma de Umbral</h4>
-              <p class="text-[10px] font-medium text-on-surface-variant uppercase tracking-wide">Notificar al alcanzar el 85%</p>
-            </div>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer group">
-            <input type="checkbox" checked class="sr-only peer">
-            <div class="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container shadow-lg group-active:scale-95"></div>
-          </label>
-        </div>
-      </section>
+      <!-- Threshold Alert (UI Only) - Removed per user request -->
 
       <!-- Action Buttons -->
       <div class="pt-6 space-y-4">
