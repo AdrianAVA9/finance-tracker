@@ -192,7 +192,7 @@ onMounted(loadBudgets)
     <div class="h-40"></div>
 
     <!-- Fixed Impact Footer -->
-    <footer style="bottom: 5.4rem;" class="fixed bottom-24 left-0 w-full z-40 bg-[#1E2228] border-t border-white/10 shadow-[0_-8px_40px_-12px_rgba(0,0,0,0.5)]">
+    <footer class="fixed bottom-0 left-0 w-full z-40 bg-[#1E2228] border-t border-white/10 shadow-[0_-8px_40px_-12px_rgba(0,0,0,0.5)]">
         <!-- Totals Row: seamless two-column split -->
         <div class="flex border-b border-white/10">
             <div class="flex-1 px-5 py-4 bg-[#1a1c20]">
