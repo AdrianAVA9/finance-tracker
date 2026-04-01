@@ -15,13 +15,13 @@ export const routes: RouteRecordRaw[] = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/app/views/DashboardView.vue'),
-        meta: { title: 'Dashboard', subtitle: '¡Bienvenido de nuevo!' }
+        meta: { title: 'Dashboard', subtitle: '¡Bienvenido de nuevo!', showMenu: true }
       },
       {
         path: 'activity',
         name: 'Activity',
         component: () => import('@/app/views/TransactionsView.vue'),
-        meta: { title: 'Actividad', subtitle: 'Revisa tu historial de movimientos.' }
+        meta: { title: 'Actividad', subtitle: 'Revisa tu historial de movimientos.', showMenu: true }
       },
       {
         path: 'expenses/new',
@@ -51,7 +51,7 @@ export const routes: RouteRecordRaw[] = [
         path: 'budgets',
         name: 'BudgetRegistration',
         component: () => import('@/app/views/BudgetRegistrationView.vue'),
-        meta: { title: 'Plan Presupuestario', subtitle: 'Define tus límites mensuales y mantén el control.' }
+        meta: { title: 'Plan Presupuestario', subtitle: 'Define tus límites mensuales y mantén el control.', showMenu: true }
       },
       {
         path: 'budgets/new',
@@ -69,7 +69,7 @@ export const routes: RouteRecordRaw[] = [
         path: 'budgets/:id',
         name: 'BudgetDetails',
         component: () => import('@/app/views/BudgetDetailsView.vue'),
-        meta: { title: 'Detalles del Presupuesto', subtitle: 'Revisa tu balance e historial.' }
+        meta: { title: 'Detalles del Presupuesto', subtitle: 'Revisa tu balance e historial.', showMenu: true }
       },
       {
         path: 'budgets/simulate',
