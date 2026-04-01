@@ -42,7 +42,7 @@ export default defineConfig({
     plugins: [
         plugin(),
         VitePWA({
-            registerType: 'autoUpdate',
+            registerType: 'prompt',
             injectRegister: 'auto',
             includeAssets: ['favicon.ico', 'splash/*.jpg', 'splash/*.png', 'screenshots/*.png'],
             manifest: {
