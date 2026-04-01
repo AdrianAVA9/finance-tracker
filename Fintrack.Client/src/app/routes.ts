@@ -70,6 +70,12 @@ export const routes: RouteRecordRaw[] = [
         name: 'BudgetDetails',
         component: () => import('@/app/views/BudgetDetailsView.vue'),
         meta: { title: 'Detalles del Presupuesto', subtitle: 'Revisa tu balance e historial.' }
+      },
+      {
+        path: 'budgets/simulate',
+        name: 'BudgetSimulation',
+        component: () => import('@/app/views/BudgetSimulationView.vue'),
+        meta: { title: 'Simulador de Presupuesto', subtitle: 'Ajusta y visualiza el impacto en tiempo real.' }
       }
     ]
   }
