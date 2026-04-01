@@ -44,14 +44,30 @@ export default defineConfig({
         VitePWA({
             registerType: 'autoUpdate',
             injectRegister: 'auto',
-            includeAssets: ['favicon.ico', 'splash/*.jpg', 'splash/*.png'],
+            includeAssets: ['favicon.ico', 'splash/*.jpg', 'splash/*.png', 'screenshots/*.png'],
             manifest: {
                 name: 'CeroBase',
                 short_name: 'CeroBase',
-                description: 'CeroBase Finance Tracker',
+                description: 'Administra tus finanzas con CeroBase. Rastrea presupuestos, gastos e ingresos en un solo lugar.',
                 theme_color: '#0f172a',
                 background_color: '#0f172a',
                 display: 'standalone',
+                screenshots: [
+                    {
+                        src: 'screenshots/mobile-dashboard.png',
+                        sizes: '539x1600',
+                        type: 'image/png',
+                        form_factor: 'narrow',
+                        label: 'Dashboard móvil de CeroBase'
+                    },
+                    {
+                        src: 'screenshots/desktop-dashboard.png',
+                        sizes: '1600x1280',
+                        type: 'image/png',
+                        form_factor: 'wide',
+                        label: 'Dashboard de escritorio de CeroBase'
+                    }
+                ],
                 icons: [
                     {
                         src: 'icons/launchericon-48x48.png',

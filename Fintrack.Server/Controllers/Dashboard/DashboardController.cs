@@ -21,7 +21,7 @@ namespace Fintrack.Server.Controllers.Dashboard
         }
 
         [HttpGet("summary")]
-        public async Task<IActionResult> GetSummary(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetSummary([FromQuery] DateTimeOffset? referenceDate, CancellationToken cancellationToken)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
@@ -29,7 +29,7 @@ namespace Fintrack.Server.Controllers.Dashboard
                 return Unauthorized();
             }
 
-            var query = new GetDashboardSummaryQuery(userId);
+            var query = new GetDashboardSummaryQuery(userId, referenceDate);
             var result = await _sender.Send(query, cancellationToken);
             
             return Ok(result);

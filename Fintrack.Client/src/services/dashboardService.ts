@@ -48,8 +48,9 @@ export interface DashboardSummaryDto {
 }
 
 const dashboardService = {
-  async getDashboardSummary(): Promise<DashboardSummaryDto> {
-    const response = await api.get<DashboardSummaryDto>('/api/v1/dashboard/summary');
+  async getDashboardSummary(referenceDate?: string): Promise<DashboardSummaryDto> {
+    const params = referenceDate ? { referenceDate } : {};
+    const response = await api.get<DashboardSummaryDto>('/api/v1/dashboard/summary', { params });
     return response.data;
   },
 };

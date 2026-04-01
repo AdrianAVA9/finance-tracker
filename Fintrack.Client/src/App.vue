@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
+import { useNetworkStatus } from '@/shared/composables/useNetworkStatus';
+import OfflineView from '@/shared/views/OfflineView.vue';
 
 const { isInitialized, checkSession } = useAuth();
+const { isOnline } = useNetworkStatus();
 const router = useRouter();
+const showOfflinePage = ref(false);
 
 onMounted(async () => {
     if (!isInitialized.value) {
@@ -12,10 +16,36 @@ onMounted(async () => {
     }
 });
 
+// Logic to show OfflineView when navigating while offline
+watch(() => router.currentRoute.value.path, () => {
+    if (!isOnline.value) {
+        showOfflinePage.value = true;
+    }
+});
+
+// Reset offline view when coming back online
+watch(isOnline, (online) => {
+    if (online) {
+        showOfflinePage.value = false;
+    }
+});
+
 // Re-evaluate routing once session is established
 watch(isInitialized, (initialized) => {
     if (initialized) {
-        router.replace(router.currentRoute.value.fullPath);
+        const { isAuthenticated } = useAuth();
+        const currentPath = router.currentRoute.value.path;
+        
+        const isAuthDomain = currentPath.startsWith('/auth');
+        const isAppDomain = currentPath.startsWith('/app');
+        const isPublicDomain = !isAuthDomain && !isAppDomain && !currentPath.startsWith('/admin');
+
+        // Force the same logic as router/index.ts since replace(currentPath) might be a no-op
+        if ((isPublicDomain || isAuthDomain) && isAuthenticated.value) {
+            router.replace('/app');
+        } else if (isAppDomain && !isAuthenticated.value) {
+            router.replace('/auth/login');
+        }
     }
 });
 </script>
@@ -39,7 +69,10 @@ watch(isInitialized, (initialized) => {
             </div>
         </div>
     </div>
-    <router-view v-else />
+    <div v-else class="h-full">
+        <OfflineView v-if="showOfflinePage" />
+        <router-view v-else />
+    </div>
   </Transition>
 </template>
 

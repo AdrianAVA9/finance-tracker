@@ -8,7 +8,15 @@ const isLoading = ref(true);
 const fetchDashboardData = async () => {
     try {
         isLoading.value = true;
-        dashboardData.value = await dashboardService.getDashboardSummary();
+        
+        // Construct local ISO 8601 string with offset
+        const date = new Date();
+        const offset = -date.getTimezoneOffset();
+        const diff = offset >= 0 ? '+' : '-' ;
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        const localNow = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}${diff}${pad(Math.floor(Math.abs(offset) / 60))}:${pad(Math.abs(offset) % 60)}`;
+        
+        dashboardData.value = await dashboardService.getDashboardSummary(localNow);
     } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
     } finally {
