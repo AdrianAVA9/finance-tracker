@@ -60,7 +60,24 @@ const spentRatio = computed(() => {
 
 const progressColorClass = computed(() => {
   if (spentRatio.value >= 1) return 'bg-red-500'
-  return 'bg-primary-container'
+  return 'bg-emerald-500'
+})
+
+const statusLabel = computed(() => {
+  const diff = props.budget.limitAmount - props.budget.spentAmount
+  if (diff >= 0) {
+    return `Disponible ₡${formatCurrency(diff)}`
+  }
+  return `Excedido ₡${formatCurrency(Math.abs(diff))}`
+})
+
+const statusLabelColorClass = computed(() => {
+  if (spentRatio.value >= 1) return 'text-red-500 font-black'
+  return 'text-on-surface-variant/70'
+})
+
+const infoText = computed(() => {
+  return `₡${formatCurrency(props.budget.spentAmount)} / ₡${formatCurrency(props.budget.limitAmount)}`
 })
 
 const formatCurrency = (amount: number) => {
@@ -77,27 +94,28 @@ const formatCurrency = (amount: number) => {
     <!-- Header: Icon, Info, and Menu -->
     <div class="flex items-start gap-4 mb-6">
       <!-- Category Icon -->
-      <div class="w-14 h-14 rounded-2xl bg-surface-container-highest flex items-center justify-center text-primary grow-0 shrink-0 border border-white/5 shadow-inner">
-        <span class="material-symbols-outlined text-3xl" :style="{ color: spentRatio >= 1 ? '#ef4444' : '#05E699' }">
+      <div class="w-12 h-12 rounded-md bg-surface-container-highest flex items-center justify-center text-primary grow-0 shrink-0 border border-white/5 shadow-inner relative">
+        <span class="material-symbols-outlined text-2xl" :style="{ color: spentRatio >= 1 ? '#ef4444' : '#05E699' }">
           {{ budget.categoryIcon || 'category' }}
         </span>
+
+        <!-- Recurring Badge (The Status Badge) -->
+        <div 
+          v-if="budget.isRecurrent" 
+          class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center border-2 border-[#1a1c20] shadow-lg z-10"
+          title="Presupuesto Recurrente"
+        >
+          <span class="material-symbols-outlined text-[11px] text-[#111317] font-black" style="font-variation-settings: 'FILL' 1;">sync</span>
+        </div>
       </div>
       
       <!-- Info Column -->
       <div class="flex-1 min-w-0 pt-0.5">
         <div class="flex justify-between items-start">
           <div class="flex-1 min-w-0 space-y-1">
-            <h4 class="font-headline font-bold text-2xl text-on-surface truncate leading-tight tracking-tight">{{ budget.categoryName }}</h4>
+            <h4 class="font-headline font-semibold text-on-surface truncate leading-tight tracking-tight">{{ budget.categoryName }}</h4>
             
-            <p class="text-[13px] font-semibold text-on-surface-variant tracking-normal">
-              ₡{{ formatCurrency(Math.max(budget.limitAmount - budget.spentAmount, 0)) }} restantes de ₡{{ formatCurrency(budget.limitAmount) }}
-            </p>
-
-            <!-- Recurring Label (Visible only if true) -->
-            <div v-if="budget.isRecurrent" class="flex items-center gap-1.5 mt-2 py-0.5 text-primary">
-              <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">sync</span>
-              <span class="text-[10px] font-black uppercase tracking-[0.2em] pt-0.5">Recurrente</span>
-            </div>
+            <p class="text-[10px] text-on-surface-variant font-medium tracking-wide">{{ budget.categoryGroup || 'Categoría' }}</p>
           </div>
 
           <!-- Menu Button -->
@@ -137,23 +155,18 @@ const formatCurrency = (amount: number) => {
     </div>
 
     <!-- Progress Information -->
-    <div class="space-y-4">
-      <div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden shadow-inner">
+    <div class="space-y-2">
+      <div class="flex justify-between text-[11px] font-bold leading-none px-0.5">
+        <span :class="statusLabelColorClass">{{ statusLabel }}</span>
+        <span class="text-on-surface-variant/70">{{ infoText }}</span>
+      </div>
+      
+      <div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden shadow-inner">
         <div 
           class="h-full rounded-full transition-all duration-1000 ease-out luminous-shadow-sm"
           :class="progressColorClass"
           :style="{ width: `${Math.min(spentRatio * 100, 100)}%` }"
         ></div>
-      </div>
-      
-      <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-[0.2em] leading-none px-0.5">
-        <span class="text-on-surface-variant/80">{{ Math.round(spentRatio * 100) }}% Consumido</span>
-        <span 
-          class="font-black px-2 py-0.5 rounded-full"
-          :class="spentRatio >= 1 ? 'text-red-500' : 'text-primary'"
-        >
-          {{ spentRatio >= 1 ? 'Excedido' : 'En Orden' }}
-        </span>
       </div>
     </div>
   </div>
