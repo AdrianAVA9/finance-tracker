@@ -52,6 +52,31 @@ export default defineConfig({
                 theme_color: '#0f172a',
                 background_color: '#0f172a',
                 display: 'standalone',
+                lang: 'es',
+                categories: ['finance', 'productivity'],
+                shortcuts: [
+                    {
+                        name: 'Registrar Gasto',
+                        short_name: 'Gasto',
+                        description: 'Registra un nuevo gasto rápidamente',
+                        url: '/app/expenses/new',
+                        icons: [{ src: 'icons/launchericon-96x96.png', sizes: '96x96' }]
+                    },
+                    {
+                        name: 'Registrar Ingreso',
+                        short_name: 'Ingreso',
+                        description: 'Registra un nuevo ingreso de dinero',
+                        url: '/app/incomes/new',
+                        icons: [{ src: 'icons/launchericon-96x96.png', sizes: '96x96' }]
+                    },
+                    {
+                        name: 'Ver Actividad',
+                        short_name: 'Actividad',
+                        description: 'Revisa tus últimos movimientos',
+                        url: '/app/activity',
+                        icons: [{ src: 'icons/launchericon-96x96.png', sizes: '96x96' }]
+                    }
+                ],
                 screenshots: [
                     {
                         src: 'screenshots/mobile-dashboard.png',
