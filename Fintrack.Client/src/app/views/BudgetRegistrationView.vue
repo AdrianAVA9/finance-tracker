@@ -15,6 +15,7 @@ interface Budget {
   categoryGroup?: string
   limitAmount: number
   spentAmount: number
+  isRecurrent?: boolean
 }
 
 const router = useRouter()
