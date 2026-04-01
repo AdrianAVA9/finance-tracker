@@ -1,14 +1,32 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
+import { useNetworkStatus } from '@/shared/composables/useNetworkStatus';
+import OfflineView from '@/shared/views/OfflineView.vue';
 
 const { isInitialized, checkSession } = useAuth();
+const { isOnline } = useNetworkStatus();
 const router = useRouter();
+const showOfflinePage = ref(false);
 
 onMounted(async () => {
     if (!isInitialized.value) {
         await checkSession();
+    }
+});
+
+// Logic to show OfflineView when navigating while offline
+watch(() => router.currentRoute.value.path, () => {
+    if (!isOnline.value) {
+        showOfflinePage.value = true;
+    }
+});
+
+// Reset offline view when coming back online
+watch(isOnline, (online) => {
+    if (online) {
+        showOfflinePage.value = false;
     }
 });
 
@@ -51,7 +69,10 @@ watch(isInitialized, (initialized) => {
             </div>
         </div>
     </div>
-    <router-view v-else />
+    <div v-else class="h-full">
+        <OfflineView v-if="showOfflinePage" />
+        <router-view v-else />
+    </div>
   </Transition>
 </template>
 
