@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "outline": "#849589",
+                "surface-container-lowest": "#0c0e12",
+                "inverse-primary": "#006c46",
+                "surface-variant": "#333539",
+                "surface-bright": "#37393e",
+                "secondary-fixed": "#adf1c9",
+                "on-tertiary-fixed": "#410004",
+                "on-error-container": "#ffdad6",
+                "surface": "#111317",
+                "on-error": "#690005",
+                "secondary": "#92d5ae",
+                "tertiary": "#ffdedc",
+                "error-container": "#93000a",
+                "background": "#111317",
+                "tertiary-container": "#ffb8b3",
+                "on-primary-container": "#00623e",
+                "surface-container-low": "#1a1c20",
+                "primary": "#77ffbb",
+                "tertiary-fixed-dim": "#ffb3ae",
+                "on-background": "#e2e2e8",
+                "error": "#ffb4ab",
+                "on-primary": "#003822",
+                "inverse-surface": "#e2e2e8",
+                "on-surface": "#e2e2e8",
+                "on-secondary-fixed-variant": "#065134",
+                "on-secondary": "#003822",
+                "primary-fixed": "#4dffb1",
+                "surface-dim": "#111317",
+                "surface-container-high": "#282a2e",
+                "secondary-fixed-dim": "#92d5ae",
+                "surface-container": "#1e2024",
+                "outline-variant": "#3b4a40",
+                "inverse-on-surface": "#2f3035",
+                "primary-container": "#05e699",
+                "on-primary-fixed": "#002112",
+                "tertiary-fixed": "#ffdad7",
+                "on-tertiary": "#68000b",
+                "surface-tint": "#00e296",
+                "on-primary-fixed-variant": "#005233",
+                "primary-fixed-dim": "#00e296",
+                "on-secondary-container": "#84c6a0",
+                "on-tertiary-container": "#ac061b",
+                "secondary-container": "#0b5436",
+                "surface-container-highest": "#333539",
+                "on-tertiary-fixed-variant": "#930014",
+                "on-surface-variant": "#bacbbe",
+                "on-secondary-fixed": "#002112"
+              },
+              fontFamily: {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"],
+                "mono": ["JetBrains Mono"]
+              },
+              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+          display: inline-block;
+          line-height: 1;
+          text-transform: none;
+          letter-spacing: normal;
+          word-wrap: normal;
+          white-space: nowrap;
+          direction: ltr;
+        }
+        .ghost-input:focus {
+          outline: none;
+          box-shadow: none;
+        }
+        .draft-row {
+          border-bottom: 1px solid rgba(132, 149, 137, 0.1);
+        }
+        body {
+          min-height: max(884px, 100dvh);
+        }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
+<!-- TopAppBar (from SCREEN_25) -->
+<header class="fixed top-0 w-full z-50 bg-[#111317] flex justify-between items-center px-6 h-16 border-b border-white/5 transition-all duration-200 ease-in-out">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#05E699]" data-icon="analytics">analytics</span>
+<h1 class="font-headline font-bold tracking-tighter text-[#F3F4F6] text-xl">Budget Simulator</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#2A2F37] transition-all">
+<span class="material-symbols-outlined text-[#9CA3AF]" data-icon="settings">settings</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="pt-20 pb-96 max-w-2xl mx-auto px-4">
+<!-- Drafting List Section Header (from SCREEN_25 styling) -->
+<section class="mb-6">
+<div class="flex justify-between items-end px-2">
+<h2 class="font-headline text-sm font-bold uppercase tracking-widest text-on-surface-variant">Drafting List</h2>
+<span class="text-[10px] font-medium text-outline">EDITS SAVE LOCALLY</span>
+</div>
+</section>
+<!-- High-Density Table Layout (from SCREEN_108) -->
+<div class="bg-surface-container-lowest border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+<!-- Table Header -->
+<div class="flex items-center px-4 py-3 bg-surface-container-low text-[10px] font-bold tracking-widest text-[#9CA3AF] uppercase font-mono border-b border-white/5">
+<div class="w-1/2">Category &amp; Baseline</div>
+<div class="w-1/4 text-right">Delta</div>
+<div class="w-1/4 text-right">Draft Value</div>
+</div>
+<!-- Simulation List -->
+<div class="divide-y divide-white/5">
+<!-- Row: Dining -->
+<div class="flex items-center px-4 py-4 draft-row hover:bg-surface-container-low/50 transition-colors">
+<div class="w-1/2 flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-xl opacity-60">restaurant</span>
+<div>
+<div class="font-manrope font-semibold text-sm text-on-surface">Dining</div>
+<div class="text-[10px] font-mono text-[#9CA3AF]">$450.00</div>
+</div>
+</div>
+<div class="w-1/4 text-right">
+<span class="text-[11px] font-mono font-bold text-primary-container">-$70.00</span>
+</div>
+<div class="w-1/4 text-right">
+<div class="flex items-center justify-end">
+<span class="text-on-surface-variant/40 font-mono text-sm mr-0.5">$</span>
+<input class="ghost-input bg-transparent border-none p-0 text-right font-mono text-lg font-bold text-on-surface w-16 focus:ring-0" type="text" value="380"/>
+</div>
+</div>
+</div>
+<!-- Row: Shopping -->
+<div class="flex items-center px-4 py-4 draft-row hover:bg-surface-container-low/50 transition-colors">
+<div class="w-1/2 flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-xl opacity-60">shopping_bag</span>
+<div>
+<div class="font-manrope font-semibold text-sm text-on-surface">Shopping</div>
+<div class="text-[10px] font-mono text-[#9CA3AF]">$320.00</div>
+</div>
+</div>
+<div class="w-1/4 text-right">
+<span class="text-[11px] font-mono font-bold text-error">+$40.00</span>
+</div>
+<div class="w-1/4 text-right">
+<div class="flex items-center justify-end">
+<span class="text-on-surface-variant/40 font-mono text-sm mr-0.5">$</span>
+<input class="ghost-input bg-transparent border-none p-0 text-right font-mono text-lg font-bold text-on-surface w-16 focus:ring-0" type="text" value="360"/>
+</div>
+</div>
+</div>
+<!-- Row: Transport -->
+<div class="flex items-center px-4 py-4 draft-row hover:bg-surface-container-low/50 transition-colors">
+<div class="w-1/2 flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-xl opacity-60">commute</span>
+<div>
+<div class="font-manrope font-semibold text-sm text-on-surface">Transport</div>
+<div class="text-[10px] font-mono text-[#9CA3AF]">$180.00</div>
+</div>
+</div>
+<div class="w-1/4 text-right">
+<span class="text-[11px] font-mono font-bold text-primary-container">-$20.00</span>
+</div>
+<div class="w-1/4 text-right">
+<div class="flex items-center justify-end">
+<span class="text-on-surface-variant/40 font-mono text-sm mr-0.5">$</span>
+<input class="ghost-input bg-transparent border-none p-0 text-right font-mono text-lg font-bold text-on-surface w-16 focus:ring-0" type="text" value="160"/>
+</div>
+</div>
+</div>
+<!-- Row: Housing -->
+<div class="flex items-center px-4 py-4 draft-row hover:bg-surface-container-low/50 transition-colors">
+<div class="w-1/2 flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-xl opacity-60">home</span>
+<div>
+<div class="font-manrope font-semibold text-sm text-on-surface">Housing</div>
+<div class="text-[10px] font-mono text-[#9CA3AF]">$1,490.00</div>
+</div>
+</div>
+<div class="w-1/4 text-right">
+<span class="text-[11px] font-mono font-bold text-[#9CA3AF]">—</span>
+</div>
+<div class="w-1/4 text-right">
+<div class="flex items-center justify-end">
+<span class="text-on-surface-variant/40 font-mono text-sm mr-0.5">$</span>
+<input class="ghost-input bg-transparent border-none p-0 text-right font-mono text-lg font-bold text-on-surface w-24 focus:ring-0" type="text" value="1,490"/>
+</div>
+</div>
+</div>
+<!-- Row: Health -->
+<div class="flex items-center px-4 py-4 draft-row hover:bg-surface-container-low/50 transition-colors">
+<div class="w-1/2 flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-xl opacity-60">medical_services</span>
+<div>
+<div class="font-manrope font-semibold text-sm text-on-surface">Health</div>
+<div class="text-[10px] font-mono text-[#9CA3AF]">$120.00</div>
+</div>
+</div>
+<div class="w-1/4 text-right">
+<span class="text-[11px] font-mono font-bold text-[#9CA3AF]">—</span>
+</div>
+<div class="w-1/4 text-right">
+<div class="flex items-center justify-end">
+<span class="text-on-surface-variant/40 font-mono text-sm mr-0.5">$</span>
+<input class="ghost-input bg-transparent border-none p-0 text-right font-mono text-lg font-bold text-on-surface w-16 focus:ring-0" type="text" value="120"/>
+</div>
+</div>
+</div>
+<!-- Row: Utilities -->
+<div class="flex items-center px-4 py-4 draft-row hover:bg-surface-container-low/50 transition-colors">
+<div class="w-1/2 flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-xl opacity-60">bolt</span>
+<div>
+<div class="font-manrope font-semibold text-sm text-on-surface">Utilities</div>
+<div class="text-[10px] font-mono text-[#9CA3AF]">$210.00</div>
+</div>
+</div>
+<div class="w-1/4 text-right">
+<span class="text-[11px] font-mono font-bold text-primary-container">-$15.00</span>
+</div>
+<div class="w-1/4 text-right">
+<div class="flex items-center justify-end">
+<span class="text-on-surface-variant/40 font-mono text-sm mr-0.5">$</span>
+<input class="ghost-input bg-transparent border-none p-0 text-right font-mono text-lg font-bold text-on-surface w-16 focus:ring-0" type="text" value="195"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Global Impact Footer (from SCREEN_108) -->
+<footer class="fixed bottom-16 left-0 w-full z-40 bg-[#1E2228]/95 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_40px_-12px_rgba(0,0,0,0.5)]">
+<div class="max-w-2xl mx-auto px-6 pt-6 pb-6">
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="p-3 bg-surface-container-low rounded-xl border border-white/5">
+<div class="text-[9px] font-bold tracking-widest text-[#9CA3AF] uppercase mb-1 font-mono">Baseline Total</div>
+<div class="font-mono text-sm font-medium text-on-surface-variant">$2,790.00</div>
+</div>
+<div class="p-3 bg-surface-container-high rounded-xl border border-white/5 text-right">
+<div class="text-[9px] font-bold tracking-widest text-primary-container uppercase mb-1 font-mono">Simulated Total</div>
+<div class="font-mono text-xl font-extrabold text-on-surface tracking-tight leading-none">$2,725.00</div>
+</div>
+</div>
+<div class="flex items-center justify-between gap-4 mb-6 px-5 py-4 bg-primary-container/10 border border-primary-container/20 rounded-2xl">
+<div class="text-xs font-bold font-mono tracking-wider text-primary-container uppercase">The Gap (Impact)</div>
+<div class="text-primary-container font-mono font-extrabold text-2xl">-$65.00</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="py-4 rounded-xl bg-surface-container-highest text-on-surface font-manrope font-bold text-sm hover:bg-[#2A2F37] transition-all active:scale-[0.98]">
+                    Discard Changes
+                </button>
+<button class="py-4 rounded-xl bg-primary-container text-on-primary font-manrope font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-[0.98]">
+                    Commit Simulation
+                </button>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar (from SCREEN_25) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-[#1E2228]/80 backdrop-blur-xl rounded-t-xl shadow-[0_-8px_40px_-12px_rgba(5,230,153,0.08)]">
+<!-- Categories -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] p-2 hover:text-[#F3F4F6] transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-inter text-[10px] font-medium tracking-wide">Categories</span>
+</a>
+<!-- Simulate (Active) -->
+<a class="flex flex-col items-center justify-center bg-[#05E699]/10 text-[#05E699] rounded-xl p-2 transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats" style="font-variation-settings: 'FILL' 1;">query_stats</span>
+<span class="font-inter text-[10px] font-medium tracking-wide">Simulate</span>
+</a>
+<!-- History -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] p-2 hover:text-[#F3F4F6] transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-inter text-[10px] font-medium tracking-wide">History</span>
+</a>
+<!-- Commit -->
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] p-2 hover:text-[#F3F4F6] transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+<span class="font-inter text-[10px] font-medium tracking-wide">Commit</span>
+</a>
+</nav>
+</body></html>

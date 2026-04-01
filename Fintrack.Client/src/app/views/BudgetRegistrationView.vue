@@ -198,12 +198,14 @@ watch([selectedMonth, selectedYear], loadBudgets)
                 <span class="whitespace-nowrap">₡{{ Math.abs(remainingToAllocate).toLocaleString() }}</span>
               </h2>
             </div>
-            <div 
-              class="px-3 py-1 rounded-full flex items-center gap-1 border border-white/5 transition-colors"
-              :class="isOverbudgeted ? 'bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary-container'"
-            >
-              <span class="material-symbols-outlined text-[14px]">{{ remainingIcon }}</span>
-              <span class="text-[10px] font-bold uppercase">{{ remainingStatusLabel }}</span>
+            <div class="flex flex-col items-end gap-2">
+              <div 
+                class="px-3 py-1 rounded-full flex items-center gap-1 border border-white/5 transition-colors"
+                :class="isOverbudgeted ? 'bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary-container'"
+              >
+                <span class="material-symbols-outlined text-[14px]">{{ remainingIcon }}</span>
+                <span class="text-[10px] font-bold uppercase">{{ remainingStatusLabel }}</span>
+              </div>
             </div>
           </div>
 
@@ -238,9 +240,19 @@ watch([selectedMonth, selectedYear], loadBudgets)
 
     <!-- Categories Section -->
     <section class="space-y-6">
-      <div class="flex items-center justify-between px-1">
-        <h3 class="font-headline text-xl font-bold tracking-tight text-on-surface">Categorías</h3>
-        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">{{ filteredBudgets.length }} Activas</p>
+      <div class="flex items-end justify-between px-1">
+        <div class="flex items-center gap-3">
+          <h3 class="font-headline text-xl font-bold tracking-tight text-on-surface">Categorías</h3>
+          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em] mb-[2px]">{{ filteredBudgets.length }} Activas</p>
+        </div>
+        
+        <button 
+          @click="router.push({ name: 'BudgetSimulation' })"
+          class="group flex items-center gap-1 text-[#05E699] hover:opacity-80 transition-opacity mb-[2px]"
+        >
+          <span class="text-[10px] font-black uppercase tracking-widest group-hover:underline underline-offset-4">Ajuste Rápido</span>
+          <span class="material-symbols-outlined text-[15px]">tune</span>
+        </button>
       </div>
 
       <div class="flex flex-col gap-4">
