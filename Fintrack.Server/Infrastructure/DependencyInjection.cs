@@ -29,6 +29,7 @@ namespace Fintrack.Server.Infrastructure
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
 
             services.AddHostedService<RecurringTransactionProcessorJob>();
+            services.AddHostedService<RecurringBudgetProcessorJob>();
 
             return services;
         }
