@@ -41,6 +41,16 @@
       "sourceType": "github",
       "computedHash": "ee53d65b163cd7eb953a930c95841cfe398cc2c0bd24c06508bbaa07c432be35"
     },
+    "domain-entity-generator": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "f03b510586c54ae737377b3a2ef3187f9c3060908cf828cb7027f1131247910d"
+    },
+    "domain-events-generator": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "b578bb0ab910df3ae0b0f7fb6a99a3e4fed7409a4b3deabc560bec6e481cb61f"
+    },
     "ef-core-configuration": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
       "sourceType": "github",
@@ -65,6 +75,11 @@
       "source": "ronnythedev/dotnet-clean-architecture-skills",
       "sourceType": "github",
       "computedHash": "96f8528926ab1f24c510657491282751d79211996618cacbbf2a807ce8e855c3"
+    },
+    "outbox-pattern": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "1b33705b2814ab2529e47d123bebcdea6b5ef5435c0a88f09a506596ff169f80"
     },
     "permission-authorization": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
@@ -95,6 +110,11 @@
       "source": "anthropics/skills",
       "sourceType": "github",
       "computedHash": "57f470f512f45bdac598e302bc72fd62bf2b649fc7fad032efe97720149cde4d"
+    },
+    "specification-pattern": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "31056b94a88a89cfb4a71274dccbbd2784c30bdcb33f57d095f67b44f2278adf"
     },
     "supabase-postgres-best-practices": {
       "source": "supabase/agent-skills",

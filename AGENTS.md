@@ -34,27 +34,33 @@ This repository contains specialized instructions (skills) in `.agents/skills/` 
 ### Backend (.NET)
 *Organized by typical development flow:*
 
-**1. Feature Implementation (Application Layer)**
+**1. Enterprise Business Rules (Domain Layer)**
+- [`domain-entity-generator`](.agents/skills/domain-entity-generator/SKILL.md): Generating Domain Entities following strict DDD principles.
+- [`domain-events-generator`](.agents/skills/domain-events-generator/SKILL.md): Generating Domain Events and their MediatR handlers.
+
+**2. Feature Implementation (Application Layer)**
 - [`cqrs-command-generator`](.agents/skills/cqrs-command-generator/SKILL.md): Generating MediatR Commands and handlers.
 - [`cqrs-query-generator`](.agents/skills/cqrs-query-generator/SKILL.md): Generating MediatR Queries and handlers.
 - [`fluent-validation`](.agents/skills/fluent-validation/SKILL.md): Creating and enforcing validation rules.
 - [`result-pattern`](.agents/skills/result-pattern/SKILL.md): Standardized error handling and result wrapping.
 
-**2. Data Access & Persistence (Infrastructure Layer)**
+**3. Data Access & Persistence (Infrastructure Layer)**
 - [`repository-pattern`](.agents/skills/repository-pattern/SKILL.md): Data access abstraction with EF Core.
+- [`specification-pattern`](.agents/skills/specification-pattern/SKILL.md): Encapsulating reusable query logic.
 - [`ef-core-configuration`](.agents/skills/ef-core-configuration/SKILL.md): Configuring EF Core entity mappings (Fluent API).
 - [`supabase-postgres-best-practices`](.agents/skills/supabase-postgres-best-practices/SKILL.md): Database optimization and queries.
 
-**3. API & Security (Presentation Layer)**
+**4. API & Security (Presentation Layer)**
 - [`api-controller-generator`](.agents/skills/api-controller-generator/SKILL.md): RESTful controller generation with MediatR.
 - [`permission-authorization`](.agents/skills/permission-authorization/SKILL.md): Granular access control using custom attributes and policies.
 
-**4. Cross-Cutting Concerns**
+**5. Cross-Cutting Concerns**
 - [`audit-trail`](.agents/skills/audit-trail/SKILL.md): Implementing entity audit logging.
+- [`outbox-pattern`](.agents/skills/outbox-pattern/SKILL.md): Ensuring reliable domain event processing.
 - [`quartz-background-jobs`](.agents/skills/quartz-background-jobs/SKILL.md): Creating scheduled background jobs.
 - [`health-checks`](.agents/skills/health-checks/SKILL.md): Implementing application and database health checks.
 
-**5. Verification & Testing**
+**6. Verification & Testing**
 - [`unit-testing`](.agents/skills/unit-testing/SKILL.md): AAA pattern using xUnit and NSubstitute.
 - [`integration-testing`](.agents/skills/integration-testing/SKILL.md): Real dependencies using Testcontainers.
 
@@ -69,4 +75,4 @@ This repository contains specialized instructions (skills) in `.agents/skills/` 
 - **Commit Messages:** Must strictly follow the Conventional Commits specification.
 - **Frontend Practices:** ALWAYS use Composition API (`<script setup>`) and TypeScript. Avoid Options API unless explicitly requested.
 - **Backend Practices:** Avoid putting business logic directly in controllers; delegate to MediatR handlers and maintain type safety.
-- **Testing Requirements:** Always provide unit and/or integration tests for new features and bug fixes prior to finalization.
+- **Testing Requirements:** Unit and Integration testing are STRICTLY MANDATORY for every new feature. A feature is not complete until Step 6 is fully executed.
