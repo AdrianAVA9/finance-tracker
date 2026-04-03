@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Fintrack.Server.Data;
+using Fintrack.Server.Infrastructure.Data;
 
 namespace Fintrack.Server.Application.Budgets.Queries;
 

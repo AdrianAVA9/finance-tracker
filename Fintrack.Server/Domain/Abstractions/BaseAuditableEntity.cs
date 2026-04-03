@@ -1,11 +1,20 @@
+using Fintrack.Server.Domain.Abstractions;
+using Fintrack.Server.Domain.Budgets;
+using Fintrack.Server.Domain.Enums;
+using Fintrack.Server.Domain.Exceptions;
+using Fintrack.Server.Domain.ExpenseCategories;
+using Fintrack.Server.Domain.Expenses;
+using Fintrack.Server.Domain.Incomes;
+using Fintrack.Server.Domain.Invoices;
+using Fintrack.Server.Domain.SavingsGoals;
+using Fintrack.Server.Domain.Users;
+
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Fintrack.Server.Domain.Abstractions
 {
     public abstract class BaseAuditableEntity : IAuditableEntity
     {
-        [Key]
         public int Id { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }

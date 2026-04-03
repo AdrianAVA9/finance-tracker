@@ -75,4 +75,4 @@ This repository contains specialized instructions (skills) in `.agents/skills/` 
 - **Commit Messages:** Must strictly follow the Conventional Commits specification.
 - **Frontend Practices:** ALWAYS use Composition API (`<script setup>`) and TypeScript. Avoid Options API unless explicitly requested.
 - **Backend Practices:** Avoid putting business logic directly in controllers; delegate to MediatR handlers and maintain type safety.
-- **Testing Requirements:** Unit and Integration testing are STRICTLY MANDATORY for every new feature. A feature is not complete until Step 6 is fully executed.
+- **Testing Requirements:** Unit and Integration testing are STRICTLY MANDATORY for every new feature. A feature is not complete until Step 6 is fully executed. **Crucial Routing Rule:** NEVER place tests inside the `Fintrack.Server` project. Unit tests MUST be created inside `Fintrack.Tests/` and Integration tests MUST be created inside `Fintrack.IntegrationTests/`.

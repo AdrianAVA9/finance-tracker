@@ -58,4 +58,4 @@ Every new backend feature MUST be implemented following these 6 sequential steps
 - **Dependency Injection:** Use constructor injection for all dependencies.
 - **Validation:** Use FluentValidation in the `Application` layer to validate Commands and Queries.
 - **Nullability:** Nullable reference types are enabled (`<Nullable>enable</Nullable>`). Ensure proper null handling and use `?` appropriately.
-- **Testing Requirements:** Unit and Integration testing are STRICTLY MANDATORY for every new feature. A feature is not complete until Step 6 is fully executed.
+- **Testing Requirements:** Unit and Integration testing are STRICTLY MANDATORY for every new feature. A feature is not complete until Step 6 is fully executed. **Crucial Routing Rule:** NEVER place tests inside the `Fintrack.Server` project. Unit tests MUST be created inside `Fintrack.Tests/` and Integration tests MUST be created inside `Fintrack.IntegrationTests/`.

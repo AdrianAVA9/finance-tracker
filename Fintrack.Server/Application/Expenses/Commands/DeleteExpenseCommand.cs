@@ -1,5 +1,5 @@
 using MediatR;
-using Fintrack.Server.Data;
+using Fintrack.Server.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fintrack.Server.Application.Expenses.Commands

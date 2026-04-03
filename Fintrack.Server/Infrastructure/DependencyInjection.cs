@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Fintrack.Server.Data;
+using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;

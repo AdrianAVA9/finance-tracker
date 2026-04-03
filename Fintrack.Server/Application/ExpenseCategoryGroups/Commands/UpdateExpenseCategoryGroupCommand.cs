@@ -28,7 +28,7 @@ namespace Fintrack.Server.Application.ExpenseCategoryGroups.Commands
         {
             var group = await _repository.GetByIdAsync(request.Id, cancellationToken);
             if (group == null)
-                throw new NotFoundException(nameof(Models.ExpenseCategoryGroup), request.Id);
+                throw new NotFoundException(nameof(ExpenseCategoryGroup), request.Id);
 
             if (group.UserId != null && group.UserId != request.UserId)
                 throw new UnauthorizedAccessException("You do not have permission to update this group.");
