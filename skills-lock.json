@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "2f77560bfec46d690ad388621337126f13b2d97cc77463c418a906962a14f810"
     },
+    "audit-trail": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "c7a1f524d6362b55a7a15b5d2ce7b1857cec87c2e669bd06c3b38b9e79976cc2"
+    },
     "brainstorming": {
       "source": "obra/superpowers",
       "sourceType": "github",
@@ -15,6 +20,16 @@
       "source": "github/awesome-copilot",
       "sourceType": "github",
       "computedHash": "f29c9486cede6c7b2df0cfb0a2e4aa67446552b991bcf17d1b309e903171f03d"
+    },
+    "cqrs-command-generator": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "ee754153065bf6e1dde10b11393122ea4d3074c56a90a4d504f6a7db3eed6cd3"
+    },
+    "cqrs-query-generator": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "b76c146f98687d16fd226d65021fca7b4d6ac6261692b1bc1bde709d42004174"
     },
     "create-adaptable-composable": {
       "source": "hyf0/vue-skills",
@@ -26,10 +41,25 @@
       "sourceType": "github",
       "computedHash": "ee53d65b163cd7eb953a930c95841cfe398cc2c0bd24c06508bbaa07c432be35"
     },
+    "ef-core-configuration": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "54c9a090836efddf98eafdb9827ead28fca2128774a2f1a0766b09a9f1c51bca"
+    },
     "excalidraw-diagram-generator": {
       "source": "github/awesome-copilot",
       "sourceType": "github",
       "computedHash": "e24e3c4cab4b5a07bc1d1801db14868f3a1cd184f7f28f5dd2c4a2b234bf2f2d"
+    },
+    "fluent-validation": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "d0e95caa84501879a18f584d8181f8d97b5ab3e37375e6fd3a54dd51416d09cf"
+    },
+    "health-checks": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "e22146ae881ed0519d59ab9a032c61ee9187e6dcb7bedcb23761b7af2f831dd7"
     },
     "integration-testing": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
@@ -46,10 +76,20 @@
       "sourceType": "github",
       "computedHash": "45a3bae4955e3399fd4680c44d2bf1adb8e88a4c595c0d2284de5785497a621f"
     },
+    "quartz-background-jobs": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "746f52c99cbacba82c4a9e3208907da0a4b8dc7c218b203060072668ba661e22"
+    },
     "repository-pattern": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
       "sourceType": "github",
       "computedHash": "e05ea05b9ef35989c28ec24d35077ee3ee605a7b891927ffab56a05f77b2eedb"
+    },
+    "result-pattern": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "0f08df91b4b0f700af7428247ebd38efdaeb98a9bde9a661a5b507618de44633"
     },
     "skill-creator": {
       "source": "anthropics/skills",

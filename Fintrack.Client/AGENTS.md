@@ -1,0 +1,41 @@
+# CeroBase Client - AI Agent Guide
+
+This document provides specialized context and rules for AI agents working within the `Fintrack.Client` directory. It overrides general knowledge and ensures code aligns with the established frontend architecture.
+
+## 1. Context & Tech Stack
+The `Fintrack.Client` is a Single Page Application (SPA) built with:
+- **Framework:** Vue 3 (Composition API ONLY, `<script setup>`)
+- **Language:** TypeScript
+- **State Management:** Pinia
+- **Routing:** Vue Router
+- **Styling:** Tailwind CSS 3, PostCSS, SCSS
+- **Build Tool:** Vite
+- **Testing:** Vitest, Vue Test Utils, Playwright
+
+## 2. Architecture: 4-Domain Client Pattern
+The client strictly adheres to a 4-domain architecture. Agents MUST respect these boundaries:
+- **`app/`**: Private, authenticated application core (dashboard, transactions, budgets).
+- **`auth/`**: Authentication and authorization flows (login, register, forgot password).
+- **`public/`**: Public-facing pages (landing, pricing, about).
+- **`admin/`**: (If applicable) Administrative features.
+
+Shared resources (components, composables, stores, services) that cross domain boundaries belong in the **`shared/`** directory.
+
+## 3. UI-Specific Skills
+When working in this directory, leverage the following skills (located in `../.agents/skills/`):
+
+- [`vue-best-practices`](../.agents/skills/vue-best-practices/SKILL.md): Core guidelines for Vue 3 (Composition API).
+- [`vue-client-architecture`](../.agents/skills/vue-client-architecture/SKILL.md): Enforces 4-domain client architecture.
+- [`vue-router-best-practices`](../.agents/skills/vue-router-best-practices/SKILL.md): State and routing guidelines.
+- [`vue-pinia-best-practices`](../.agents/skills/vue-pinia-best-practices/SKILL.md): State management patterns.
+- [`vue-testing-best-practices`](../.agents/skills/vue-testing-best-practices/SKILL.md): Testing with Vitest and Vue Test Utils.
+- [`vue-debug-guides`](../.agents/skills/vue-debug-guides/SKILL.md): Handling runtime errors, hydration issues, etc.
+- [`create-adaptable-composable`](../.agents/skills/create-adaptable-composable/SKILL.md): Standards for writing robust composables.
+- [`pwa-development`](../.agents/skills/pwa-development/SKILL.md): Progressive Web Apps guidelines.
+
+## 4. Coding Conventions
+- **Composition API:** Never use the Options API.
+- **TypeScript:** Enforce strict typing. Use interfaces for complex objects.
+- **Components:** Keep components small, focused, and pure where possible.
+- **State:** Use Pinia for global state; avoid deeply nested prop drilling.
+- **Styling:** Prefer Tailwind CSS utility classes; use SCSS only when necessary for complex, scoped styling.
