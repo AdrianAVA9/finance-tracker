@@ -242,8 +242,7 @@ watch([selectedMonth, selectedYear], loadBudgets)
     <section class="space-y-6">
       <div class="flex items-end justify-between px-1">
         <div class="flex items-center gap-3">
-          <h3 class="font-headline text-xl font-bold tracking-tight text-on-surface">Categorías</h3>
-          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em] mb-[2px]">{{ filteredBudgets.length }} Activas</p>
+          <h3 class="font-headline text-xl font-bold tracking-tight text-on-surface">Categorías({{ filteredBudgets.length }})</h3>
         </div>
         
         <button 
