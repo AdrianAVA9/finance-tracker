@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Fintrack.Server.Data;
+using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Infrastructure.Data.Seeders;
 using Xunit;
 

@@ -3,9 +3,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
-using Fintrack.Server.Data;
+using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Application.Budgets.Commands;
-using Fintrack.Server.Models;
+using Fintrack.Server.Domain.Abstractions;
+using Fintrack.Server.Domain.Budgets;
+using Fintrack.Server.Domain.Enums;
+using Fintrack.Server.Domain.Exceptions;
+using Fintrack.Server.Domain.ExpenseCategories;
+using Fintrack.Server.Domain.Expenses;
+using Fintrack.Server.Domain.Incomes;
+using Fintrack.Server.Domain.Invoices;
+using Fintrack.Server.Domain.SavingsGoals;
+using Fintrack.Server.Domain.Users;
 
 namespace Fintrack.Tests.Application.Budgets.Commands
 {

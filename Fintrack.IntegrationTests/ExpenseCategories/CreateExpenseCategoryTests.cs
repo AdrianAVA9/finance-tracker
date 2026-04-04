@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
-using Fintrack.Server.Controllers.ExpenseCategories;
+using Fintrack.Server.Api.Controllers.ExpenseCategories;
 using Fintrack.IntegrationTests.Infrastructure;
 using Xunit;
 

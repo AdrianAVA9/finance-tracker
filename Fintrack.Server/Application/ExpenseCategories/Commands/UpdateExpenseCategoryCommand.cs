@@ -26,7 +26,7 @@ namespace Fintrack.Server.Application.ExpenseCategories.Commands
 
             if (category is null)
             {
-                throw new NotFoundException(nameof(Models.ExpenseCategory), request.Id);
+                throw new NotFoundException(nameof(ExpenseCategory), request.Id);
             }
 
             if (category.UserId != null && category.UserId != request.UserId)

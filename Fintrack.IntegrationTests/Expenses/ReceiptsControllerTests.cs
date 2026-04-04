@@ -14,7 +14,7 @@ using Xunit;
 using Fintrack.IntegrationTests.Infrastructure;
 using Fintrack.Server.Application.Abstractions.Vision;
 using Fintrack.Server.Application.DTOs.Vision;
-using Fintrack.Server.Models.Enums;
+using Fintrack.Server.Domain.Enums;
 
 namespace Fintrack.IntegrationTests.Expenses;
 
