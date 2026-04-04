@@ -86,6 +86,11 @@
       "sourceType": "github",
       "computedHash": "ee14dde7ed98b312d3fecf0220af2ba52a125e3b9864d2a0731588733750e886"
     },
+    "pipeline-behaviors": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "b7f422393289ac713d6ee3c878dc25ff7a70b95eb0291aa8adc53c89377d6eea"
+    },
     "pwa-development": {
       "source": "alinaqi/claude-bootstrap",
       "sourceType": "github",
