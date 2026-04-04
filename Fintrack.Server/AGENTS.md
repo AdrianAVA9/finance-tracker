@@ -44,6 +44,7 @@ Every new backend feature MUST be implemented following these 6 sequential steps
 **5. Cross-Cutting Concerns & Monitoring**
 - [`audit-trail`](../.agents/skills/audit-trail/SKILL.md): Implementing entity audit logging.
 - [`outbox-pattern`](../.agents/skills/outbox-pattern/SKILL.md): Ensuring reliable domain event processing.
+- [`pipeline-behaviors`](../.agents/skills/pipeline-behaviors/SKILL.md): MediatR behaviors for logging, validation, and performance.
 - [`quartz-background-jobs`](../.agents/skills/quartz-background-jobs/SKILL.md): Creating scheduled background jobs.
 - [`health-checks`](../.agents/skills/health-checks/SKILL.md): Implementing application and database health checks.
 
