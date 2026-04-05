@@ -5,7 +5,7 @@ using Fintrack.Server.Domain.Users;
 
 namespace Fintrack.Server.Domain.Budgets;
 
-public sealed class Budget : BudgetAuditableEntity
+public sealed class Budget : BaseAuditableEntityGuid
 {
     // Properties with private setters
     public string UserId { get; private set; } = string.Empty;
