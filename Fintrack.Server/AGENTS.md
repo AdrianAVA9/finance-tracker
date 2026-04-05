@@ -27,7 +27,7 @@ Every new backend feature MUST be implemented following these 6 sequential steps
 
 **2. Feature Implementation (Application Layer)**
 - [`cqrs-command-generator`](../.agents/skills/cqrs-command-generator/SKILL.md): Generating MediatR Commands and handlers.
-- [`cqrs-query-generator`](../.agents/skills/cqrs-query-generator/SKILL.md): Generating MediatR Queries and handlers.
+- [`cqrs-query-generator`](../.agents/skills/cqrs-query-generator/SKILL.md): Generating MediatR Queries and handlers (reads via EF Core abstractions by default; Dapper optional).
 - [`fluent-validation`](../.agents/skills/fluent-validation/SKILL.md): Creating and enforcing validation rules for commands/queries.
 - [`result-pattern`](../.agents/skills/result-pattern/SKILL.md): Standardized error handling and result wrapping.
 

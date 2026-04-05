@@ -26,11 +26,6 @@
       "sourceType": "github",
       "computedHash": "ee754153065bf6e1dde10b11393122ea4d3074c56a90a4d504f6a7db3eed6cd3"
     },
-    "cqrs-query-generator": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "b76c146f98687d16fd226d65021fca7b4d6ac6261692b1bc1bde709d42004174"
-    },
     "create-adaptable-composable": {
       "source": "hyf0/vue-skills",
       "sourceType": "github",
@@ -100,11 +95,6 @@
       "source": "ronnythedev/dotnet-clean-architecture-skills",
       "sourceType": "github",
       "computedHash": "746f52c99cbacba82c4a9e3208907da0a4b8dc7c218b203060072668ba661e22"
-    },
-    "repository-pattern": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "e05ea05b9ef35989c28ec24d35077ee3ee605a7b891927ffab56a05f77b2eedb"
     },
     "result-pattern": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
