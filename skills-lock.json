@@ -46,6 +46,11 @@
       "sourceType": "github",
       "computedHash": "b578bb0ab910df3ae0b0f7fb6a99a3e4fed7409a4b3deabc560bec6e481cb61f"
     },
+    "dotnet-clean-architecture": {
+      "source": "ronnythedev/dotnet-clean-architecture-skills",
+      "sourceType": "github",
+      "computedHash": "96c7dd8ae42148cb5e874d5a3c22189fd0f8b8268beb753e4af2b5a1c78f5c54"
+    },
     "ef-core-configuration": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
       "sourceType": "github",
