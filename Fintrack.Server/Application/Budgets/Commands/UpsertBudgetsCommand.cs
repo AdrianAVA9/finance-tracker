@@ -1,15 +1,7 @@
-using MediatR;
-using Fintrack.Server.Infrastructure.Data;
+using Fintrack.Server.Application.Abstractions.Messaging;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Domain.Enums;
-using Fintrack.Server.Domain.Exceptions;
-using Fintrack.Server.Domain.ExpenseCategories;
-using Fintrack.Server.Domain.Expenses;
-using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
-using Fintrack.Server.Domain.SavingsGoals;
-using Fintrack.Server.Domain.Users;
+using Fintrack.Server.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fintrack.Server.Application.Budgets.Commands;
@@ -21,22 +13,28 @@ public record UpsertBudgetsCommand(
     int Month,
     int Year,
     List<BudgetEntryDto> Budgets
-) : IRequest<Unit>;
+) : ICommand;
 
-internal sealed class UpsertBudgetsCommandHandler : IRequestHandler<UpsertBudgetsCommand, Unit>
+internal sealed class UpsertBudgetsCommandHandler : ICommandHandler<UpsertBudgetsCommand>
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IBudgetRepository _budgetRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpsertBudgetsCommandHandler(ApplicationDbContext dbContext)
+    public UpsertBudgetsCommandHandler(IBudgetRepository budgetRepository, IUnitOfWork unitOfWork)
     {
-        _dbContext = dbContext;
+        _budgetRepository = budgetRepository;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<Unit> Handle(UpsertBudgetsCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpsertBudgetsCommand request, CancellationToken cancellationToken)
     {
-        var existingBudgets = await _dbContext.Budgets
-            .Where(b => b.UserId == request.UserId && b.Month == request.Month && b.Year == request.Year)
-            .ToDictionaryAsync(b => b.CategoryId, cancellationToken);
+        var userBudgets = await _budgetRepository.GetUserBudgetsByMonthAsync(
+            request.UserId, 
+            request.Month, 
+            request.Year, 
+            cancellationToken);
+            
+        var existingBudgets = userBudgets.ToDictionary(b => b.CategoryId);
 
         // Group to handle safety if multiple items for same CategoryId are sent in one batch
         var uniqueBudgets = request.Budgets
@@ -48,24 +46,34 @@ internal sealed class UpsertBudgetsCommandHandler : IRequestHandler<UpsertBudget
         {
             if (existingBudgets.TryGetValue(entry.CategoryId, out var existing))
             {
-                existing.Amount = entry.Amount;
-                existing.IsRecurrent = entry.IsRecurrent;
+                var updateResult = existing.Update(entry.Amount, entry.IsRecurrent);
+                if (updateResult.IsFailure)
+                {
+                    return updateResult;
+                }
+                
+                _budgetRepository.Update(existing);
             }
             else
             {
-                _dbContext.Budgets.Add(new Budget
+                var createResult = Budget.Create(
+                    request.UserId,
+                    entry.CategoryId,
+                    entry.Amount,
+                    entry.IsRecurrent,
+                    request.Month,
+                    request.Year);
+
+                if (createResult.IsFailure)
                 {
-                    UserId = request.UserId,
-                    CategoryId = entry.CategoryId,
-                    Amount = entry.Amount,
-                    IsRecurrent = entry.IsRecurrent,
-                    Month = request.Month,
-                    Year = request.Year
-                });
+                    return createResult;
+                }
+
+                _budgetRepository.Add(createResult.Value);
             }
         }
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return Unit.Value;
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        return Result.Success();
     }
 }

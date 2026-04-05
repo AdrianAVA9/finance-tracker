@@ -1,23 +1,13 @@
-using System;
-using MediatR;
-using Fintrack.Server.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using Fintrack.Server.Application.Abstractions.Messaging;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Domain.Enums;
-using Fintrack.Server.Domain.Exceptions;
-using Fintrack.Server.Domain.ExpenseCategories;
-using Fintrack.Server.Domain.Expenses;
-using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
-using Fintrack.Server.Domain.SavingsGoals;
-using Fintrack.Server.Domain.Users;
-
+using Fintrack.Server.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fintrack.Server.Application.Budgets.Queries;
 
 public record BudgetDto(
-    int Id,
+    Guid Id,
     int CategoryId,
     string CategoryName,
     string? CategoryIcon,
@@ -37,9 +27,9 @@ public record GetBudgetsQuery(
     string UserId,
     int Month,
     int Year
-) : IRequest<BudgetListDto>;
+) : IQuery<BudgetListDto>;
 
-internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, BudgetListDto>
+internal sealed class GetBudgetsQueryHandler : IQueryHandler<GetBudgetsQuery, BudgetListDto>
 {
     private readonly ApplicationDbContext _dbContext;
 
@@ -48,7 +38,7 @@ internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, 
         _dbContext = dbContext;
     }
 
-    public async Task<BudgetListDto> Handle(GetBudgetsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<BudgetListDto>> Handle(GetBudgetsQuery request, CancellationToken cancellationToken)
     {
         // 0. Fetch total expected Income for the month (based on recurring income)
         var startDate = new DateTime(request.Year, request.Month, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -80,17 +70,22 @@ internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, 
 
             if (recurrentBudgets.Any())
             {
-                var newBudgets = recurrentBudgets.Select(rb => new Budget
+                foreach (var rb in recurrentBudgets)
                 {
-                    UserId = request.UserId,
-                    CategoryId = rb.CategoryId,
-                    Amount = rb.Amount,
-                    Month = request.Month,
-                    Year = request.Year,
-                    IsRecurrent = true
-                }).ToList();
+                    var createResult = Budget.Create(
+                        request.UserId,
+                        rb.CategoryId,
+                        rb.Amount,
+                        true,
+                        request.Month,
+                        request.Year);
 
-                _dbContext.Budgets.AddRange(newBudgets);
+                    if (createResult.IsSuccess)
+                    {
+                        _dbContext.Budgets.Add(createResult.Value);
+                    }
+                }
+
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 // Refresh userBudgets list
@@ -103,7 +98,6 @@ internal sealed class GetBudgetsQueryHandler : IRequestHandler<GetBudgetsQuery, 
         }
 
         // 2. Fetch spent amounts (expenses) for these categories in the same period
-        // Optimization: only fetching for categories that have budgets
         var categoryIds = userBudgets.Select(b => b.CategoryId).ToList();
         
         var spentItems = await _dbContext.ExpenseItems

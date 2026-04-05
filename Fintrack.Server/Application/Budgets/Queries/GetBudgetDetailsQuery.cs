@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Fintrack.Server.Application.Abstractions.Messaging;
+using Fintrack.Server.Domain.Abstractions;
+using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fintrack.Server.Application.Budgets.Queries;
 
@@ -24,20 +21,20 @@ public record MonthlyExpenseSummaryDto(
 );
 
 public record BudgetDetailsDto(
-    int Id,
+    Guid Id,
     string CategoryName,
     decimal LimitAmount,
     List<MonthlyExpenseSummaryDto> MonthlyHistory
 );
 
 public record GetBudgetDetailsQuery(
-    int BudgetId,
+    Guid BudgetId,
     string UserId,
     int Month,
     int Year
-) : IRequest<BudgetDetailsDto?>;
+) : IQuery<BudgetDetailsDto>;
 
-internal sealed class GetBudgetDetailsQueryHandler : IRequestHandler<GetBudgetDetailsQuery, BudgetDetailsDto?>
+internal sealed class GetBudgetDetailsQueryHandler : IQueryHandler<GetBudgetDetailsQuery, BudgetDetailsDto>
 {
     private readonly ApplicationDbContext _dbContext;
 
@@ -46,14 +43,17 @@ internal sealed class GetBudgetDetailsQueryHandler : IRequestHandler<GetBudgetDe
         _dbContext = dbContext;
     }
 
-    public async Task<BudgetDetailsDto?> Handle(GetBudgetDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<BudgetDetailsDto>> Handle(GetBudgetDetailsQuery request, CancellationToken cancellationToken)
     {
         // 1. Fetch the specific budget
         var budget = await _dbContext.Budgets
             .Include(b => b.Category)
             .FirstOrDefaultAsync(b => b.Id == request.BudgetId && b.UserId == request.UserId, cancellationToken);
 
-        if (budget == null) return null;
+        if (budget == null)
+        {
+            return Result.Failure<BudgetDetailsDto>(BudgetErrors.NotFound);
+        }
 
         var categoryId = budget.CategoryId;
         

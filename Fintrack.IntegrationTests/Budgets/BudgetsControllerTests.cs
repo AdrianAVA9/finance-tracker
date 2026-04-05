@@ -38,15 +38,9 @@ public class BudgetsControllerTests : BaseIntegrationTest
         await AddAsync(group);
         await AddAsync(category);
 
-        var budget = new Budget
-        {
-            UserId = userId,
-            CategoryId = category.Id,
-            Amount = 500,
-            Month = 3,
-            Year = 2024
-        };
-        await AddAsync(budget);
+        var budgetResult = Budget.Create(userId, category.Id, 500, false, 3, 2024);
+        budgetResult.IsSuccess.Should().BeTrue();
+        await AddAsync(budgetResult.Value);
 
         // Act
         var response = await GetAsync($"/api/v1/budgets?month=3&year=2024");
@@ -70,14 +64,9 @@ public class BudgetsControllerTests : BaseIntegrationTest
         await AddAsync(group);
         await AddAsync(category);
 
-        var budget = new Budget
-        {
-            UserId = userId,
-            CategoryId = category.Id,
-            Amount = 500,
-            Month = 3,
-            Year = 2024
-        };
+        var budgetResult = Budget.Create(userId, category.Id, 500, false, 3, 2024);
+        budgetResult.IsSuccess.Should().BeTrue();
+        var budget = budgetResult.Value;
         await AddAsync(budget);
 
         // Act

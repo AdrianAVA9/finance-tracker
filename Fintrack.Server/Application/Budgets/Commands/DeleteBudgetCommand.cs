@@ -1,42 +1,34 @@
-using MediatR;
-using Fintrack.Server.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using Fintrack.Server.Application.Abstractions.Messaging;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Domain.Enums;
-using Fintrack.Server.Domain.Exceptions;
-using Fintrack.Server.Domain.ExpenseCategories;
-using Fintrack.Server.Domain.Expenses;
-using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
-using Fintrack.Server.Domain.SavingsGoals;
-using Fintrack.Server.Domain.Users;
-
+using Fintrack.Server.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fintrack.Server.Application.Budgets.Commands;
 
-public record DeleteBudgetCommand(int Id, string UserId) : IRequest<Unit>;
+public record DeleteBudgetCommand(Guid Id, string UserId) : ICommand;
 
-internal sealed class DeleteBudgetCommandHandler : IRequestHandler<DeleteBudgetCommand, Unit>
+internal sealed class DeleteBudgetCommandHandler : ICommandHandler<DeleteBudgetCommand>
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IBudgetRepository _budgetRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteBudgetCommandHandler(ApplicationDbContext dbContext)
+    public DeleteBudgetCommandHandler(IBudgetRepository budgetRepository, IUnitOfWork unitOfWork)
     {
-        _dbContext = dbContext;
+        _budgetRepository = budgetRepository;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<Unit> Handle(DeleteBudgetCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeleteBudgetCommand request, CancellationToken cancellationToken)
     {
-        var budget = await _dbContext.Budgets
-            .FirstOrDefaultAsync(b => b.Id == request.Id && b.UserId == request.UserId, cancellationToken);
+        var budget = await _budgetRepository.GetByIdAsync(request.Id, request.UserId, cancellationToken);
 
         if (budget != null)
         {
-            _dbContext.Budgets.Remove(budget);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            _budgetRepository.Remove(budget);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        return Unit.Value;
+        return Result.Success();
     }
 }

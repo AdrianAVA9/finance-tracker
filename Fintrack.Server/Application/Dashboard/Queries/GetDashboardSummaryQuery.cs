@@ -36,7 +36,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
 
     public record CategorySummaryDto(string CategoryName, decimal Amount, double Percentage, string? Color);
 
-    public record BudgetSummaryDto(int Id, string CategoryName, decimal TotalBudget, decimal SpentAmount, decimal RemainingAmount, double Percentage, string? Icon, string? Color);
+    public record BudgetSummaryDto(Guid Id, string CategoryName, decimal TotalBudget, decimal SpentAmount, decimal RemainingAmount, double Percentage, string? Icon, string? Color);
 
     public record TransactionDto(
         string Id,

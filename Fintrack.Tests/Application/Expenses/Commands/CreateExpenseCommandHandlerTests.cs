@@ -18,6 +18,8 @@ using Fintrack.Server.Domain.Invoices;
 using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
 using Fintrack.Server.Domain.Enums;
+using MediatR;
+using NSubstitute;
 
 namespace Fintrack.Tests.Application.Expenses.Commands
 {
@@ -25,10 +27,14 @@ namespace Fintrack.Tests.Application.Expenses.Commands
     {
         private ApplicationDbContext GetInMemoryContext()
         {
+            var publisher = Substitute.For<IPublisher>();
+            publisher.Publish(Arg.Any<INotification>(), Arg.Any<CancellationToken>())
+                .Returns(Task.CompletedTask);
+
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
-            return new ApplicationDbContext(options);
+            return new ApplicationDbContext(options, publisher);
         }
 
         [Fact]

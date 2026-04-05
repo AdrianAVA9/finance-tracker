@@ -1,37 +1,41 @@
 using System.Runtime.CompilerServices;
-using Fintrack.Server.Infrastructure.Data;
+using Fintrack.Server.Application.Abstractions.Vision;
+using Fintrack.Server.Application.Expenses;
 using Fintrack.Server.Domain.Abstractions;
+using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;
 using Fintrack.Server.Infrastructure.BackgroundJobs;
+using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Infrastructure.Repositories;
+using Fintrack.Server.Infrastructure.Vision;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: InternalsVisibleTo("Fintrack.Tests")]
 
-namespace Fintrack.Server.Infrastructure
+namespace Fintrack.Server.Infrastructure;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
-        {
-            services.AddScoped<IUnitOfWork>(sp =>
-                sp.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IUnitOfWork>(sp =>
+            sp.GetRequiredService<ApplicationDbContext>());
 
-            services.AddScoped<IExpenseCategoryRepository, ExpenseCategoryRepository>();
-            services.AddScoped<IExpenseCategoryGroupRepository, ExpenseCategoryGroupRepository>();
+        services.AddScoped<IExpenseCategoryRepository, ExpenseCategoryRepository>();
+        services.AddScoped<IExpenseCategoryGroupRepository, ExpenseCategoryGroupRepository>();
+        services.AddScoped<IBudgetRepository, BudgetRepository>();
 
-            // --- OCR / Vision Integrations ---
-            services.AddHttpClient<Fintrack.Server.Application.Abstractions.Vision.IVisionExtractionProvider, Fintrack.Server.Infrastructure.Vision.GeminiVisionExtractionProvider>();
-            services.AddScoped<Fintrack.Server.Application.Expenses.ReceiptProcessingService>();
-            
-            // NOTE: Make sure IExpenseRepository is registered if it's not already!
-            services.AddScoped<IExpenseRepository, ExpenseRepository>();
+        // --- OCR / Vision Integrations ---
+        services.AddHttpClient<IVisionExtractionProvider, GeminiVisionExtractionProvider>();
+        services.AddScoped<ReceiptProcessingService>();
 
-            services.AddHostedService<RecurringTransactionProcessorJob>();
-            services.AddHostedService<RecurringBudgetProcessorJob>();
+        // NOTE: Make sure IExpenseRepository is registered if it's not already!
+        services.AddScoped<IExpenseRepository, ExpenseRepository>();
 
-            return services;
-        }
+        services.AddHostedService<RecurringTransactionProcessorJob>();
+        services.AddHostedService<RecurringBudgetProcessorJob>();
+
+        return services;
     }
 }

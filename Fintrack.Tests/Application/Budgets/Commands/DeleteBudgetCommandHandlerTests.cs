@@ -1,108 +1,74 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
-using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Application.Budgets.Commands;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Domain.Enums;
-using Fintrack.Server.Domain.Exceptions;
-using Fintrack.Server.Domain.ExpenseCategories;
-using Fintrack.Server.Domain.Expenses;
-using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
-using Fintrack.Server.Domain.SavingsGoals;
-using Fintrack.Server.Domain.Users;
+using NSubstitute;
+using Xunit;
 
-namespace Fintrack.Tests.Application.Budgets.Commands
+namespace Fintrack.Tests.Application.Budgets.Commands;
+
+public class DeleteBudgetCommandHandlerTests
 {
-    public class DeleteBudgetCommandHandlerTests
+    [Fact]
+    public async Task Should_Delete_Budget_When_Exists_And_Belongs_To_User()
     {
-        private ApplicationDbContext GetInMemoryContext()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-            return new ApplicationDbContext(options);
-        }
+        var userId = "user-1";
+        var budget = Budget.Create(userId, 1, 100m, false, 1, 2024).Value;
 
-        [Fact]
-        public async Task Should_Delete_Budget_When_Exists_And_Belongs_To_User()
-        {
-            // Arrange
-            using var context = GetInMemoryContext();
-            var userId = "user-1";
-            var budgetId = 1;
+        var repository = Substitute.For<IBudgetRepository>();
+        repository.GetByIdAsync(budget.Id, userId, Arg.Any<CancellationToken>())
+            .Returns(budget);
 
-            context.Budgets.Add(new Budget
-            {
-                Id = budgetId,
-                UserId = userId,
-                CategoryId = 1,
-                Amount = 100.00m,
-                Month = 1,
-                Year = 2024
-            });
-            await context.SaveChangesAsync();
+        var unitOfWork = Substitute.For<IUnitOfWork>();
+        unitOfWork.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(1);
 
-            var handler = new DeleteBudgetCommandHandler(context);
-            var command = new DeleteBudgetCommand(budgetId, userId);
+        var handler = new DeleteBudgetCommandHandler(repository, unitOfWork);
+        var command = new DeleteBudgetCommand(budget.Id, userId);
 
-            // Act
-            await handler.Handle(command, CancellationToken.None);
+        await handler.Handle(command, CancellationToken.None);
 
-            // Assert
-            var budget = await context.Budgets.FindAsync(budgetId);
-            Assert.Null(budget);
-        }
+        repository.Received(1).Remove(budget);
+        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
 
-        [Fact]
-        public async Task Should_Not_Delete_Budget_When_Belongs_To_Different_User()
-        {
-            // Arrange
-            using var context = GetInMemoryContext();
-            var ownerId = "owner";
-            var attackerId = "attacker";
-            var budgetId = 1;
+    [Fact]
+    public async Task Should_Not_Delete_Budget_When_Belongs_To_Different_User()
+    {
+        var attackerId = "attacker";
+        var budgetId = Guid.NewGuid();
 
-            context.Budgets.Add(new Budget
-            {
-                Id = budgetId,
-                UserId = ownerId,
-                CategoryId = 1,
-                Amount = 100.00m,
-                Month = 1,
-                Year = 2024
-            });
-            await context.SaveChangesAsync();
+        var repository = Substitute.For<IBudgetRepository>();
+        repository.GetByIdAsync(budgetId, attackerId, Arg.Any<CancellationToken>())
+            .Returns((Budget?)null);
 
-            var handler = new DeleteBudgetCommandHandler(context);
-            var command = new DeleteBudgetCommand(budgetId, attackerId);
+        var unitOfWork = Substitute.For<IUnitOfWork>();
 
-            // Act
-            await handler.Handle(command, CancellationToken.None);
+        var handler = new DeleteBudgetCommandHandler(repository, unitOfWork);
+        var command = new DeleteBudgetCommand(budgetId, attackerId);
 
-            // Assert
-            var budget = await context.Budgets.FindAsync(budgetId);
-            Assert.NotNull(budget);
-            Assert.Equal(ownerId, budget.UserId);
-        }
+        await handler.Handle(command, CancellationToken.None);
 
-        [Fact]
-        public async Task Should_Not_Throw_When_Budget_Does_Not_Exist()
-        {
-            // Arrange
-            using var context = GetInMemoryContext();
-            var handler = new DeleteBudgetCommandHandler(context);
-            var command = new DeleteBudgetCommand(999, "user-1");
+        repository.DidNotReceive().Remove(Arg.Any<Budget>());
+        await unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
 
-            // Act & Assert
-            var exception = await Record.ExceptionAsync(() => 
-                handler.Handle(command, CancellationToken.None));
-            
-            Assert.Null(exception);
-        }
+    [Fact]
+    public async Task Should_Not_Throw_When_Budget_Does_Not_Exist()
+    {
+        var repository = Substitute.For<IBudgetRepository>();
+        repository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns((Budget?)null);
+
+        var unitOfWork = Substitute.For<IUnitOfWork>();
+
+        var handler = new DeleteBudgetCommandHandler(repository, unitOfWork);
+        var command = new DeleteBudgetCommand(Guid.NewGuid(), "user-1");
+
+        var exception = await Record.ExceptionAsync(() =>
+            handler.Handle(command, CancellationToken.None));
+
+        Assert.Null(exception);
     }
 }

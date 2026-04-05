@@ -92,18 +92,20 @@ namespace Fintrack.Server.Infrastructure.BackgroundJobs
 
                 if (!exists)
                 {
-                    var newBudget = new Budget
-                    {
-                        UserId = previousBudget.UserId,
-                        CategoryId = previousBudget.CategoryId,
-                        Amount = previousBudget.Amount,
-                        IsRecurrent = true,
-                        Month = currentMonth,
-                        Year = currentYear
-                    };
+                    var createResult = Budget.Create(
+                        previousBudget.UserId,
+                        previousBudget.CategoryId,
+                        previousBudget.Amount,
+                        true,
+                        currentMonth,
+                        currentYear
+                    );
 
-                    dbContext.Budgets.Add(newBudget);
-                    addedCount++;
+                    if (createResult.IsSuccess)
+                    {
+                        dbContext.Budgets.Add(createResult.Value);
+                        addedCount++;
+                    }
                 }
             }
 

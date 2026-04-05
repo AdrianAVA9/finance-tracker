@@ -75,6 +75,11 @@ namespace Fintrack.IntegrationTests.Infrastructure
             return await DbContext.Set<TEntity>().FindAsync(id);
         }
 
+        protected async Task<TEntity?> FindAsync<TEntity>(Guid id) where TEntity : class
+        {
+            return await DbContext.Set<TEntity>().FindAsync(id);
+        }
+
         public async Task InitializeAsync()
         {
             // Re-create the database for each test to ensure test isolation
