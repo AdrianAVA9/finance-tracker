@@ -7,7 +7,7 @@ using Fintrack.Server.Domain.Incomes;
 namespace Fintrack.Server.Application.Budgets.Queries.GetBudgets;
 
 public record BudgetDto(
-    Guid Id,
+    int Id,
     int CategoryId,
     string CategoryName,
     string? CategoryIcon,

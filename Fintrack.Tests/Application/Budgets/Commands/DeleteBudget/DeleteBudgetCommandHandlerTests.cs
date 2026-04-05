@@ -13,16 +13,17 @@ public class DeleteBudgetCommandHandlerTests
     {
         var userId = "user-1";
         var budget = Budget.Create(userId, 1, 100m, false, 1, 2024).Value;
+        const int budgetId = 1;
 
         var repository = Substitute.For<IBudgetRepository>();
-        repository.GetByIdAsync(budget.Id, userId, Arg.Any<CancellationToken>())
+        repository.GetByIdAsync(budgetId, userId, Arg.Any<CancellationToken>())
             .Returns(budget);
 
         var unitOfWork = Substitute.For<IUnitOfWork>();
         unitOfWork.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(1);
 
         var handler = new DeleteBudgetCommandHandler(repository, unitOfWork);
-        var command = new DeleteBudgetCommand(budget.Id, userId);
+        var command = new DeleteBudgetCommand(budgetId, userId);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -36,15 +37,16 @@ public class DeleteBudgetCommandHandlerTests
     {
         var budget = Budget.Create("owner", 1, 100m, false, 1, 2024).Value;
         var attackerId = "attacker";
+        const int budgetId = 1;
 
         var repository = Substitute.For<IBudgetRepository>();
-        repository.GetByIdAsync(budget.Id, attackerId, Arg.Any<CancellationToken>())
+        repository.GetByIdAsync(budgetId, attackerId, Arg.Any<CancellationToken>())
             .Returns((Budget?)null);
 
         var unitOfWork = Substitute.For<IUnitOfWork>();
 
         var handler = new DeleteBudgetCommandHandler(repository, unitOfWork);
-        var command = new DeleteBudgetCommand(budget.Id, attackerId);
+        var command = new DeleteBudgetCommand(budgetId, attackerId);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -57,13 +59,13 @@ public class DeleteBudgetCommandHandlerTests
     public async Task Should_Not_Throw_When_Budget_Does_Not_Exist()
     {
         var repository = Substitute.For<IBudgetRepository>();
-        repository.GetByIdAsync(Arg.Any<Guid>(), "user-1", Arg.Any<CancellationToken>())
+        repository.GetByIdAsync(Arg.Any<int>(), "user-1", Arg.Any<CancellationToken>())
             .Returns((Budget?)null);
 
         var unitOfWork = Substitute.For<IUnitOfWork>();
 
         var handler = new DeleteBudgetCommandHandler(repository, unitOfWork);
-        var command = new DeleteBudgetCommand(Guid.NewGuid(), "user-1");
+        var command = new DeleteBudgetCommand(999, "user-1");
 
         var result = await handler.Handle(command, CancellationToken.None);
 

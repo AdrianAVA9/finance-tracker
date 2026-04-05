@@ -4,7 +4,7 @@ using Fintrack.Server.Domain.Budgets;
 
 namespace Fintrack.Server.Application.Budgets.Commands.DeleteBudget;
 
-public record DeleteBudgetCommand(Guid Id, string UserId) : ICommand;
+public record DeleteBudgetCommand(int Id, string UserId) : ICommand;
 
 internal sealed class DeleteBudgetCommandHandler : ICommandHandler<DeleteBudgetCommand>
 {

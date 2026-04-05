@@ -7,7 +7,7 @@ internal sealed class DeleteBudgetCommandValidator : AbstractValidator<DeleteBud
     public DeleteBudgetCommandValidator()
     {
         RuleFor(x => x.Id)
-            .NotEqual(Guid.Empty)
+            .GreaterThan(0)
             .WithMessage("Budget ID is required");
 
         RuleFor(x => x.UserId)

@@ -54,8 +54,8 @@ public class BudgetsController : ApiControllerBase
         return HandleResult(result);
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
@@ -65,8 +65,8 @@ public class BudgetsController : ApiControllerBase
         return HandleResult(result);
     }
 
-    [HttpGet("{id:guid}/details")]
-    public async Task<IActionResult> GetDetails(Guid id, [FromQuery] int year, [FromQuery] int month)
+    [HttpGet("{id:int}/details")]
+    public async Task<IActionResult> GetDetails(int id, [FromQuery] int year, [FromQuery] int month)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();

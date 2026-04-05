@@ -14,7 +14,7 @@ internal sealed class BudgetRepository : IBudgetRepository
     }
 
     public async Task<Budget?> GetByIdAsync(
-        Guid id,
+        int id,
         string userId,
         CancellationToken cancellationToken = default)
     {
@@ -23,7 +23,7 @@ internal sealed class BudgetRepository : IBudgetRepository
     }
 
     public async Task<Budget?> GetByIdWithCategoryAsync(
-        Guid id,
+        int id,
         string userId,
         CancellationToken cancellationToken = default)
     {

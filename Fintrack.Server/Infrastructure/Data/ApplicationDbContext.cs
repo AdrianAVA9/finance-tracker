@@ -158,8 +158,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
                 .WithMany(c => c.Budgets)
                 .HasForeignKey(b => b.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.Property(b => b.Id)
-                .ValueGeneratedNever();
             entity.HasIndex(b => new { b.UserId, b.CategoryId, b.Month, b.Year })
                 .IsUnique();
         });

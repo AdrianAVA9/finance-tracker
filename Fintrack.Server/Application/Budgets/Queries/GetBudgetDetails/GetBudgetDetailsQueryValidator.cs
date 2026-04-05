@@ -7,7 +7,7 @@ internal sealed class GetBudgetDetailsQueryValidator : AbstractValidator<GetBudg
     public GetBudgetDetailsQueryValidator()
     {
         RuleFor(x => x.BudgetId)
-            .NotEqual(Guid.Empty)
+            .GreaterThan(0)
             .WithMessage("Budget ID is required");
 
         RuleFor(x => x.UserId)
