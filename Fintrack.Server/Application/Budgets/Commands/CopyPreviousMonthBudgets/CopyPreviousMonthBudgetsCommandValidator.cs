@@ -1,7 +1,6 @@
-using Fintrack.Server.Application.Budgets.Commands;
 using FluentValidation;
 
-namespace Fintrack.Server.Application.Budgets.Commands;
+namespace Fintrack.Server.Application.Budgets.Commands.CopyPreviousMonthBudgets;
 
 internal sealed class CopyPreviousMonthBudgetsCommandValidator : AbstractValidator<CopyPreviousMonthBudgetsCommand>
 {

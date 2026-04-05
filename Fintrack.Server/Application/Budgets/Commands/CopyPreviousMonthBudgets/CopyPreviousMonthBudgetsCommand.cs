@@ -1,10 +1,8 @@
 using Fintrack.Server.Application.Abstractions.Messaging;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
-namespace Fintrack.Server.Application.Budgets.Commands;
+namespace Fintrack.Server.Application.Budgets.Commands.CopyPreviousMonthBudgets;
 
 public record CopyPreviousMonthBudgetsCommand(
     string UserId,
@@ -25,7 +23,6 @@ internal sealed class CopyPreviousMonthBudgetsCommandHandler : ICommandHandler<C
 
     public async Task<Result> Handle(CopyPreviousMonthBudgetsCommand request, CancellationToken cancellationToken)
     {
-        // Calculate previous month and year
         int prevMonth = request.TargetMonth - 1;
         int prevYear = request.TargetYear;
 
@@ -35,25 +32,23 @@ internal sealed class CopyPreviousMonthBudgetsCommandHandler : ICommandHandler<C
             prevYear--;
         }
 
-        // 1. Fetch source budgets
         var sourceBudgets = await _budgetRepository.GetUserBudgetsByMonthAsync(
-            request.UserId, 
-            prevMonth, 
-            prevYear, 
+            request.UserId,
+            prevMonth,
+            prevYear,
             cancellationToken);
 
         if (!sourceBudgets.Any())
         {
-            return Result.Success(); // Nothing to copy
+            return Result.Success();
         }
 
-        // 2. Clear current target month if exists (optional strategy, here we Upsert/Merge)
         var existingTargetBudgetsList = await _budgetRepository.GetUserBudgetsByMonthAsync(
-            request.UserId, 
-            request.TargetMonth, 
-            request.TargetYear, 
+            request.UserId,
+            request.TargetMonth,
+            request.TargetYear,
             cancellationToken);
-            
+
         var existingTargetBudgets = existingTargetBudgetsList.ToDictionary(b => b.CategoryId);
 
         foreach (var source in sourceBudgets)
@@ -65,7 +60,7 @@ internal sealed class CopyPreviousMonthBudgetsCommandHandler : ICommandHandler<C
                 {
                     return updateResult;
                 }
-                
+
                 _budgetRepository.Update(existing);
             }
             else

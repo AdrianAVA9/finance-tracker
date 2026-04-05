@@ -1,19 +1,16 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Fintrack.Server.Application.Budgets.Queries;
+using Fintrack.Server.Application.Budgets.Queries.GetBudgets;
 using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;
 using Fintrack.Server.Domain.Incomes;
 using Fintrack.Server.Infrastructure.Data;
+using Fintrack.Server.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Xunit;
 
-namespace Fintrack.Tests.Application.Budgets.Queries;
+namespace Fintrack.Tests.Application.Budgets.Queries.GetBudgets;
 
 public class GetBudgetsQueryHandlerTests
 {
@@ -91,7 +88,11 @@ public class GetBudgetsQueryHandlerTests
 
         await context.SaveChangesAsync();
 
-        var handler = new GetBudgetsQueryHandler(context);
+        var handler = new GetBudgetsQueryHandler(
+            new BudgetRepository(context),
+            new RecurringIncomeRepository(context),
+            new ExpenseRepository(context),
+            context);
         var query = new GetBudgetsQuery(userId, month, year);
 
         var result = await handler.Handle(query, CancellationToken.None);
@@ -110,7 +111,11 @@ public class GetBudgetsQueryHandlerTests
     public async Task Should_Return_Empty_List_When_No_Budgets_Exist()
     {
         using var context = GetInMemoryContext();
-        var handler = new GetBudgetsQueryHandler(context);
+        var handler = new GetBudgetsQueryHandler(
+            new BudgetRepository(context),
+            new RecurringIncomeRepository(context),
+            new ExpenseRepository(context),
+            context);
         var query = new GetBudgetsQuery("user-1", 1, 2024);
 
         var result = await handler.Handle(query, CancellationToken.None);

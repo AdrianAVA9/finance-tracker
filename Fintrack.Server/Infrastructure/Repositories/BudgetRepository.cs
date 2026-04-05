@@ -13,16 +13,22 @@ internal sealed class BudgetRepository : IBudgetRepository
         _dbContext = dbContext;
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // QUERY METHODS
-    // ═══════════════════════════════════════════════════════════════
-
     public async Task<Budget?> GetByIdAsync(
         Guid id,
         string userId,
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Budgets
+            .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId, cancellationToken);
+    }
+
+    public async Task<Budget?> GetByIdWithCategoryAsync(
+        Guid id,
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Budgets
+            .Include(b => b.Category)
             .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId, cancellationToken);
     }
 
@@ -34,11 +40,11 @@ internal sealed class BudgetRepository : IBudgetRepository
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Budgets
-            .FirstOrDefaultAsync(b => 
-                b.UserId == userId && 
-                b.CategoryId == categoryId && 
-                b.Month == month && 
-                b.Year == year, 
+            .FirstOrDefaultAsync(b =>
+                b.UserId == userId &&
+                b.CategoryId == categoryId &&
+                b.Month == month &&
+                b.Year == year,
                 cancellationToken);
     }
 
@@ -53,6 +59,34 @@ internal sealed class BudgetRepository : IBudgetRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Budget>> GetUserBudgetsByMonthWithCategoryAsync(
+        string userId,
+        int month,
+        int year,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Budgets
+            .Include(b => b.Category)
+            .ThenInclude(c => c!.Group)
+            .Where(b => b.UserId == userId && b.Month == month && b.Year == year)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Budget>> GetRecurrentBudgetsForMonthAsync(
+        string userId,
+        int month,
+        int year,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Budgets
+            .Where(b =>
+                b.UserId == userId &&
+                b.IsRecurrent &&
+                b.Month == month &&
+                b.Year == year)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> ExistsAsync(
         string userId,
         int categoryId,
@@ -61,17 +95,13 @@ internal sealed class BudgetRepository : IBudgetRepository
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Budgets
-            .AnyAsync(b => 
-                b.UserId == userId && 
-                b.CategoryId == categoryId && 
-                b.Month == month && 
-                b.Year == year, 
+            .AnyAsync(b =>
+                b.UserId == userId &&
+                b.CategoryId == categoryId &&
+                b.Month == month &&
+                b.Year == year,
                 cancellationToken);
     }
-
-    // ═══════════════════════════════════════════════════════════════
-    // COMMAND METHODS
-    // ═══════════════════════════════════════════════════════════════
 
     public void Add(Budget budget)
     {

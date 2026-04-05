@@ -1,10 +1,8 @@
 using Fintrack.Server.Application.Abstractions.Messaging;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
-namespace Fintrack.Server.Application.Budgets.Commands;
+namespace Fintrack.Server.Application.Budgets.Commands.DeleteBudget;
 
 public record DeleteBudgetCommand(Guid Id, string UserId) : ICommand;
 

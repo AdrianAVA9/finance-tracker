@@ -1,7 +1,6 @@
-using Fintrack.Server.Application.Budgets.Queries;
 using FluentValidation;
 
-namespace Fintrack.Server.Application.Budgets.Queries;
+namespace Fintrack.Server.Application.Budgets.Queries.GetBudgetDetails;
 
 internal sealed class GetBudgetDetailsQueryValidator : AbstractValidator<GetBudgetDetailsQuery>
 {

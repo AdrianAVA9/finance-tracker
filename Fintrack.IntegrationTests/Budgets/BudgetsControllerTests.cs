@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Fintrack.IntegrationTests.Infrastructure;
-using Fintrack.Server.Application.Budgets.Commands;
+using Fintrack.Server.Application.Budgets.Commands.UpsertBudgets;
 using Fintrack.Server.Api.Controllers.Budgets;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;

@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Asp.Versioning;
 using Fintrack.Server.Domain.Abstractions;
-using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.Enums;
 using Fintrack.Server.Domain.Exceptions;
 using Fintrack.Server.Domain.ExpenseCategories;

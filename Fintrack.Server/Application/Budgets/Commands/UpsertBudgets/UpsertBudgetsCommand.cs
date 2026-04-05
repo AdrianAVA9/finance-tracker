@@ -1,10 +1,8 @@
 using Fintrack.Server.Application.Abstractions.Messaging;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
-namespace Fintrack.Server.Application.Budgets.Commands;
+namespace Fintrack.Server.Application.Budgets.Commands.UpsertBudgets;
 
 public record BudgetEntryDto(int CategoryId, decimal Amount, bool IsRecurrent = false);
 
@@ -29,17 +27,16 @@ internal sealed class UpsertBudgetsCommandHandler : ICommandHandler<UpsertBudget
     public async Task<Result> Handle(UpsertBudgetsCommand request, CancellationToken cancellationToken)
     {
         var userBudgets = await _budgetRepository.GetUserBudgetsByMonthAsync(
-            request.UserId, 
-            request.Month, 
-            request.Year, 
+            request.UserId,
+            request.Month,
+            request.Year,
             cancellationToken);
-            
+
         var existingBudgets = userBudgets.ToDictionary(b => b.CategoryId);
 
-        // Group to handle safety if multiple items for same CategoryId are sent in one batch
         var uniqueBudgets = request.Budgets
             .GroupBy(b => b.CategoryId)
-            .Select(g => g.Last()) // Take the last one if duplicates exist
+            .Select(g => g.Last())
             .ToList();
 
         foreach (var entry in uniqueBudgets)
@@ -51,7 +48,7 @@ internal sealed class UpsertBudgetsCommandHandler : ICommandHandler<UpsertBudget
                 {
                     return updateResult;
                 }
-                
+
                 _budgetRepository.Update(existing);
             }
             else

@@ -4,6 +4,7 @@ using Fintrack.Server.Application.Expenses;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.ExpenseCategories;
+using Fintrack.Server.Domain.Incomes;
 using Fintrack.Server.Domain.Expenses;
 using Fintrack.Server.Infrastructure.BackgroundJobs;
 using Fintrack.Server.Infrastructure.Data;
@@ -25,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IExpenseCategoryRepository, ExpenseCategoryRepository>();
         services.AddScoped<IExpenseCategoryGroupRepository, ExpenseCategoryGroupRepository>();
         services.AddScoped<IBudgetRepository, BudgetRepository>();
+        services.AddScoped<IRecurringIncomeRepository, RecurringIncomeRepository>();
 
         // --- OCR / Vision Integrations ---
         services.AddHttpClient<IVisionExtractionProvider, GeminiVisionExtractionProvider>();

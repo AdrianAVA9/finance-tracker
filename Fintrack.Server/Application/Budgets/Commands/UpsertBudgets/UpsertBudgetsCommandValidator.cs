@@ -1,7 +1,6 @@
-using Fintrack.Server.Application.Budgets.Commands;
 using FluentValidation;
 
-namespace Fintrack.Server.Application.Budgets.Commands;
+namespace Fintrack.Server.Application.Budgets.Commands.UpsertBudgets;
 
 internal sealed class UpsertBudgetsCommandValidator : AbstractValidator<UpsertBudgetsCommand>
 {
