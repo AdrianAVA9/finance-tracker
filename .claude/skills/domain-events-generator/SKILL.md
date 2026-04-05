@@ -1,7 +1,7 @@
 ---
 name: domain-events-generator
 description: "Generates Domain Events and their handlers following DDD patterns. Implements event raising in entities, MediatR notification handlers, and the Outbox pattern for reliable event processing."
-version: 1.0.0
+version: 1.1.0
 language: C#
 framework: .NET 8+
 dependencies: MediatR
@@ -25,7 +25,7 @@ Domain Events capture something significant that happened in the domain:
 |-----------|---------|----------|
 | `IDomainEvent` | Marker interface | Domain/Abstractions |
 | `{Entity}{Action}DomainEvent` | Event record | Domain/{Aggregate}/Events |
-| `{Event}DomainEventHandler` | Event handler | Application/{Feature} |
+| `{Event}DomainEventHandler` | MediatR `INotification` handler | `Application/{Feature}/EventHandlers/` (or co-locate under a use-case folder if 1:1) |
 | `OutboxMessage` | Persisted event | Infrastructure/Outbox |
 
 ---
@@ -54,6 +54,8 @@ Domain Events capture something significant that happened in the domain:
     ├── OutboxMessageConfiguration.cs
     └── ProcessOutboxMessagesJob.cs
 ```
+
+**CQRS commands/queries** use **one folder per use case** under `Application/{Feature}/` — not shared `Commands/` or `Queries/` buckets ([`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md)). **`EventHandlers/`** is for domain-event **notification** handlers only (different from `ICommand` / `IQuery`).
 
 ---
 

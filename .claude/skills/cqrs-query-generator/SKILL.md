@@ -1,7 +1,7 @@
 ---
 name: cqrs-query-generator
 description: "Generates CQRS Queries with MediatR handlers and response DTOs for read operations. Default data access is Entity Framework Core via abstractions implemented in Infrastructure; Dapper is optional when raw SQL is justified."
-version: 1.1.0
+version: 1.2.0
 language: C#
 framework: .NET 8+
 dependencies: MediatR, FluentValidation, Entity Framework Core (optional: Dapper)
@@ -17,6 +17,7 @@ This skill generates Queries following the CQRS pattern. Queries are read-side o
 - **Prefer Entity Framework Core** — Implement reads in Infrastructure using EF (`DbContext`, `Include`/`Select`, `AsNoTracking` when appropriate) behind an interface the Application layer consumes
 - **Keep `DbContext` out of query handlers** — Handlers depend on repository or read-service abstractions; Infrastructure registers EF implementations
 - **Dapper is optional** — Use hand-written SQL/Dapper when profiling or complexity warrants it, not by default
+- **One folder per query** — Under `Application/{Feature}/`, each query lives in its **own** folder (e.g. `GetBudgets/`). Do **not** use a shared `Queries/` folder. See [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md) (**Application `{Feature}` folder layout**).
 
 ## Quick Reference
 
@@ -38,6 +39,8 @@ This skill generates Queries following the CQRS pattern. Queries are read-side o
 **Interface placement:** If methods return application query DTOs, the interface belongs in **Application.Abstractions** so **Domain** does not reference Application types. Classic `I{Aggregate}Repository` with only entity + `Add`/`Update`/`Remove` may still live in Domain per project convention.
 
 ## Query Structure
+
+**Mandatory layout:** `Application/{Feature}/{QueryFolder}/` only — no `Application/{Feature}/Queries/...`.
 
 ```
 /Application/{Feature}/

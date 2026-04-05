@@ -1,7 +1,7 @@
 ---
 name: integration-testing
 description: "Configures integration tests with WebApplicationFactory and Testcontainers. Provides test database setup, authentication helpers, and utilities for testing API endpoints with real dependencies."
-version: 1.0.0
+version: 1.1.0
 language: C#
 framework: .NET 8+
 dependencies: Testcontainers.PostgreSql, Microsoft.AspNetCore.Mvc.Testing, Respawn
@@ -32,6 +32,8 @@ Integration tests verify the full request pipeline:
 
 ## Test Project Structure
 
+Group tests under **`{Feature}/{UseCaseFolder}/`** to match `Application/{Feature}/{UseCaseFolder}/` (see [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md)).
+
 ```
 tests/
 └── {name}.Api.IntegrationTests/
@@ -41,8 +43,10 @@ tests/
     │   ├── TestAuthHandler.cs
     │   └── FakeUserContext.cs
     ├── {Feature}/
-    │   ├── Create{Entity}Tests.cs
-    │   └── Get{Entity}Tests.cs
+    │   ├── Create{Entity}/
+    │   │   └── Create{Entity}Tests.cs
+    │   └── Get{Entity}ById/
+    │       └── Get{Entity}ByIdTests.cs
     └── {name}.Api.IntegrationTests.csproj
 ```
 

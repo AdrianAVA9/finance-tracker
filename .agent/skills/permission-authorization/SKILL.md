@@ -1,7 +1,7 @@
 ---
 name: permission-authorization
 description: "Implements permission-based authorization with custom attributes, policy providers, and authorization handlers. Provides granular access control beyond simple role-based authorization."
-version: 1.0.0
+version: 1.1.0
 language: C#
 framework: .NET 8+
 dependencies: Microsoft.AspNetCore.Authorization
@@ -609,6 +609,8 @@ public class UserController : ControllerBase
 ---
 
 ## Usage in Handlers (Imperative)
+
+Place handlers under **`Application/{Feature}/{UseCaseFolder}/`** (same layout as [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md)).
 
 ```csharp
 // src/{name}.application/{Feature}/DoSomething/DoSomethingCommandHandler.cs

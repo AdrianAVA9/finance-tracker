@@ -1,7 +1,7 @@
 ---
 name: unit-testing
 description: "Generates unit tests for command and query handlers using xUnit and NSubstitute. Implements Arrange-Act-Assert pattern with comprehensive test coverage for success and failure scenarios."
-version: 1.0.0
+version: 1.1.0
 language: C#
 framework: .NET 8+
 dependencies: xUnit, NSubstitute, FluentAssertions
@@ -31,6 +31,8 @@ Unit tests for Clean Architecture handlers:
 ---
 
 ## Test Project Structure
+
+Mirror **`Application/{Feature}/{UseCaseFolder}/`** (one folder per command/query). See [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md).
 
 ```
 tests/

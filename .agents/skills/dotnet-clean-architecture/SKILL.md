@@ -1,7 +1,7 @@
 ---
 name: dotnet-clean-architecture
 description: "Scaffolds a complete .NET solution following Clean Architecture principles with proper layer separation (API, Application, Domain, Infrastructure). Creates project structure, dependency injection setup, and cross-cutting concerns configuration."
-version: 1.0.0
+version: 1.1.0
 language: C#
 framework: .NET 8+
 dependencies: MediatR, FluentValidation, Entity Framework Core, Dapper
@@ -45,6 +45,19 @@ The same **Dependency Rule** line says Infrastructure implements interfaces from
 Infrastructure still holds the **implementations** (e.g. one EF-backed class can implement both a Domain `IBudgetRepository` for `Budget` persistence and an Application `IBudgetListQueries` for DTO projections). Naming is flexible; what matters is **Domain never references Application types**.
 
 So: **persistence-only repository → Domain**. **DTO-returning or cross-aggregate reads → Application abstractions** (unless you map to DTOs entirely inside the handler from entity-only repository methods).
+
+### Application `{Feature}` folder layout (mandatory)
+
+Under **`Application/{Feature}/`**, every CQRS use case **must** live in **its own folder** named after that command or query. **Do not** group files under generic **`Commands/`** or **`Queries/`** buckets at the feature level.
+
+| Kind | Folder pattern | Typical contents |
+|------|----------------|------------------|
+| **Command** (write) | `{Verb}{Entity}/` or action name | `{Name}Command.cs` (record + handler), `{Name}CommandValidator.cs`, optional request types |
+| **Query** (read) | `Get{Thing}/`, `List{Thing}/`, etc. | `{Name}Query.cs` (record + handler + response DTOs as needed), `{Name}QueryValidator.cs` |
+
+- **Namespace** matches the folder: e.g. `Budgets/GetBudgets/` → `...Application.Budgets.GetBudgets`.
+- **Tests** mirror the same shape: `Application.Tests/{Feature}/{FolderName}/...` (see `unit-testing`, `integration-testing` skills).
+- **Reference implementation in this repo:** `Fintrack.Server/Application/Budgets/` (`UpsertBudgets/`, `DeleteBudget/`, `GetBudgets/`, …).
 
 ## Quick Reference
 
@@ -92,11 +105,12 @@ So: **persistence-only repository → Domain**. **DTO-returning or cross-aggrega
 │   │   │   ├── Authentication/
 │   │   │   ├── Clock/
 │   │   │   └── Data/
-│   │   ├── {Feature}/
-│   │   │   ├── Create{Entity}/
+│   │   ├── {Feature}/                   # NO {Feature}/Commands or {Feature}/Queries — only per-use-case folders
+│   │   │   ├── Create{Entity}/          # command folder: handler + validator + types
 │   │   │   ├── Update{Entity}/
 │   │   │   ├── Delete{Entity}/
-│   │   │   └── Get{Entity}/
+│   │   │   ├── Get{Entity}ById/         # query folder: handler + validator + response DTOs
+│   │   │   └── GetAll{Entities}/        # e.g. Budgets/UpsertBudgets/, Budgets/GetBudgets/
 │   │   ├── DependencyInjection.cs
 │   │   └── {name}.application.csproj
 │   │
@@ -596,6 +610,7 @@ app.Run();
 8. **Repositories are per aggregate root** - not per entity
 9. **Domain events are raised in domain**, handled in application layer
 10. **Always use CancellationToken** in async operations
+11. **Application features use one folder per command or query** under `{Feature}/` — never a shared `Commands/` or `Queries/` folder for that feature (see **Application `{Feature}` folder layout** above)
 
 ---
 

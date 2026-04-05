@@ -1,7 +1,7 @@
 ---
 name: fluent-validation
 description: "Generates FluentValidation validators for commands and queries. Includes common validation rules, custom validators, async validation, and integration with MediatR pipeline behaviors."
-version: 1.0.0
+version: 1.1.0
 language: C#
 framework: .NET 8+
 dependencies: FluentValidation, FluentValidation.DependencyInjectionExtensions
@@ -32,6 +32,8 @@ FluentValidation provides a fluent interface for building strongly-typed validat
 
 ## Validator Structure
 
+**Mandatory (CeroBase):** Co-locate `*CommandValidator` and `*QueryValidator` with the command or query in **`Application/{Feature}/{UseCaseFolder}/`** (same rule as [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md)). Do **not** put use-case validators under `{Feature}/Commands/`, `{Feature}/Queries/`, or a generic `{Feature}/Validators/` bucket. Optional `{Feature}/Validators/` is **only** for small, **reusable** validators (e.g. shared `EmailValidator`) used by multiple use cases.
+
 ```
 /Application/{Feature}/
 ├── Create{Entity}/
@@ -39,8 +41,8 @@ FluentValidation provides a fluent interface for building strongly-typed validat
 │   └── Create{Entity}CommandValidator.cs    # Or inline in Command.cs
 ├── Update{Entity}/
 │   └── Update{Entity}Command.cs             # Validator inline
-└── Validators/
-    ├── EmailValidator.cs                     # Reusable validators
+└── Validators/                               # optional: cross-cutting only (not per-command buckets)
+    ├── EmailValidator.cs
     └── PhoneNumberValidator.cs
 ```
 

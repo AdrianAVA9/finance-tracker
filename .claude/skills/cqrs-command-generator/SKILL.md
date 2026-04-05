@@ -1,7 +1,7 @@
 ---
 name: cqrs-command-generator
 description: "Generates CQRS Commands with Handlers, Validators, and Request DTOs following Clean Architecture patterns. Commands represent actions that modify state and return Result types for proper error handling."
-version: 1.0.0
+version: 1.1.0
 language: C#
 framework: .NET 8+
 dependencies: MediatR, FluentValidation
@@ -17,6 +17,7 @@ This skill generates Commands following the CQRS (Command Query Responsibility S
 - **Validator** - FluentValidation rules for input validation
 - **Handler** - Business logic implementation returning Result
 - **Request DTO** (optional) - API layer request model
+- **One folder per command** — Under `Application/{Feature}/`, each command lives in its **own** folder (e.g. `UpsertBudgets/`). Do **not** use a shared `Commands/` folder. See [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md) (**Application `{Feature}` folder layout**).
 
 ## Quick Reference
 
@@ -28,6 +29,8 @@ This skill generates Commands following the CQRS (Command Query Responsibility S
 ---
 
 ## Command Structure
+
+**Mandatory layout:** `Application/{Feature}/{CommandFolder}/` only — no `Application/{Feature}/Commands/...`.
 
 ```
 /Application/{Feature}/

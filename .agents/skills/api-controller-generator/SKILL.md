@@ -1,7 +1,7 @@
 ---
 name: api-controller-generator
 description: "Generates RESTful API Controllers with proper routing, versioning, authorization, and MediatR integration. Follows REST conventions and Clean Architecture patterns."
-version: 1.0.0
+version: 1.1.0
 language: C#
 framework: .NET 8+
 dependencies: MediatR, Asp.Versioning
@@ -18,6 +18,7 @@ This skill generates RESTful API Controllers following best practices:
 - **Authorization** - Role and permission-based
 - **Consistent responses** - Proper HTTP status codes
 - **Request/Response DTOs** - Separate from domain
+- **MediatR types** — Import commands/queries from **`Application/{Feature}/{UseCaseFolder}/`** (one folder per use case; see [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md))
 
 ## Quick Reference
 
