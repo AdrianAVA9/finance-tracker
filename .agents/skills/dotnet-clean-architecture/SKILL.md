@@ -48,16 +48,23 @@ So: **persistence-only repository → Domain**. **DTO-returning or cross-aggrega
 
 ### Application `{Feature}` folder layout (mandatory)
 
-Under **`Application/{Feature}/`**, every CQRS use case **must** live in **its own folder** named after that command or query. **Do not** group files under generic **`Commands/`** or **`Queries/`** buckets at the feature level.
+Every CQRS use case **must** live in **its own folder** named after that command or query. **CeroBase** groups them under read/write parents:
 
-| Kind | Folder pattern | Typical contents |
-|------|----------------|------------------|
-| **Command** (write) | `{Verb}{Entity}/` or action name | `{Name}Command.cs` (record + handler), `{Name}CommandValidator.cs`, optional request types |
-| **Query** (read) | `Get{Thing}/`, `List{Thing}/`, etc. | `{Name}Query.cs` (record + handler + response DTOs as needed), `{Name}QueryValidator.cs` |
+| Layout | Path pattern | Namespace (example) |
+|--------|----------------|----------------------|
+| **Grouped (CeroBase)** | `Application/{Feature}/Queries/{UseCase}/` | `...Application.Budgets.Queries.GetBudgets` |
+| **Grouped (CeroBase)** | `Application/{Feature}/Commands/{UseCase}/` | `...Application.Budgets.Commands.UpsertBudgets` |
+| **Flat (alternative)** | `Application/{Feature}/{UseCase}/` | `...Application.Budgets.GetBudgets` |
 
-- **Namespace** matches the folder: e.g. `Budgets/GetBudgets/` → `...Application.Budgets.GetBudgets`.
-- **Tests** mirror the same shape: `Application.Tests/{Feature}/{FolderName}/...` (see `unit-testing`, `integration-testing` skills).
-- **Reference implementation in this repo:** `Fintrack.Server/Application/Budgets/` (`UpsertBudgets/`, `DeleteBudget/`, `GetBudgets/`, …).
+**Do not** put multiple unrelated use cases in one leaf folder (no single folder containing every command’s files).
+
+| Kind | Typical contents |
+|------|------------------|
+| **Command** (write) | `{Name}Command.cs` (record + handler), `{Name}CommandValidator.cs`, optional request types |
+| **Query** (read) | `{Name}Query.cs` (record + handler + response DTOs as needed), `{Name}QueryValidator.cs` |
+
+- **Tests** mirror the same folder shape under `{Feature}/` (see `unit-testing`, `integration-testing` skills).
+- **Reference (this repo):** `Fintrack.Server/Application/Budgets/Queries/GetBudgets/`, `.../Commands/UpsertBudgets/`, etc.
 
 ## Quick Reference
 
@@ -105,12 +112,13 @@ Under **`Application/{Feature}/`**, every CQRS use case **must** live in **its o
 │   │   │   ├── Authentication/
 │   │   │   ├── Clock/
 │   │   │   └── Data/
-│   │   ├── {Feature}/                   # NO {Feature}/Commands or {Feature}/Queries — only per-use-case folders
-│   │   │   ├── Create{Entity}/          # command folder: handler + validator + types
-│   │   │   ├── Update{Entity}/
-│   │   │   ├── Delete{Entity}/
-│   │   │   ├── Get{Entity}ById/         # query folder: handler + validator + response DTOs
-│   │   │   └── GetAll{Entities}/        # e.g. Budgets/UpsertBudgets/, Budgets/GetBudgets/
+│   │   ├── {Feature}/
+│   │   │   ├── Commands/                # optional parent for writes (CeroBase)
+│   │   │   │   ├── Create{Entity}/      # one folder per command
+│   │   │   │   └── Delete{Entity}/
+│   │   │   └── Queries/                 # optional parent for reads (CeroBase)
+│   │   │       ├── Get{Entity}ById/
+│   │   │       └── GetAll{Entities}/
 │   │   ├── DependencyInjection.cs
 │   │   └── {name}.application.csproj
 │   │
@@ -610,7 +618,7 @@ app.Run();
 8. **Repositories are per aggregate root** - not per entity
 9. **Domain events are raised in domain**, handled in application layer
 10. **Always use CancellationToken** in async operations
-11. **Application features use one folder per command or query** under `{Feature}/` — never a shared `Commands/` or `Queries/` folder for that feature (see **Application `{Feature}` folder layout** above)
+11. **Application features use one folder per command or query** under `{Feature}/` — either flat `{Feature}/{UseCase}/` or grouped `{Feature}/Queries/{UseCase}/` and `{Feature}/Commands/{UseCase}/` (see **Application `{Feature}` folder layout** above); never one folder mixing several use cases
 
 ---
 

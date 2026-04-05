@@ -32,7 +32,7 @@ FluentValidation provides a fluent interface for building strongly-typed validat
 
 ## Validator Structure
 
-**Mandatory (CeroBase):** Co-locate `*CommandValidator` and `*QueryValidator` with the command or query in **`Application/{Feature}/{UseCaseFolder}/`** (same rule as [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md)). Do **not** put use-case validators under `{Feature}/Commands/`, `{Feature}/Queries/`, or a generic `{Feature}/Validators/` bucket. Optional `{Feature}/Validators/` is **only** for small, **reusable** validators (e.g. shared `EmailValidator`) used by multiple use cases.
+**Mandatory (CeroBase):** Co-locate `*CommandValidator` and `*QueryValidator` in the **same leaf folder** as the command/query (e.g. `{Feature}/Commands/UpsertBudgets/`, `{Feature}/Queries/GetBudgets/`, or flat `{Feature}/{UseCase}/`). See [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md). Do **not** gather use-case validators in a single generic `{Feature}/Validators/` folder. Optional `{Feature}/Validators/` is **only** for small **reusable** validators (e.g. `EmailValidator`) shared by multiple use cases.
 
 ```
 /Application/{Feature}/

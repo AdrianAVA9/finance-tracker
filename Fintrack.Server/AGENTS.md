@@ -53,7 +53,7 @@ Every new backend feature MUST be implemented following these 6 sequential steps
 - [`integration-testing`](../.agents/skills/integration-testing/SKILL.md): Testing with real dependencies using Testcontainers.
 
 ## 4. Coding Conventions
-- **Application layout:** Under `Application/{Feature}/`, use **one folder per command or query** (e.g. `Budgets/GetBudgets/`, `Budgets/UpsertBudgets/`). Do **not** add shared `Commands/` or `Queries/` folders inside a feature. Canonical rule: [`dotnet-clean-architecture`](../.agents/skills/dotnet-clean-architecture/SKILL.md).
+- **Application layout:** Under `Application/{Feature}/`, place each use case under **`Queries/{UseCase}/`** (reads) or **`Commands/{UseCase}/`** (writes), e.g. `Budgets/Queries/GetBudgets/`, `Budgets/Commands/UpsertBudgets/`. Namespace matches the path (e.g. `...Budgets.Queries.GetBudgets`). See [`dotnet-clean-architecture`](../.agents/skills/dotnet-clean-architecture/SKILL.md).
 - **CQRS & MediatR:** Keep controllers thin. All business logic must be delegated to MediatR Queries and Commands in the `Application` layer.
 - **Repository Pattern:** Do not use `DbContext` directly in the `Application` layer. Use repositories to abstract data access.
 - **Asynchronous Programming:** Always use `async`/`await` for I/O bound operations (database, HTTP calls). Suffix asynchronous methods with `Async`.

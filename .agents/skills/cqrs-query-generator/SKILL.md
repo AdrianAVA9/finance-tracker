@@ -17,7 +17,7 @@ This skill generates Queries following the CQRS pattern. Queries are read-side o
 - **Prefer Entity Framework Core** — Implement reads in Infrastructure using EF (`DbContext`, `Include`/`Select`, `AsNoTracking` when appropriate) behind an interface the Application layer consumes
 - **Keep `DbContext` out of query handlers** — Handlers depend on repository or read-service abstractions; Infrastructure registers EF implementations
 - **Dapper is optional** — Use hand-written SQL/Dapper when profiling or complexity warrants it, not by default
-- **One folder per query** — Under `Application/{Feature}/`, each query lives in its **own** folder (e.g. `GetBudgets/`). Do **not** use a shared `Queries/` folder. See [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md) (**Application `{Feature}` folder layout**).
+- **One folder per query** — Each query lives in its **own** folder (e.g. `Budgets/Queries/GetBudgets/` in CeroBase, or `Budgets/GetBudgets/` flat). Do **not** mix multiple queries in one leaf folder. See [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md).
 
 ## Quick Reference
 
@@ -40,10 +40,10 @@ This skill generates Queries following the CQRS pattern. Queries are read-side o
 
 ## Query Structure
 
-**Mandatory layout:** `Application/{Feature}/{QueryFolder}/` only — no `Application/{Feature}/Queries/...`.
+**Mandatory:** one folder per query — e.g. `Application/{Feature}/Queries/{QueryFolder}/` (CeroBase) or `Application/{Feature}/{QueryFolder}/` (flat).
 
 ```
-/Application/{Feature}/
+/Application/{Feature}/Queries/
 ├── Get{Entity}ById/
 │   ├── Get{Entity}ByIdQuery.cs       # Query + Validator + Handler
 │   └── {Entity}Response.cs            # Response DTO

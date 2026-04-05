@@ -17,7 +17,7 @@ This skill generates Commands following the CQRS (Command Query Responsibility S
 - **Validator** - FluentValidation rules for input validation
 - **Handler** - Business logic implementation returning Result
 - **Request DTO** (optional) - API layer request model
-- **One folder per command** — Under `Application/{Feature}/`, each command lives in its **own** folder (e.g. `UpsertBudgets/`). Do **not** use a shared `Commands/` folder. See [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md) (**Application `{Feature}` folder layout**).
+- **One folder per command** — Each command lives in its **own** folder (e.g. `Budgets/Commands/UpsertBudgets/` in CeroBase, or `Budgets/UpsertBudgets/` flat). Do **not** mix multiple commands in one leaf folder. See [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md).
 
 ## Quick Reference
 
@@ -30,10 +30,10 @@ This skill generates Commands following the CQRS (Command Query Responsibility S
 
 ## Command Structure
 
-**Mandatory layout:** `Application/{Feature}/{CommandFolder}/` only — no `Application/{Feature}/Commands/...`.
+**Mandatory:** one folder per command — e.g. `Application/{Feature}/Commands/{CommandFolder}/` (CeroBase) or `Application/{Feature}/{CommandFolder}/` (flat).
 
 ```
-/Application/{Feature}/
+/Application/{Feature}/Commands/
 ├── Create{Entity}/
 │   ├── Create{Entity}Command.cs        # Record + Validator + Handler
 │   └── Create{Entity}Request.cs        # Optional API DTO
