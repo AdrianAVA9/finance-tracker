@@ -1,4 +1,5 @@
 using Fintrack.Server.Application.Abstractions.Messaging;
+using Fintrack.Server.Application.Budgets;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
 
@@ -53,30 +54,20 @@ internal sealed class UpsertBudgetsCommandHandler : ICommandHandler<UpsertBudget
             }
             else
             {
-                if (await _budgetRepository.ExistsAsync(
-                    request.UserId,
-                    entry.CategoryId,
-                    request.Month,
-                    request.Year,
-                    cancellationToken))
-                {
-                    return Result.Failure(BudgetErrors.AlreadyExists);
-                }
-
-                var createResult = Budget.Create(
+                var addResult = await BudgetSlotHelper.TryAddNewBudgetSlotAsync(
+                    _budgetRepository,
                     request.UserId,
                     entry.CategoryId,
                     entry.Amount,
                     entry.IsRecurrent,
                     request.Month,
-                    request.Year);
+                    request.Year,
+                    cancellationToken);
 
-                if (createResult.IsFailure)
+                if (addResult.IsFailure)
                 {
-                    return createResult;
+                    return addResult;
                 }
-
-                _budgetRepository.Add(createResult.Value);
             }
         }
 

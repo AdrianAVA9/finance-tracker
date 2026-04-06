@@ -1,4 +1,5 @@
 using Fintrack.Server.Application.Abstractions.Messaging;
+using Fintrack.Server.Application.Budgets;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
 
@@ -65,30 +66,20 @@ internal sealed class CopyPreviousMonthBudgetsCommandHandler : ICommandHandler<C
             }
             else
             {
-                if (await _budgetRepository.ExistsAsync(
-                    request.UserId,
-                    source.CategoryId,
-                    request.TargetMonth,
-                    request.TargetYear,
-                    cancellationToken))
-                {
-                    return Result.Failure(BudgetErrors.AlreadyExists);
-                }
-
-                var createResult = Budget.Create(
+                var addResult = await BudgetSlotHelper.TryAddNewBudgetSlotAsync(
+                    _budgetRepository,
                     request.UserId,
                     source.CategoryId,
                     source.Amount,
                     source.IsRecurrent,
                     request.TargetMonth,
-                    request.TargetYear);
+                    request.TargetYear,
+                    cancellationToken);
 
-                if (createResult.IsFailure)
+                if (addResult.IsFailure)
                 {
-                    return createResult;
+                    return addResult;
                 }
-
-                _budgetRepository.Add(createResult.Value);
             }
         }
 

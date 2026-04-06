@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Fintrack.Server.Application.Budgets;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,30 +74,28 @@ public class RecurringBudgetProcessorJob : BackgroundService
 
         foreach (var previousBudget in recurringBudgets)
         {
-            var exists = await budgetRepository.ExistsAsync(
+            var addResult = await BudgetSlotHelper.TryAddNewBudgetSlotAsync(
+                budgetRepository,
                 previousBudget.UserId,
                 previousBudget.CategoryId,
+                previousBudget.Amount,
+                isRecurrent: true,
                 currentMonth,
                 currentYear,
                 cancellationToken);
 
-            if (exists)
+            if (addResult.IsSuccess)
             {
-                continue;
-            }
-
-            var createResult = Budget.Create(
-                previousBudget.UserId,
-                previousBudget.CategoryId,
-                previousBudget.Amount,
-                true,
-                currentMonth,
-                currentYear);
-
-            if (createResult.IsSuccess)
-            {
-                budgetRepository.Add(createResult.Value);
                 addedCount++;
+            }
+            else if (addResult.Error != BudgetErrors.AlreadyExists)
+            {
+                _logger.LogWarning(
+                    "Skipped recurring budget roll-forward for user {UserId} category {CategoryId}: {Code} {Description}",
+                    previousBudget.UserId,
+                    previousBudget.CategoryId,
+                    addResult.Error.Code,
+                    addResult.Error.Description);
             }
         }
 
