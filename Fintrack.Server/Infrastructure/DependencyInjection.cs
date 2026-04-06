@@ -1,5 +1,7 @@
 using System.Runtime.CompilerServices;
+using Fintrack.Server.Application.Abstractions.Clock;
 using Fintrack.Server.Application.Abstractions.Vision;
+using Fintrack.Server.Application.Budgets;
 using Fintrack.Server.Application.Expenses;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
@@ -7,6 +9,7 @@ using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Incomes;
 using Fintrack.Server.Domain.Expenses;
 using Fintrack.Server.Infrastructure.BackgroundJobs;
+using Fintrack.Server.Infrastructure.Clock;
 using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Infrastructure.Repositories;
 using Fintrack.Server.Infrastructure.Vision;
@@ -34,6 +37,9 @@ public static class DependencyInjection
 
         // NOTE: Make sure IExpenseRepository is registered if it's not already!
         services.AddScoped<IExpenseRepository, ExpenseRepository>();
+
+        services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
+        services.AddScoped<IRecurringBudgetRollForwardService, RecurringBudgetRollForwardService>();
 
         services.AddHostedService<RecurringTransactionProcessorJob>();
         services.AddHostedService<RecurringBudgetProcessorJob>();

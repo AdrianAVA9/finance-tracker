@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Fintrack.Server.Application.Abstractions.Clock;
 using Fintrack.Server.Application.Budgets;
-using Fintrack.Server.Domain.Abstractions;
-using Fintrack.Server.Domain.Budgets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,12 +11,17 @@ namespace Fintrack.Server.Infrastructure.BackgroundJobs;
 
 public class RecurringBudgetProcessorJob : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IDateTimeProvider _clock;
     private readonly ILogger<RecurringBudgetProcessorJob> _logger;
 
-    public RecurringBudgetProcessorJob(IServiceProvider serviceProvider, ILogger<RecurringBudgetProcessorJob> logger)
+    public RecurringBudgetProcessorJob(
+        IServiceScopeFactory scopeFactory,
+        IDateTimeProvider clock,
+        ILogger<RecurringBudgetProcessorJob> logger)
     {
-        _serviceProvider = serviceProvider;
+        _scopeFactory = scopeFactory;
+        _clock = clock;
         _logger = logger;
     }
 
@@ -30,9 +33,11 @@ public class RecurringBudgetProcessorJob : BackgroundService
         {
             try
             {
-                if (DateTime.UtcNow.Day == 1)
+                if (_clock.UtcNow.Day == 1)
                 {
-                    await ProcessRecurringBudgetsAsync(stoppingToken);
+                    using var scope = _scopeFactory.CreateScope();
+                    var processor = scope.ServiceProvider.GetRequiredService<IRecurringBudgetRollForwardService>();
+                    await processor.ProcessAsync(_clock.UtcNow, stoppingToken);
                 }
             }
             catch (Exception ex)
@@ -41,72 +46,6 @@ public class RecurringBudgetProcessorJob : BackgroundService
             }
 
             await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
-        }
-    }
-
-    private async Task ProcessRecurringBudgetsAsync(CancellationToken cancellationToken)
-    {
-        using var scope = _serviceProvider.CreateScope();
-        var budgetRepository = scope.ServiceProvider.GetRequiredService<IBudgetRepository>();
-        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-
-        var now = DateTime.UtcNow;
-        int currentYear = now.Year;
-        int currentMonth = now.Month;
-
-        var previousMonthDate = now.AddMonths(-1);
-        int previousYear = previousMonthDate.Year;
-        int previousMonth = previousMonthDate.Month;
-
-        var recurringBudgets = await budgetRepository.GetRecurrentBudgetsForMonthForAllUsersAsync(
-            previousMonth,
-            previousYear,
-            cancellationToken);
-
-        if (!recurringBudgets.Any())
-        {
-            return;
-        }
-
-        _logger.LogInformation("Found {Count} recurring budgets from previous month.", recurringBudgets.Count);
-
-        var addedCount = 0;
-
-        foreach (var previousBudget in recurringBudgets)
-        {
-            var addResult = await BudgetSlotHelper.TryAddNewBudgetSlotAsync(
-                budgetRepository,
-                previousBudget.UserId,
-                previousBudget.CategoryId,
-                previousBudget.Amount,
-                isRecurrent: true,
-                currentMonth,
-                currentYear,
-                cancellationToken);
-
-            if (addResult.IsSuccess)
-            {
-                addedCount++;
-            }
-            else if (addResult.Error != BudgetErrors.AlreadyExists)
-            {
-                _logger.LogWarning(
-                    "Skipped recurring budget roll-forward for user {UserId} category {CategoryId}: {Code} {Description}",
-                    previousBudget.UserId,
-                    previousBudget.CategoryId,
-                    addResult.Error.Code,
-                    addResult.Error.Description);
-            }
-        }
-
-        if (addedCount > 0)
-        {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation(
-                "Successfully registered {AddedCount} recurring budgets for {Year}-{Month}.",
-                addedCount,
-                currentYear,
-                currentMonth);
         }
     }
 }
