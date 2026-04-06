@@ -68,7 +68,7 @@ public sealed class BudgetsControllerAuthorizationTests : BaseIntegrationTest
             permissions: null,
             roles: new[] { Roles.IntegrationTestBudgetReadOnly });
 
-        var group = new ExpenseCategoryGroup { Name = "G" };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("G");
         await AddAsync(group);
         var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "C");
         await AddAsync(category);
@@ -100,7 +100,7 @@ public sealed class BudgetsControllerAuthorizationTests : BaseIntegrationTest
     public async Task Delete_Should_ReturnForbidden_When_UserLacksBudgetWritePermission()
     {
         var userId = Guid.NewGuid().ToString();
-        var group = new ExpenseCategoryGroup { Name = "G" };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("G");
         await AddAsync(group);
         var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "C");
         await AddAsync(category);

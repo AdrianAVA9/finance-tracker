@@ -14,7 +14,7 @@ public sealed class ExpenseCategoryGroupRepository : IExpenseCategoryGroupReposi
     }
 
     public async Task<ExpenseCategoryGroup?> GetByIdAsync(
-        int id,
+        Guid id,
         CancellationToken cancellationToken = default)
     {
         return await _dbContext
@@ -35,7 +35,7 @@ public sealed class ExpenseCategoryGroupRepository : IExpenseCategoryGroupReposi
     }
 
     public async Task<bool> ExistsAsync(
-        int id,
+        Guid id,
         CancellationToken cancellationToken = default)
     {
         return await _dbContext

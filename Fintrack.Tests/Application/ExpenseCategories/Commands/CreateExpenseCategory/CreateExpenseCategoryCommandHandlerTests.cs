@@ -1,3 +1,4 @@
+using System;
 using Fintrack.Server.Application.ExpenseCategories.Commands.CreateExpenseCategory;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.ExpenseCategories;
@@ -31,7 +32,7 @@ public sealed class CreateExpenseCategoryCommandHandlerTests
             "Test Description",
             "icon-test",
             "#ffffff",
-            1,
+            Guid.NewGuid(),
             "user-123");
 
         var result = await _handler.Handle(command, CancellationToken.None);

@@ -13,12 +13,22 @@ internal static class BudgetTestDoubles
 {
     public const string DefaultUserId = "user-1";
 
-    public static ExpenseCategoryGroup CreateGroup(int id = 1, string name = "Vivienda") =>
-        new()
+    public static ExpenseCategoryGroup CreateGroup(Guid? id = null, string name = "Vivienda")
+    {
+        var result = ExpenseCategoryGroup.CreateForSystem(name, null);
+        if (result.IsFailure)
         {
-            Id = id,
-            Name = name
-        };
+            throw new InvalidOperationException(result.Error.Description);
+        }
+
+        var group = result.Value;
+        if (id.HasValue)
+        {
+            SetEntityId(group, id.Value);
+        }
+
+        return group;
+    }
 
     public static ExpenseCategory CreateCategory(
         Guid? id = null,
@@ -28,7 +38,7 @@ internal static class BudgetTestDoubles
         string? icon = "home")
     {
         group ??= CreateGroup();
-        var groupId = group.Id != 0 ? group.Id : (int?)null;
+        var groupId = group.Id != Guid.Empty ? group.Id : (Guid?)null;
         var result = ExpenseCategory.Create(
             name,
             description: null,
@@ -63,13 +73,13 @@ internal static class BudgetTestDoubles
         setter.Invoke(category, new object?[] { group });
     }
 
-    private static void SetEntityId(ExpenseCategory category, Guid id)
+    private static void SetEntityId(BaseAuditableEntityGuid entity, Guid id)
     {
         var prop = typeof(BaseAuditableEntityGuid).GetProperty(nameof(BaseAuditableEntityGuid.Id))
                    ?? throw new InvalidOperationException("Id not found");
         var setter = prop.GetSetMethod(nonPublic: true)
                      ?? throw new InvalidOperationException("Id has no setter");
-        setter.Invoke(category, new object[] { id });
+        setter.Invoke(entity, new object[] { id });
     }
 
     public static Budget CreateBudget(

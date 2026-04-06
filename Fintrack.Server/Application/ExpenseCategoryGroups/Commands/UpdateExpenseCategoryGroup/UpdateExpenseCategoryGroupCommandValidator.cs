@@ -1,3 +1,4 @@
+using System;
 using FluentValidation;
 
 namespace Fintrack.Server.Application.ExpenseCategoryGroups.Commands.UpdateExpenseCategoryGroup;
@@ -7,7 +8,7 @@ internal sealed class UpdateExpenseCategoryGroupCommandValidator : AbstractValid
     public UpdateExpenseCategoryGroupCommandValidator()
     {
         RuleFor(x => x.Id)
-            .GreaterThan(0)
+            .NotEqual(Guid.Empty)
             .WithMessage("Expense category group ID is required");
 
         RuleFor(x => x.UserId)

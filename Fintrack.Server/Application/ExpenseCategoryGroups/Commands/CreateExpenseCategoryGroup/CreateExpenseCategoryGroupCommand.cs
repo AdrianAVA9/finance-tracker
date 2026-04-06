@@ -8,9 +8,9 @@ public record CreateExpenseCategoryGroupCommand(
     string Name,
     string? Description,
     string UserId
-) : ICommand<int>;
+) : ICommand<Guid>;
 
-internal sealed class CreateExpenseCategoryGroupCommandHandler : ICommandHandler<CreateExpenseCategoryGroupCommand, int>
+internal sealed class CreateExpenseCategoryGroupCommandHandler : ICommandHandler<CreateExpenseCategoryGroupCommand, Guid>
 {
     private readonly IExpenseCategoryGroupRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
@@ -23,17 +23,21 @@ internal sealed class CreateExpenseCategoryGroupCommandHandler : ICommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<int>> Handle(
+    public async Task<Result<Guid>> Handle(
         CreateExpenseCategoryGroupCommand request,
         CancellationToken cancellationToken)
     {
-        var group = new ExpenseCategoryGroup
+        var createResult = ExpenseCategoryGroup.CreateForUser(
+            request.Name,
+            request.Description,
+            request.UserId);
+
+        if (createResult.IsFailure)
         {
-            Name = request.Name,
-            Description = request.Description,
-            UserId = request.UserId,
-            IsEditable = true
-        };
+            return Result.Failure<Guid>(createResult.Error);
+        }
+
+        var group = createResult.Value;
 
         _repository.Add(group);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

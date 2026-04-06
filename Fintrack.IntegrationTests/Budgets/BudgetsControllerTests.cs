@@ -43,7 +43,7 @@ public class BudgetsControllerTests : BaseIntegrationTest
         var userId = Guid.NewGuid().ToString();
         AuthenticateAs(userId, BudgetUserPermissions);
 
-        var group = new ExpenseCategoryGroup { Name = "Test group" };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Test group");
         await AddAsync(group);
         var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Test category");
         await AddAsync(category);
@@ -69,7 +69,7 @@ public class BudgetsControllerTests : BaseIntegrationTest
         var userId = Guid.NewGuid().ToString();
         AuthenticateAs(userId, BudgetUserPermissions);
 
-        var group = new ExpenseCategoryGroup { Name = "Test group" };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Test group");
         await AddAsync(group);
         var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Test category");
         await AddAsync(category);
@@ -110,7 +110,7 @@ public class BudgetsControllerTests : BaseIntegrationTest
         var userId = Guid.NewGuid().ToString();
         AuthenticateAs(userId, BudgetUserPermissions);
 
-        var group = new ExpenseCategoryGroup { Name = "Test group" };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Test group");
         await AddAsync(group);
         var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Test category");
         await AddAsync(category);
@@ -144,7 +144,7 @@ public class BudgetsControllerTests : BaseIntegrationTest
         var userId = Guid.NewGuid().ToString();
         AuthenticateAs(userId, BudgetUserPermissions);
 
-        var group = new ExpenseCategoryGroup { Name = "Copy group" };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Copy group");
         await AddAsync(group);
         var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Copy category");
         await AddAsync(category);
@@ -191,7 +191,7 @@ public class BudgetsControllerTests : BaseIntegrationTest
         var userId = Guid.NewGuid().ToString();
         AuthenticateAs(userId, BudgetUserPermissions);
 
-        var group = new ExpenseCategoryGroup { Name = "Details group" };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Details group");
         await AddAsync(group);
         var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Details category");
         await AddAsync(category);
@@ -229,7 +229,7 @@ public class BudgetsControllerTests : BaseIntegrationTest
         var ownerId = Guid.NewGuid().ToString();
         var otherId = Guid.NewGuid().ToString();
 
-        var group = new ExpenseCategoryGroup { Name = "Iso group" };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Iso group");
         await AddAsync(group);
         var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Iso category");
         await AddAsync(category);

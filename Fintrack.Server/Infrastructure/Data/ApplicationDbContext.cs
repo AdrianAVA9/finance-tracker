@@ -140,6 +140,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Expense>()
+            .HasOne(e => e.ExpenseCategory)
+            .WithMany()
+            .HasForeignKey(e => e.ExpenseCategoryId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<Expense>()
             .HasOne(e => e.Invoice)
             .WithMany()
             .HasForeignKey(e => e.InvoiceId)

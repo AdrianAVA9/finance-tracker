@@ -4,7 +4,7 @@ using Fintrack.Server.Domain.ExpenseCategories;
 
 namespace Fintrack.Server.Application.ExpenseCategoryGroups.Commands.DeleteExpenseCategoryGroup;
 
-public record DeleteExpenseCategoryGroupCommand(int Id, string UserId) : ICommand;
+public record DeleteExpenseCategoryGroupCommand(Guid Id, string UserId) : ICommand;
 
 internal sealed class DeleteExpenseCategoryGroupCommandHandler : ICommandHandler<DeleteExpenseCategoryGroupCommand>
 {
@@ -34,9 +34,10 @@ internal sealed class DeleteExpenseCategoryGroupCommandHandler : ICommandHandler
             return Result.Failure(ExpenseCategoryGroupErrors.AccessDenied);
         }
 
-        if (!group.IsEditable)
+        var deleteResult = group.RegisterDeletion();
+        if (deleteResult.IsFailure)
         {
-            return Result.Failure(ExpenseCategoryGroupErrors.NotEditable);
+            return deleteResult;
         }
 
         _repository.Remove(group);

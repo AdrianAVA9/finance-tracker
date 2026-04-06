@@ -1,3 +1,4 @@
+using System;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.ExpenseCategories.Events;
 using FluentAssertions;
@@ -9,12 +10,13 @@ public sealed class ExpenseCategoryTests
     [Fact]
     public void Create_Should_Succeed_When_ParametersValid()
     {
+        var groupId = Guid.Parse("00000000-0000-0000-0000-000000000002");
         var result = ExpenseCategory.Create(
             "Groceries",
             "Weekly shop",
             "cart",
             "#111111",
-            groupId: 2,
+            groupId: groupId,
             userId: "user-1",
             isEditable: true);
 
@@ -23,7 +25,7 @@ public sealed class ExpenseCategoryTests
         result.Value.Description.Should().Be("Weekly shop");
         result.Value.Icon.Should().Be("cart");
         result.Value.Color.Should().Be("#111111");
-        result.Value.GroupId.Should().Be(2);
+        result.Value.GroupId.Should().Be(groupId);
         result.Value.UserId.Should().Be("user-1");
         result.Value.IsEditable.Should().BeTrue();
     }
@@ -64,17 +66,19 @@ public sealed class ExpenseCategoryTests
     [Fact]
     public void Update_Should_Succeed_And_RaiseEvent_When_Editable()
     {
-        var category = ExpenseCategory.Create("A", null, null, null, 1, "u1", true).Value;
+        var g1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var g2 = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        var category = ExpenseCategory.Create("A", null, null, null, g1, "u1", true).Value;
         category.ClearDomainEvents();
 
-        var update = category.Update("B", "d", "i", "#fff", 2);
+        var update = category.Update("B", "d", "i", "#fff", g2);
 
         update.IsSuccess.Should().BeTrue();
         category.Name.Should().Be("B");
         category.Description.Should().Be("d");
         category.Icon.Should().Be("i");
         category.Color.Should().Be("#fff");
-        category.GroupId.Should().Be(2);
+        category.GroupId.Should().Be(g2);
         category.GetDomainEvents().Should().ContainSingle()
             .Which.Should().BeOfType<ExpenseCategoryUpdatedDomainEvent>()
             .Which.ExpenseCategoryId.Should().Be(category.Id);

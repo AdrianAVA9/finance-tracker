@@ -1,3 +1,4 @@
+using System;
 using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
@@ -144,22 +145,22 @@ namespace Fintrack.Server.Infrastructure.Data.Seeders
             await context.SaveChangesAsync();
         }
 
-        private static async Task<int> TryAddGroup(ApplicationDbContext context, string name, string description)
+        private static async Task<Guid> TryAddGroup(ApplicationDbContext context, string name, string description)
         {
-            var group = new ExpenseCategoryGroup
+            var createResult = ExpenseCategoryGroup.CreateForSystem(name, description);
+            if (createResult.IsFailure)
             {
-                Name = name,
-                Description = description,
-                UserId = null,
-                IsEditable = false
-            };
+                throw new InvalidOperationException(createResult.Error.Description);
+            }
+
+            var group = createResult.Value;
 
             context.ExpenseCategoryGroups.Add(group);
             await context.SaveChangesAsync(); // save immediately to get ID for linking to categories
             return group.Id;
         }
 
-        private static Task TryAddCategory(ApplicationDbContext context, string name, string description, int groupId, string icon, string color)
+        private static Task TryAddCategory(ApplicationDbContext context, string name, string description, Guid groupId, string icon, string color)
         {
             var createResult = ExpenseCategory.Create(
                 name,

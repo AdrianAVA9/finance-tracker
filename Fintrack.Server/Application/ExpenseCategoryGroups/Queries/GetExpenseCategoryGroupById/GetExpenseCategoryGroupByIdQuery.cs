@@ -4,7 +4,7 @@ using Fintrack.Server.Domain.ExpenseCategories;
 
 namespace Fintrack.Server.Application.ExpenseCategoryGroups.Queries.GetExpenseCategoryGroupById;
 
-public record GetExpenseCategoryGroupByIdQuery(int Id, string UserId) : IQuery<ExpenseCategoryGroup>;
+public record GetExpenseCategoryGroupByIdQuery(Guid Id, string UserId) : IQuery<ExpenseCategoryGroup>;
 
 internal sealed class GetExpenseCategoryGroupByIdQueryHandler
     : IQueryHandler<GetExpenseCategoryGroupByIdQuery, ExpenseCategoryGroup>

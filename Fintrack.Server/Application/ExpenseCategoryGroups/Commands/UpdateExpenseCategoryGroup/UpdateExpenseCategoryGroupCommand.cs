@@ -5,7 +5,7 @@ using Fintrack.Server.Domain.ExpenseCategories;
 namespace Fintrack.Server.Application.ExpenseCategoryGroups.Commands.UpdateExpenseCategoryGroup;
 
 public record UpdateExpenseCategoryGroupCommand(
-    int Id,
+    Guid Id,
     string Name,
     string? Description,
     string UserId
@@ -39,13 +39,11 @@ internal sealed class UpdateExpenseCategoryGroupCommandHandler : ICommandHandler
             return Result.Failure(ExpenseCategoryGroupErrors.AccessDenied);
         }
 
-        if (!group.IsEditable)
+        var updateResult = group.Update(request.Name, request.Description);
+        if (updateResult.IsFailure)
         {
-            return Result.Failure(ExpenseCategoryGroupErrors.NotEditable);
+            return updateResult;
         }
-
-        group.Name = request.Name;
-        group.Description = request.Description;
 
         _repository.Update(group);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

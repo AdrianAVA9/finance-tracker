@@ -8,6 +8,17 @@ namespace Fintrack.IntegrationTests.Infrastructure;
 /// </summary>
 internal static class ExpenseCategoryTestHelpers
 {
+    public static ExpenseCategoryGroup CreateSystemGroup(string name, string? description = null)
+    {
+        var result = ExpenseCategoryGroup.CreateForSystem(name, description);
+        if (result.IsFailure)
+        {
+            throw new InvalidOperationException(result.Error.Description);
+        }
+
+        return result.Value;
+    }
+
     public static ExpenseCategory CreateWithGroup(
         ExpenseCategoryGroup group,
         string name = "Test category",

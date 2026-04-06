@@ -10,7 +10,7 @@ public record UpdateExpenseCategoryCommand(
     string? Description,
     string? Icon,
     string? Color,
-    int? GroupId,
+    Guid? GroupId,
     string UserId
 ) : ICommand;
 

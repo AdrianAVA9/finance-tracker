@@ -14,7 +14,7 @@ public sealed class ExpenseCategory : BaseAuditableEntityGuid
     public string? Color { get; private set; }
     public string? Icon { get; private set; }
     public string? Description { get; private set; }
-    public int? GroupId { get; private set; }
+    public Guid? GroupId { get; private set; }
     public bool IsEditable { get; private set; }
 
     public ApplicationUser? User { get; private set; }
@@ -31,7 +31,7 @@ public sealed class ExpenseCategory : BaseAuditableEntityGuid
         string? description,
         string? icon,
         string? color,
-        int? groupId,
+        Guid? groupId,
         string? userId,
         bool isEditable)
         : base()
@@ -54,7 +54,7 @@ public sealed class ExpenseCategory : BaseAuditableEntityGuid
         string? description,
         string? icon,
         string? color,
-        int? groupId,
+        Guid? groupId,
         string? userId,
         bool isEditable)
     {
@@ -78,7 +78,7 @@ public sealed class ExpenseCategory : BaseAuditableEntityGuid
         return category;
     }
 
-    public Result Update(string name, string? description, string? icon, string? color, int? groupId)
+    public Result Update(string name, string? description, string? icon, string? color, Guid? groupId)
     {
         if (!IsEditable)
         {

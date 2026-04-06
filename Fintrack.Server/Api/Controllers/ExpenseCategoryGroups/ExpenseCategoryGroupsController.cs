@@ -23,12 +23,12 @@ public sealed class ExpenseCategoryGroupsController : ApiControllerBase
 
     private string GetUserId() => User.GetUserId() ?? throw new UnauthorizedAccessException();
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:guid}")]
     [HasPermission(Permissions.CategoriesRead)]
     [ProducesResponseType(typeof(ExpenseCategoryGroup), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(
-        int id,
+        Guid id,
         CancellationToken cancellationToken)
     {
         var query = new GetExpenseCategoryGroupByIdQuery(id, GetUserId());
@@ -48,7 +48,7 @@ public sealed class ExpenseCategoryGroupsController : ApiControllerBase
 
     [HttpPost]
     [HasPermission(Permissions.CategoriesWrite)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(
         [FromBody] RequestCreateExpenseCategoryGroup request,
@@ -71,13 +71,13 @@ public sealed class ExpenseCategoryGroupsController : ApiControllerBase
             result.Value);
     }
 
-    [HttpPut("{id:int}")]
+    [HttpPut("{id:guid}")]
     [HasPermission(Permissions.CategoriesWrite)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(
-        int id,
+        Guid id,
         [FromBody] RequestUpdateExpenseCategoryGroup request,
         CancellationToken cancellationToken)
     {
@@ -91,13 +91,13 @@ public sealed class ExpenseCategoryGroupsController : ApiControllerBase
         return HandleResult(result);
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:guid}")]
     [HasPermission(Permissions.CategoriesDelete)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(
-        int id,
+        Guid id,
         CancellationToken cancellationToken)
     {
         var command = new DeleteExpenseCategoryGroupCommand(id, GetUserId());

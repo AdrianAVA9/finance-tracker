@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Fintrack.Server.Domain.Abstractions;
 
 /// <summary>
@@ -9,6 +11,7 @@ public abstract class BaseAuditableEntityGuid : IAuditableEntity, IHasDomainEven
 {
     private readonly List<IDomainEvent> _domainEvents = new();
 
+    [JsonInclude]
     public Guid Id { get; protected set; }
 
     public DateTimeOffset CreatedAt { get; set; }
