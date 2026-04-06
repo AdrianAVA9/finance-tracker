@@ -38,6 +38,37 @@ Use `BaseIntegrationTest.AuthenticateAs(userId, permissions, roles)` to set head
 
 ---
 
+### CeroBase monorepo (`Fintrack.IntegrationTests`) — completion checklist
+
+A feature's integration tests are **not complete** until both test classes below exist and pass. If an endpoint does not apply (e.g., the feature is read-only), skip the irrelevant rows explicitly.
+
+#### Functional CRUD tests
+`Fintrack.IntegrationTests/{Feature}/{Entity}sControllerTests.cs`
+- Create — valid request → `201 Created`, entity persisted in DB.
+- Create — multiple child items persisted correctly (if applicable).
+- GetById — exists → `200 OK` with correct DTO fields.
+- GetById — not found → `404 Not Found`.
+- GetById — belongs to another user → `404 Not Found` (user isolation).
+- Update — valid request → `200 OK`, changes persisted.
+- Update — not found → `404 Not Found`.
+- Update — belongs to another user → `404 Not Found` (user isolation).
+- Delete — exists → `200 OK`, entity removed from DB.
+- Delete — not found → `404 Not Found`.
+- Delete — belongs to another user → `404 Not Found`, entity still exists (user isolation).
+
+#### Authorization tests
+`Fintrack.IntegrationTests/{Feature}/{Entity}sControllerAuthorizationTests.cs`
+- Unauthenticated → `401 Unauthorized` for **every** endpoint (omit `X-Test-User-Id`).
+- Authenticated with zero feature permissions → `403 Forbidden` for **every** endpoint.
+  Use a dedicated integration-test role (e.g., `Roles.IntegrationTestNo{Feature}`) in `Infrastructure/Authorization/Roles.cs` and `RolePermissions.cs`.
+- Read-only role → GET succeeds (`200` or `404`), POST/PUT/DELETE → `403 Forbidden`.
+  Use a dedicated role (e.g., `Roles.IntegrationTest{Feature}ReadOnly`).
+- Verify that write operations under a read-only role do **not** mutate the database.
+
+When creating integration-test roles, add them to both `Roles.cs` (constant) and `RolePermissions.cs` (permission mapping).
+
+---
+
 ## Test Project Structure
 
 Group tests under **`{Feature}/{UseCaseFolder}/`** to match `Application/{Feature}/{UseCaseFolder}/` (see [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md)).

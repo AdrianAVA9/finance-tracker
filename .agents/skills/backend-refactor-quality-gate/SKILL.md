@@ -64,13 +64,24 @@ Work through the list; for each row, **open the linked skill** and apply it—do
 - **Controller shape, MediatR, authorization:** `.agents/skills/api-controller-generator/SKILL.md`, `.agents/skills/permission-authorization/SKILL.md`
 - Prefer **`Result` end-to-end** from handler to controller for commands/queries that already return `Result`, matching **`BudgetsController`** + **`ApiControllerBase`**.
 
-### 6. Testing (mandatory in this repo)
+### 6. Testing (mandatory — the refactor is NOT done until every layer is covered)
 
-- **Unit tests** only under `Fintrack.Tests/`, **integration tests** only under `Fintrack.IntegrationTests/` — see `AGENTS.md` in the repo root.
-- **Unit test style:** `.agents/skills/unit-testing/SKILL.md`
-- **Integration test style:** `.agents/skills/integration-testing/SKILL.md`
-- Mirror the **Application folder shape** under `Fintrack.Tests/Application/...` when adding or moving handler tests.
-- Run **`dotnet test`** for affected projects before claiming completion.
+**Placement rules:** unit tests only in `Fintrack.Tests/`, integration tests only in `Fintrack.IntegrationTests/` — never inside `Fintrack.Server/`. See `AGENTS.md`.
+
+Open each skill below and follow its **completion checklist** for the feature being refactored. Do not silently skip any layer — if a layer does not apply, acknowledge it explicitly.
+
+- **Unit tests** (all layers): `.agents/skills/unit-testing/SKILL.md` — see the "Per-layer completion checklist" section. Covers:
+  - Domain entity / aggregate tests
+  - Command handler tests
+  - Query handler tests
+  - Validator tests
+  - Repository tests (EF Core InMemory)
+  - API controller unit tests (mock ISender)
+- **Integration tests** (CRUD + authorization): `.agents/skills/integration-testing/SKILL.md` — see the "CeroBase monorepo completion checklist" section. Covers:
+  - Functional CRUD tests (create, get, update, delete, user isolation)
+  - Authorization tests (401, 403, read-only role)
+  - Integration-test roles in `Roles.cs` / `RolePermissions.cs`
+- **Green bar:** `dotnet test` passes for **both** `Fintrack.Tests` and `Fintrack.IntegrationTests` before claiming completion.
 
 ### 7. Persistence and data rollout
 
