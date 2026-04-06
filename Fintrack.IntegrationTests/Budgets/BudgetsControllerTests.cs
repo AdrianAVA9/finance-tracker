@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Fintrack.IntegrationTests.Infrastructure;
 using Fintrack.Server.Application.Budgets.Commands.UpsertBudgets;
 using Fintrack.Server.Api.Controllers.Budgets;
@@ -13,6 +15,7 @@ using Fintrack.Server.Domain.Incomes;
 using Fintrack.Server.Domain.Invoices;
 using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
+using Fintrack.Server.Infrastructure.Authorization;
 using Microsoft.EntityFrameworkCore;
 using FluentAssertions;
 using Xunit;
@@ -21,6 +24,12 @@ namespace Fintrack.IntegrationTests.Budgets;
 
 public class BudgetsControllerTests : BaseIntegrationTest
 {
+    private static readonly string[] BudgetUserPermissions =
+    {
+        Permissions.BudgetsRead,
+        Permissions.BudgetsWrite
+    };
+
     public BudgetsControllerTests(IntegrationTestWebAppFactory factory) 
         : base(factory)
     {
@@ -31,7 +40,7 @@ public class BudgetsControllerTests : BaseIntegrationTest
     {
         // Arrange
         var userId = Guid.NewGuid().ToString();
-        AuthenticateAs(userId);
+        AuthenticateAs(userId, BudgetUserPermissions);
 
         var group = new ExpenseCategoryGroup { Name = "Test group" };
         var category = new ExpenseCategory { Name = "Test category", Group = group };
@@ -47,9 +56,9 @@ public class BudgetsControllerTests : BaseIntegrationTest
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var budgets = await response.Content.ReadFromJsonAsync<List<object>>();
-        budgets.Should().NotBeNull();
-        budgets.Should().HaveCount(1);
+        var payload = await response.Content.ReadFromJsonAsync<BudgetListResponse>();
+        payload.Should().NotBeNull();
+        payload!.Budgets.Should().HaveCount(1);
     }
 
     [Fact]
@@ -57,7 +66,7 @@ public class BudgetsControllerTests : BaseIntegrationTest
     {
         // Arrange
         var userId = Guid.NewGuid().ToString();
-        AuthenticateAs(userId);
+        AuthenticateAs(userId, BudgetUserPermissions);
 
         var group = new ExpenseCategoryGroup { Name = "Test group" };
         var category = new ExpenseCategory { Name = "Test category", Group = group };
@@ -84,7 +93,7 @@ public class BudgetsControllerTests : BaseIntegrationTest
     public async Task Delete_Should_ReturnNotFound_When_Budget_Does_Not_Exist()
     {
         var userId = Guid.NewGuid().ToString();
-        AuthenticateAs(userId);
+        AuthenticateAs(userId, BudgetUserPermissions);
 
         var missingId = Guid.NewGuid();
 
@@ -98,7 +107,7 @@ public class BudgetsControllerTests : BaseIntegrationTest
     {
         // Arrange
         var userId = Guid.NewGuid().ToString();
-        AuthenticateAs(userId);
+        AuthenticateAs(userId, BudgetUserPermissions);
 
         var group = new ExpenseCategoryGroup { Name = "Test group" };
         var category = new ExpenseCategory { Name = "Test category", Group = group };
@@ -126,5 +135,14 @@ public class BudgetsControllerTests : BaseIntegrationTest
         
         budgets.Should().HaveCount(1);
         budgets[0].Amount.Should().Be(1200.50m);
+    }
+
+    private sealed class BudgetListResponse
+    {
+        [JsonPropertyName("budgets")]
+        public List<JsonElement> Budgets { get; init; } = new();
+
+        [JsonPropertyName("monthlyIncome")]
+        public decimal MonthlyIncome { get; init; }
     }
 }

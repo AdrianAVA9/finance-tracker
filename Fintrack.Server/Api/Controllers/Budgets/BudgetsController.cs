@@ -4,6 +4,7 @@ using Fintrack.Server.Application.Budgets.Commands.DeleteBudget;
 using Fintrack.Server.Application.Budgets.Commands.UpsertBudgets;
 using Fintrack.Server.Application.Budgets.Queries.GetBudgetDetails;
 using Fintrack.Server.Application.Budgets.Queries.GetBudgets;
+using Fintrack.Server.Infrastructure.Authorization;
 using System;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +24,7 @@ public class BudgetsController : ApiControllerBase
     }
 
     [HttpGet]
+    [HasPermission(Permissions.BudgetsRead)]
     public async Task<IActionResult> Get([FromQuery] int month, [FromQuery] int year)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -34,6 +36,7 @@ public class BudgetsController : ApiControllerBase
     }
 
     [HttpPost("batch")]
+    [HasPermission(Permissions.BudgetsWrite)]
     public async Task<IActionResult> Upsert([FromBody] UpsertBudgetsRequest request)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -45,6 +48,7 @@ public class BudgetsController : ApiControllerBase
     }
 
     [HttpPost("copy-previous")]
+    [HasPermission(Permissions.BudgetsWrite)]
     public async Task<IActionResult> CopyPrevious([FromBody] CopyPreviousRequest request)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -56,6 +60,7 @@ public class BudgetsController : ApiControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [HasPermission(Permissions.BudgetsWrite)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -67,6 +72,7 @@ public class BudgetsController : ApiControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [HasPermission(Permissions.BudgetsRead)]
     public async Task<IActionResult> GetById(Guid id, [FromQuery] int year, [FromQuery] int month)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
