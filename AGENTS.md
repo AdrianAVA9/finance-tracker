@@ -15,6 +15,7 @@ The project is divided into the following primary directories, each with its spe
 - **`Fintrack.Server/` (Backend API)**
   - **Stack:** .NET 8, C#, ASP.NET Core, Entity Framework Core, PostgreSQL, MediatR.
   - **Rules:** Follow Clean Architecture principles and the Repository pattern.
+  - **Refactors & consistency:** For any multi-layer backend change (domain, application, infrastructure, API, migrations), use the [`backend-refactor-quality-gate`](.agents/skills/backend-refactor-quality-gate/SKILL.md) skill as the completion checklist; it references the other backend skills and the in-repo `Budgets` feature as the pattern to match.
 
 - **`Fintrack.Tests/` & `Fintrack.IntegrationTests/` (Testing)**
   - **Stack:** xUnit, NSubstitute, WebApplicationFactory, Testcontainers.
@@ -33,6 +34,10 @@ This repository contains specialized instructions (skills) in `.agents/skills/` 
 
 ### Backend (.NET)
 *Organized by typical development flow:*
+
+**0. Solution structure & refactor gates**
+- [`backend-refactor-quality-gate`](.agents/skills/backend-refactor-quality-gate/SKILL.md): Completion checklist for Fintrack.Server refactors; references other skills for details and points to `Budgets` as the in-repo pattern.
+- [`dotnet-clean-architecture`](.agents/skills/dotnet-clean-architecture/SKILL.md): Layer boundaries, CQRS folder layout (`Commands/<UseCase>/`, `Queries/<UseCase>/`), and dependency rules.
 
 **1. Enterprise Business Rules (Domain Layer)**
 - [`domain-entity-generator`](.agents/skills/domain-entity-generator/SKILL.md): Generating Domain Entities following strict DDD principles.
@@ -76,5 +81,5 @@ This repository contains specialized instructions (skills) in `.agents/skills/` 
 - **Skills lock (`skills-lock.json`):** If you customize a skill under `.agents/skills/`, remove that skill’s entry from `skills-lock.json` when it appears there, so upstream skill installers do not overwrite local edits. See `maintenanceNote` in that file.
 - **Commit Messages:** Must strictly follow the Conventional Commits specification.
 - **Frontend Practices:** ALWAYS use Composition API (`<script setup>`) and TypeScript. Avoid Options API unless explicitly requested.
-- **Backend Practices:** Avoid putting business logic directly in controllers; delegate to MediatR handlers and maintain type safety.
+- **Backend Practices:** Avoid putting business logic directly in controllers; delegate to MediatR handlers and maintain type safety. When refactoring or extending backend behavior across layers, follow [`backend-refactor-quality-gate`](.agents/skills/backend-refactor-quality-gate/SKILL.md) before considering the work complete.
 - **Testing Requirements:** Unit and Integration testing are STRICTLY MANDATORY for every new feature. A feature is not complete until Step 6 is fully executed. **Crucial Routing Rule:** NEVER place tests inside the `Fintrack.Server` project. Unit tests MUST be created inside `Fintrack.Tests/` and Integration tests MUST be created inside `Fintrack.IntegrationTests/`.

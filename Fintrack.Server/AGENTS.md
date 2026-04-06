@@ -10,6 +10,7 @@ The `Fintrack.Server` is a RESTful API built with:
 - **Database Provider:** PostgreSQL (Npgsql)
 - **Architecture Pattern:** Clean Architecture, CQRS (via MediatR)
 - **Testing:** xUnit, NSubstitute, WebApplicationFactory, Testcontainers
+- **Refactors & consistency:** For any multi-layer backend change (domain, application, infrastructure, API, migrations), use [`backend-refactor-quality-gate`](../.agents/skills/backend-refactor-quality-gate/SKILL.md) as the completion checklist; it references the other backend skills and the in-repo `Budgets` feature as the pattern to match.
 
 ## 2. Architecture: Clean Architecture
 The backend adheres strictly to Clean Architecture principles. Agents MUST respect these boundaries:
@@ -19,7 +20,11 @@ The backend adheres strictly to Clean Architecture principles. Agents MUST respe
 - **`Api/`** (or `Controllers/`): The presentation layer. HTTP endpoints, middleware, and dependency injection setup.
 
 ## 3. Mandatory Development Workflow & Skills
-Every new backend feature MUST be implemented following these 6 sequential steps. You must not skip steps. **Testing (Step 6) is strictly mandatory for every feature.** Leverage the following skills (located in `../.agents/skills/`) for each step:
+Every new backend feature MUST be implemented following these numbered steps (0–6). You must not skip steps. **Testing (Step 6) is strictly mandatory for every feature.** Leverage the following skills (located in `../.agents/skills/`) for each step:
+
+**0. Solution structure & refactor gates**
+- [`backend-refactor-quality-gate`](../.agents/skills/backend-refactor-quality-gate/SKILL.md): Completion checklist for Fintrack.Server refactors; references other skills for details and points to `Budgets` as the in-repo pattern.
+- [`dotnet-clean-architecture`](../.agents/skills/dotnet-clean-architecture/SKILL.md): Layer boundaries, CQRS folder layout (`Commands/<UseCase>/`, `Queries/<UseCase>/`), and dependency rules.
 
 **1. Enterprise Business Rules (Domain Layer)**
 - [`domain-entity-generator`](../.agents/skills/domain-entity-generator/SKILL.md): Generating Domain Entities following strict DDD principles.
@@ -54,6 +59,7 @@ Every new backend feature MUST be implemented following these 6 sequential steps
 
 ## 4. Coding Conventions
 - **Application layout:** Under `Application/{Feature}/`, place each use case under **`Queries/{UseCase}/`** (reads) or **`Commands/{UseCase}/`** (writes), e.g. `Budgets/Queries/GetBudgets/`, `Budgets/Commands/UpsertBudgets/`. Namespace matches the path (e.g. `...Budgets.Queries.GetBudgets`). See [`dotnet-clean-architecture`](../.agents/skills/dotnet-clean-architecture/SKILL.md).
+- **Refactors:** When refactoring or extending behavior across layers, follow [`backend-refactor-quality-gate`](../.agents/skills/backend-refactor-quality-gate/SKILL.md) before considering the work complete.
 - **CQRS & MediatR:** Keep controllers thin. All business logic must be delegated to MediatR Queries and Commands in the `Application` layer.
 - **Repository Pattern:** Do not use `DbContext` directly in the `Application` layer. Use repositories to abstract data access.
 - **Asynchronous Programming:** Always use `async`/`await` for I/O bound operations (database, HTTP calls). Suffix asynchronous methods with `Async`.
