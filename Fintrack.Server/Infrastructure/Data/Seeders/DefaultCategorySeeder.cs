@@ -6,7 +6,7 @@ using Fintrack.Server.Domain.Enums;
 using Fintrack.Server.Domain.Exceptions;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;
-using Fintrack.Server.Domain.Incomes;
+using Fintrack.Server.Domain.IncomeCategories;
 using Fintrack.Server.Domain.Invoices;
 using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
@@ -180,17 +180,22 @@ namespace Fintrack.Server.Infrastructure.Data.Seeders
             return Task.CompletedTask;
         }
 
-        private static async Task TryAddIncomeCategory(ApplicationDbContext context, string name, string icon, string color)
+        private static Task TryAddIncomeCategory(ApplicationDbContext context, string name, string icon, string color)
         {
-            var category = new IncomeCategory
-            {
-                Name = name,
-                UserId = null,
-                Icon = icon,
-                Color = color
-            };
+            var createResult = IncomeCategory.Create(
+                name,
+                icon,
+                color,
+                userId: null,
+                isEditable: false);
 
-            context.IncomeCategories.Add(category);
+            if (createResult.IsFailure)
+            {
+                throw new InvalidOperationException(createResult.Error.Description);
+            }
+
+            context.IncomeCategories.Add(createResult.Value);
+            return Task.CompletedTask;
         }
     }
 }

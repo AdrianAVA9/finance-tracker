@@ -2,6 +2,7 @@ using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;
+using Fintrack.Server.Domain.IncomeCategories;
 using Fintrack.Server.Domain.Incomes;
 using Fintrack.Server.Domain.Invoices;
 using Fintrack.Server.Domain.SavingsGoals;
@@ -173,6 +174,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
                 .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(b => new { b.UserId, b.CategoryId, b.Month, b.Year })
                 .IsUnique();
+        });
+
+        builder.Entity<IncomeCategory>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
         });
 
         builder.Entity<Income>()

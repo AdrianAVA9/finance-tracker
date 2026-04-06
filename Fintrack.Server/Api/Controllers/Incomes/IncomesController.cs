@@ -1,4 +1,6 @@
 using Asp.Versioning;
+using Fintrack.Server.Api.Controllers;
+using Fintrack.Server.Application.IncomeCategories.Queries.GetIncomeCategories;
 using Fintrack.Server.Application.Incomes.Commands;
 using Fintrack.Server.Application.Incomes.Queries;
 using Fintrack.Server.Domain.Enums;
@@ -13,23 +15,21 @@ namespace Fintrack.Server.Api.Controllers.Incomes
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/incomes")]
-    public class IncomesController : ControllerBase
+    public class IncomesController : ApiControllerBase
     {
-        private readonly ISender _sender;
-
         public IncomesController(ISender sender)
+            : base(sender)
         {
-            _sender = sender;
         }
 
         [HttpGet("categories")]
-        public async Task<IActionResult> GetCategories()
+        public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            var result = await _sender.Send(new GetIncomeCategoriesQuery(userId));
-            return Ok(result);
+            var result = await Sender.Send(new GetIncomeCategoriesQuery(userId), cancellationToken);
+            return HandleResult(result);
         }
 
         [HttpGet("{id}")]
@@ -38,7 +38,7 @@ namespace Fintrack.Server.Api.Controllers.Incomes
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            var result = await _sender.Send(new GetIncomeByIdQuery(id, userId));
+            var result = await Sender.Send(new GetIncomeByIdQuery(id, userId));
             return result != null ? Ok(result) : NotFound();
         }
 
@@ -60,7 +60,7 @@ namespace Fintrack.Server.Api.Controllers.Incomes
                 request.NextDate
             );
 
-            var id = await _sender.Send(command);
+            var id = await Sender.Send(command);
             return Ok(new { id });
         }
 
@@ -83,7 +83,7 @@ namespace Fintrack.Server.Api.Controllers.Incomes
                 request.NextDate
             );
 
-            var success = await _sender.Send(command);
+            var success = await Sender.Send(command);
             return success ? NoContent() : NotFound();
         }
 
@@ -93,7 +93,7 @@ namespace Fintrack.Server.Api.Controllers.Incomes
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            var success = await _sender.Send(new DeleteIncomeCommand(id, userId));
+            var success = await Sender.Send(new DeleteIncomeCommand(id, userId));
             return success ? NoContent() : NotFound();
         }
     }
@@ -101,7 +101,7 @@ namespace Fintrack.Server.Api.Controllers.Incomes
     public record CreateIncomeRequest(
         string Source,
         decimal Amount,
-        int CategoryId,
+        Guid CategoryId,
         DateTime Date,
         string? Notes,
         bool IsRecurring,
@@ -112,7 +112,7 @@ namespace Fintrack.Server.Api.Controllers.Incomes
     public record UpdateIncomeRequest(
         string Source,
         decimal Amount,
-        int CategoryId,
+        Guid CategoryId,
         DateTime Date,
         string? Notes,
         bool IsRecurring,

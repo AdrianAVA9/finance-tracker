@@ -1,6 +1,7 @@
 using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;
+using Fintrack.Server.Domain.IncomeCategories;
 using Fintrack.Server.Domain.Incomes;
 using Fintrack.Server.Domain.SavingsGoals;
 using Microsoft.AspNetCore.Identity;

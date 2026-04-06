@@ -11,7 +11,6 @@ using Fintrack.Server.Domain.Invoices;
 using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
 using Microsoft.EntityFrameworkCore;
-using Fintrack.Server.Domain.Enums;
 
 namespace Fintrack.Server.Application.Incomes.Queries
 {
@@ -19,7 +18,7 @@ namespace Fintrack.Server.Application.Incomes.Queries
         int Id,
         string Source,
         decimal Amount,
-        int CategoryId,
+        Guid CategoryId,
         DateTime Date,
         string? Notes,
         bool IsRecurring,

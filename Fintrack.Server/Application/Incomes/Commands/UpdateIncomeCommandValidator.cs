@@ -11,7 +11,7 @@ namespace Fintrack.Server.Application.Incomes.Commands
             RuleFor(x => x.Source).NotEmpty().MaximumLength(200);
             RuleFor(x => x.Amount).GreaterThan(0);
             RuleFor(x => x.Date).NotEmpty();
-            RuleFor(x => x.CategoryId).GreaterThan(0);
+            RuleFor(x => x.CategoryId).NotEmpty();
 
             RuleFor(x => x.Frequency)
                 .NotNull()
