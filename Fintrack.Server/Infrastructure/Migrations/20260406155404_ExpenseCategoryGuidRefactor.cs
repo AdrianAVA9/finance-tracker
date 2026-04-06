@@ -37,7 +37,8 @@ namespace Fintrack.Server.Migrations
                 table: "ExpenseCategories");
 
             migrationBuilder.Sql("""
-                ALTER TABLE "ExpenseCategories" ALTER COLUMN "Id" DROP DEFAULT;
+                -- Integer PKs from EF/Npgsql are IDENTITY; DROP DEFAULT fails on PG — drop identity first (IF EXISTS: PG 15+).
+                ALTER TABLE "ExpenseCategories" ALTER COLUMN "Id" DROP IDENTITY IF EXISTS;
                 ALTER TABLE "ExpenseCategories"
                     ALTER COLUMN "Id" TYPE uuid
                     USING (('00000000-0000-0000-0000-' || lpad("Id"::text, 12, '0'))::uuid);

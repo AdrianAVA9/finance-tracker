@@ -59,17 +59,24 @@ public class RecurringTransactionProcessorJob : BackgroundService
 
         foreach (var template in dueIncomes)
         {
-            var newIncome = new Income
-            {
-                UserId = template.UserId,
-                Amount = template.Amount,
-                Source = template.Source,
-                CategoryId = template.CategoryId,
-                Date = today,
-                Notes = "Procesado automáticamente desde plantilla recurrente."
-            };
+            var incomeResult = Income.Create(
+                template.UserId,
+                template.Source,
+                template.Amount,
+                template.CategoryId,
+                today,
+                "Procesado automáticamente desde plantilla recurrente.");
 
-            dbContext.Incomes.Add(newIncome);
+            if (incomeResult.IsFailure)
+            {
+                _logger.LogWarning(
+                    "Skipped recurring income {Id}: {Error}",
+                    template.Id,
+                    incomeResult.Error.Description);
+                continue;
+            }
+
+            dbContext.Incomes.Add(incomeResult.Value);
 
             template.NextProcessingDate = CalculateNextDate(template.NextProcessingDate.Date, template.Frequency, today);
             _logger.LogInformation("Processed recurring income {Id}. Next date: {NextDate:d}", template.Id, template.NextProcessingDate);

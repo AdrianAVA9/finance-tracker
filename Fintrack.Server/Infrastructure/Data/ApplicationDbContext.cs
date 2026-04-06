@@ -8,6 +8,7 @@ using Fintrack.Server.Domain.Invoices;
 using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -16,6 +17,9 @@ namespace Fintrack.Server.Infrastructure.Data;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfWork
 {
+    public const string AppSchema = "app";
+    public const string IdentitySchema = "identity";
+
     private readonly IPublisher _publisher;
 
     public ApplicationDbContext(
@@ -90,6 +94,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        ConfigureIdentitySchema(builder);
+        ConfigureAppSchema(builder);
 
         // Global ValueConverter for DateTime to ensure UTC for PostgreSQL
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
@@ -167,7 +174,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
 
         builder.Entity<Budget>(entity =>
         {
-            entity.ToTable("Budgets", "app");
+            entity.ToTable("Budgets", AppSchema);
             entity.HasOne(b => b.Category)
                 .WithMany(c => c.Budgets)
                 .HasForeignKey(b => b.CategoryId)
@@ -181,16 +188,51 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
             entity.Property(e => e.Id).ValueGeneratedNever();
         });
 
-        builder.Entity<Income>()
-            .HasOne(i => i.Category)
-            .WithMany(c => c.Incomes)
-            .HasForeignKey(i => i.CategoryId)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<Income>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasOne(i => i.Category)
+                .WithMany(c => c.Incomes)
+                .HasForeignKey(i => i.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
 
         builder.Entity<RecurringIncome>()
             .HasOne(ri => ri.Category)
             .WithMany(c => c.RecurringIncomes)
             .HasForeignKey(ri => ri.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    /// <summary>
+    /// ASP.NET Identity stores live in <c>identity</c> schema (separate from application domain tables).
+    /// </summary>
+    private static void ConfigureIdentitySchema(ModelBuilder builder)
+    {
+        builder.Entity<ApplicationUser>().ToTable("AspNetUsers", IdentitySchema);
+        builder.Entity<IdentityRole>().ToTable("AspNetRoles", IdentitySchema);
+        builder.Entity<IdentityUserClaim<string>>().ToTable("AspNetUserClaims", IdentitySchema);
+        builder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles", IdentitySchema);
+        builder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins", IdentitySchema);
+        builder.Entity<IdentityRoleClaim<string>>().ToTable("AspNetRoleClaims", IdentitySchema);
+        builder.Entity<IdentityUserToken<string>>().ToTable("AspNetUserTokens", IdentitySchema);
+    }
+
+    /// <summary>
+    /// All domain aggregates use the <c>app</c> schema (Budgets already lived here; others move from default/public).
+    /// </summary>
+    private static void ConfigureAppSchema(ModelBuilder builder)
+    {
+        builder.Entity<ExpenseCategoryGroup>().ToTable("ExpenseCategoryGroups", AppSchema);
+        builder.Entity<ExpenseCategory>().ToTable("ExpenseCategories", AppSchema);
+        builder.Entity<IncomeCategory>().ToTable("IncomeCategories", AppSchema);
+        builder.Entity<Income>().ToTable("Incomes", AppSchema);
+        builder.Entity<RecurringIncome>().ToTable("RecurringIncomes", AppSchema);
+        builder.Entity<Expense>().ToTable("Expenses", AppSchema);
+        builder.Entity<ExpenseItem>().ToTable("ExpenseItems", AppSchema);
+        builder.Entity<RecurringExpense>().ToTable("RecurringExpenses", AppSchema);
+        builder.Entity<Invoice>().ToTable("Invoices", AppSchema);
+        builder.Entity<InvoiceItem>().ToTable("InvoiceItems", AppSchema);
+        builder.Entity<SavingsGoal>().ToTable("SavingsGoals", AppSchema);
     }
 }

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Fintrack.IntegrationTests.Infrastructure;
+using Fintrack.Server.Infrastructure.Authorization;
 using FluentAssertions;
 using Xunit;
 
@@ -28,7 +29,7 @@ public sealed class IncomeCategoriesIntegrationTests : BaseIntegrationTest
     public async Task GetCategories_Should_ReturnSeededCategories_When_Authenticated()
     {
         var userId = Guid.NewGuid().ToString();
-        AuthenticateAs(userId);
+        AuthenticateAs(userId, new[] { Permissions.IncomesRead });
 
         var response = await GetAsync("/api/v1/incomes/categories");
 

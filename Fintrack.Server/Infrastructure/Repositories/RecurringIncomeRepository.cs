@@ -27,4 +27,26 @@ internal sealed class RecurringIncomeRepository : IRecurringIncomeRepository
 
         return amounts.Sum();
     }
+
+    public async Task<RecurringIncome?> FindActiveMatchingTemplateAsync(
+        string userId,
+        string source,
+        Guid categoryId,
+        decimal amount,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.RecurringIncomes
+            .FirstOrDefaultAsync(
+                r => r.UserId == userId &&
+                     r.Source == source &&
+                     r.CategoryId == categoryId &&
+                     r.Amount == amount &&
+                     r.IsActive,
+                cancellationToken);
+    }
+
+    public void Add(RecurringIncome recurringIncome)
+    {
+        _dbContext.RecurringIncomes.Add(recurringIncome);
+    }
 }

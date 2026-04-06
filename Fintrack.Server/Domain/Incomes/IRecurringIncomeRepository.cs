@@ -9,4 +9,16 @@ public interface IRecurringIncomeRepository
         string userId,
         DateTime periodEndExclusive,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Finds an active recurring template matching legacy sync semantics (same user, source, category, and amount).
+    /// </summary>
+    Task<RecurringIncome?> FindActiveMatchingTemplateAsync(
+        string userId,
+        string source,
+        Guid categoryId,
+        decimal amount,
+        CancellationToken cancellationToken = default);
+
+    void Add(RecurringIncome recurringIncome);
 }

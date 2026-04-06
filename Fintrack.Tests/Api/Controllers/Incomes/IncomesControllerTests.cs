@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Fintrack.Server.Api.Controllers.Incomes;
 using Fintrack.Server.Application.IncomeCategories.Queries.GetIncomeCategories;
+using Fintrack.Server.Application.Incomes.Queries.GetIncomeById;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.IncomeCategories;
 using Fintrack.Tests.Abstractions;
@@ -94,5 +95,47 @@ public sealed class IncomesControllerTests : BaseUnitTest
         var result = await controller.GetCategories(CancellationToken);
 
         result.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task GetById_Should_ReturnUnauthorized_When_UserIdMissing()
+    {
+        var controller = CreateController(_sender, userId: null);
+
+        var result = await controller.GetById(Guid.NewGuid(), CancellationToken);
+
+        result.Should().BeOfType<UnauthorizedResult>();
+        await _sender.DidNotReceive().Send(
+            Arg.Any<GetIncomeByIdQuery>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task GetById_Should_ReturnOk_When_Success()
+    {
+        const string userId = "user-1";
+        var id = Guid.NewGuid();
+        var dto = new IncomeDetailsDto(
+            id,
+            "Salary",
+            100m,
+            Guid.NewGuid(),
+            DateTime.UtcNow.Date,
+            null,
+            false,
+            null,
+            null);
+        _sender
+            .Send(Arg.Any<GetIncomeByIdQuery>(), CancellationToken)
+            .Returns(Result.Success(dto));
+
+        var controller = CreateController(_sender, userId);
+
+        var result = await controller.GetById(id, CancellationToken);
+
+        await _sender.Received(1).Send(
+            Arg.Is<GetIncomeByIdQuery>(q => q.Id == id && q.UserId == userId),
+            CancellationToken);
+        var ok = result.Should().BeOfType<OkObjectResult>().Subject;
+        ok.Value.Should().BeSameAs(dto);
     }
 }

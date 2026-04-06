@@ -3,6 +3,7 @@ using System;
 using Fintrack.Server.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Fintrack.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260406223339_IncomePrimaryKeyGuid")]
+    partial class IncomePrimaryKeyGuid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,7 +118,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ExpenseCategories", "app");
+                    b.ToTable("ExpenseCategories");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.ExpenseCategories.ExpenseCategoryGroup", b =>
@@ -153,7 +156,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ExpenseCategoryGroups", "app");
+                    b.ToTable("ExpenseCategoryGroups");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.Expenses.Expense", b =>
@@ -213,7 +216,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Expenses", "app");
+                    b.ToTable("Expenses");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.Expenses.ExpenseItem", b =>
@@ -251,7 +254,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("ExpenseId");
 
-                    b.ToTable("ExpenseItems", "app");
+                    b.ToTable("ExpenseItems");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.Expenses.RecurringExpense", b =>
@@ -305,7 +308,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RecurringExpenses", "app");
+                    b.ToTable("RecurringExpenses");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.IncomeCategories.IncomeCategory", b =>
@@ -345,7 +348,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("IncomeCategories", "app");
+                    b.ToTable("IncomeCategories");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.Incomes.Income", b =>
@@ -391,7 +394,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Incomes", "app");
+                    b.ToTable("Incomes");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.Incomes.RecurringIncome", b =>
@@ -446,7 +449,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RecurringIncomes", "app");
+                    b.ToTable("RecurringIncomes");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.Invoices.Invoice", b =>
@@ -484,7 +487,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Invoices", "app");
+                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.Invoices.InvoiceItem", b =>
@@ -520,7 +523,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("InvoiceId");
 
-                    b.ToTable("InvoiceItems", "app");
+                    b.ToTable("InvoiceItems");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.SavingsGoals.SavingsGoal", b =>
@@ -555,7 +558,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SavingsGoals", "app");
+                    b.ToTable("SavingsGoals");
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.Users.ApplicationUser", b =>
@@ -628,7 +631,7 @@ namespace Fintrack.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", "identity");
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -654,7 +657,7 @@ namespace Fintrack.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", "identity");
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -679,7 +682,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", "identity");
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -704,7 +707,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", "identity");
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -726,7 +729,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", "identity");
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -741,7 +744,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", "identity");
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -760,7 +763,7 @@ namespace Fintrack.Server.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", "identity");
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("Fintrack.Server.Domain.Budgets.Budget", b =>

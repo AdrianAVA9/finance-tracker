@@ -8,6 +8,7 @@ namespace Fintrack.Server.Infrastructure.Authorization
             {
                 Permissions.CategoriesRead, Permissions.CategoriesWrite, Permissions.CategoriesDelete,
                 Permissions.ExpensesRead, Permissions.ExpensesWrite, Permissions.ExpensesDelete,
+                Permissions.IncomesRead, Permissions.IncomesWrite, Permissions.IncomesDelete,
                 Permissions.InvoicesRead, Permissions.InvoicesWrite, Permissions.InvoicesDelete,
                 Permissions.BudgetsRead, Permissions.BudgetsWrite
             },
@@ -15,6 +16,7 @@ namespace Fintrack.Server.Infrastructure.Authorization
             {
                 Permissions.CategoriesRead, // Built in system categories
                 Permissions.ExpensesRead, Permissions.ExpensesWrite, Permissions.ExpensesDelete,
+                Permissions.IncomesRead, Permissions.IncomesWrite, Permissions.IncomesDelete,
                 Permissions.InvoicesRead, Permissions.InvoicesWrite, Permissions.InvoicesDelete,
                 Permissions.BudgetsRead, Permissions.BudgetsWrite
             },
@@ -36,6 +38,15 @@ namespace Fintrack.Server.Infrastructure.Authorization
             {
                 Permissions.CategoriesRead,
                 Permissions.ExpensesRead
+            },
+            [Roles.IntegrationTestNoIncomes] = new HashSet<string>
+            {
+                Permissions.CategoriesRead
+            },
+            [Roles.IntegrationTestIncomeReadOnly] = new HashSet<string>
+            {
+                Permissions.CategoriesRead,
+                Permissions.IncomesRead
             }
         };
 

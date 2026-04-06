@@ -24,7 +24,7 @@ namespace Fintrack.Server.Migrations
                 table: "ExpenseCategoryGroups");
 
             migrationBuilder.Sql("""
-                ALTER TABLE "ExpenseCategoryGroups" ALTER COLUMN "Id" DROP DEFAULT;
+                ALTER TABLE "ExpenseCategoryGroups" ALTER COLUMN "Id" DROP IDENTITY IF EXISTS;
                 ALTER TABLE "ExpenseCategoryGroups"
                     ALTER COLUMN "Id" TYPE uuid
                     USING (('00000000-0000-0000-0000-' || lpad("Id"::text, 12, '0'))::uuid);

@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<IIncomeCategoryRepository, IncomeCategoryRepository>();
         services.AddScoped<IExpenseCategoryGroupRepository, ExpenseCategoryGroupRepository>();
         services.AddScoped<IBudgetRepository, BudgetRepository>();
+        services.AddScoped<IIncomeRepository, IncomeRepository>();
         services.AddScoped<IRecurringIncomeRepository, RecurringIncomeRepository>();
 
         // --- OCR / Vision Integrations ---
