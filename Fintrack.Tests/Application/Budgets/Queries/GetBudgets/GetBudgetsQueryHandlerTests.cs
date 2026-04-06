@@ -91,8 +91,7 @@ public class GetBudgetsQueryHandlerTests
         var handler = new GetBudgetsQueryHandler(
             new BudgetRepository(context),
             new RecurringIncomeRepository(context),
-            new ExpenseRepository(context),
-            context);
+            new ExpenseRepository(context));
         var query = new GetBudgetsQuery(userId, month, year);
 
         var result = await handler.Handle(query, CancellationToken.None);
@@ -114,8 +113,7 @@ public class GetBudgetsQueryHandlerTests
         var handler = new GetBudgetsQueryHandler(
             new BudgetRepository(context),
             new RecurringIncomeRepository(context),
-            new ExpenseRepository(context),
-            context);
+            new ExpenseRepository(context));
         var query = new GetBudgetsQuery("user-1", 1, 2024);
 
         var result = await handler.Handle(query, CancellationToken.None);
@@ -123,5 +121,44 @@ public class GetBudgetsQueryHandlerTests
         Assert.True(result.IsSuccess);
         Assert.Empty(result.Value.Budgets);
         Assert.Equal(0, result.Value.MonthlyIncome);
+    }
+
+    [Fact]
+    public async Task Should_Not_Materialize_Next_Month_From_Recurrent_Previous_Month_On_Read()
+    {
+        using var context = GetInMemoryContext();
+        var userId = "test-user";
+
+        var group = new ExpenseCategoryGroup { Id = 1, Name = "Group" };
+        var category = new ExpenseCategory
+        {
+            Id = 1,
+            Name = "Cat",
+            GroupId = 1,
+            Group = group
+        };
+        context.ExpenseCategoryGroups.Add(group);
+        context.ExpenseCategories.Add(category);
+
+        var feb = Budget.Create(userId, category.Id, 500m, isRecurrent: true, month: 2, year: 2024);
+        Assert.True(feb.IsSuccess);
+        context.Budgets.Add(feb.Value);
+        await context.SaveChangesAsync();
+
+        var handler = new GetBudgetsQueryHandler(
+            new BudgetRepository(context),
+            new RecurringIncomeRepository(context),
+            new ExpenseRepository(context));
+
+        var result = await handler.Handle(
+            new GetBudgetsQuery(userId, Month: 3, Year: 2024),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Empty(result.Value.Budgets);
+
+        var marchCount = context.Budgets.Count(b =>
+            b.UserId == userId && b.Month == 3 && b.Year == 2024);
+        Assert.Equal(0, marchCount);
     }
 }

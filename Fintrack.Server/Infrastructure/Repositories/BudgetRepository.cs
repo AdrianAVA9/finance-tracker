@@ -72,18 +72,13 @@ internal sealed class BudgetRepository : IBudgetRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Budget>> GetRecurrentBudgetsForMonthAsync(
-        string userId,
+    public async Task<IReadOnlyList<Budget>> GetRecurrentBudgetsForMonthForAllUsersAsync(
         int month,
         int year,
         CancellationToken cancellationToken = default)
     {
         return await _dbContext.Budgets
-            .Where(b =>
-                b.UserId == userId &&
-                b.IsRecurrent &&
-                b.Month == month &&
-                b.Year == year)
+            .Where(b => b.IsRecurrent && b.Month == month && b.Year == year)
             .ToListAsync(cancellationToken);
     }
 

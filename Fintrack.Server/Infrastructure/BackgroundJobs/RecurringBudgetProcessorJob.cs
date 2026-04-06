@@ -1,119 +1,113 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
-using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Domain.Enums;
-using Fintrack.Server.Domain.Exceptions;
-using Fintrack.Server.Domain.ExpenseCategories;
-using Fintrack.Server.Domain.Expenses;
-using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
-using Fintrack.Server.Domain.SavingsGoals;
-using Fintrack.Server.Domain.Users;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-namespace Fintrack.Server.Infrastructure.BackgroundJobs
+namespace Fintrack.Server.Infrastructure.BackgroundJobs;
+
+public class RecurringBudgetProcessorJob : BackgroundService
 {
-    public class RecurringBudgetProcessorJob : BackgroundService
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<RecurringBudgetProcessorJob> _logger;
+
+    public RecurringBudgetProcessorJob(IServiceProvider serviceProvider, ILogger<RecurringBudgetProcessorJob> logger)
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<RecurringBudgetProcessorJob> _logger;
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
 
-        public RecurringBudgetProcessorJob(IServiceProvider serviceProvider, ILogger<RecurringBudgetProcessorJob> logger)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _logger.LogInformation("RecurringBudgetProcessorJob started.");
+
+        while (!stoppingToken.IsCancellationRequested)
         {
-            _serviceProvider = serviceProvider;
-            _logger = logger;
+            try
+            {
+                if (DateTime.UtcNow.Day == 1)
+                {
+                    await ProcessRecurringBudgetsAsync(stoppingToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred processing recurring budgets.");
+            }
+
+            await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+        }
+    }
+
+    private async Task ProcessRecurringBudgetsAsync(CancellationToken cancellationToken)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var budgetRepository = scope.ServiceProvider.GetRequiredService<IBudgetRepository>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+        var now = DateTime.UtcNow;
+        int currentYear = now.Year;
+        int currentMonth = now.Month;
+
+        var previousMonthDate = now.AddMonths(-1);
+        int previousYear = previousMonthDate.Year;
+        int previousMonth = previousMonthDate.Month;
+
+        var recurringBudgets = await budgetRepository.GetRecurrentBudgetsForMonthForAllUsersAsync(
+            previousMonth,
+            previousYear,
+            cancellationToken);
+
+        if (!recurringBudgets.Any())
+        {
+            return;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        _logger.LogInformation("Found {Count} recurring budgets from previous month.", recurringBudgets.Count);
+
+        var addedCount = 0;
+
+        foreach (var previousBudget in recurringBudgets)
         {
-            _logger.LogInformation("RecurringBudgetProcessorJob started.");
+            var exists = await budgetRepository.ExistsAsync(
+                previousBudget.UserId,
+                previousBudget.CategoryId,
+                currentMonth,
+                currentYear,
+                cancellationToken);
 
-            while (!stoppingToken.IsCancellationRequested)
+            if (exists)
             {
-                try
-                {
-                    // Run the job logic only on the first day of the month
-                    if (DateTime.UtcNow.Day == 1)
-                    {
-                        await ProcessRecurringBudgetsAsync(stoppingToken);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error occurred processing recurring budgets.");
-                }
+                continue;
+            }
 
-                // Check every day
-                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+            var createResult = Budget.Create(
+                previousBudget.UserId,
+                previousBudget.CategoryId,
+                previousBudget.Amount,
+                true,
+                currentMonth,
+                currentYear);
+
+            if (createResult.IsSuccess)
+            {
+                budgetRepository.Add(createResult.Value);
+                addedCount++;
             }
         }
 
-        private async Task ProcessRecurringBudgetsAsync(CancellationToken cancellationToken)
+        if (addedCount > 0)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-            var now = DateTime.UtcNow;
-            int currentYear = now.Year;
-            int currentMonth = now.Month;
-
-            var previousMonthDate = now.AddMonths(-1);
-            int previousYear = previousMonthDate.Year;
-            int previousMonth = previousMonthDate.Month;
-
-            // Find all recurrent budgets from the previous month
-            var recurringBudgets = await dbContext.Budgets
-                .Where(b => b.Year == previousYear && b.Month == previousMonth && b.IsRecurrent)
-                .ToListAsync(cancellationToken);
-
-            if (!recurringBudgets.Any()) return;
-
-            _logger.LogInformation($"Found {recurringBudgets.Count} recurring budgets from previous month.");
-
-            int addedCount = 0;
-
-            foreach (var previousBudget in recurringBudgets)
-            {
-                // Check if a budget for the current month and category already exists for this user
-                var exists = await dbContext.Budgets.AnyAsync(b => 
-                    b.UserId == previousBudget.UserId && 
-                    b.CategoryId == previousBudget.CategoryId && 
-                    b.Year == currentYear && 
-                    b.Month == currentMonth, 
-                    cancellationToken);
-
-                if (!exists)
-                {
-                    var createResult = Budget.Create(
-                        previousBudget.UserId,
-                        previousBudget.CategoryId,
-                        previousBudget.Amount,
-                        true,
-                        currentMonth,
-                        currentYear
-                    );
-
-                    if (createResult.IsSuccess)
-                    {
-                        dbContext.Budgets.Add(createResult.Value);
-                        addedCount++;
-                    }
-                }
-            }
-
-            if (addedCount > 0)
-            {
-                await dbContext.SaveChangesAsync(cancellationToken);
-                _logger.LogInformation($"Successfully registered {addedCount} recurring budgets for {currentYear}-{currentMonth}.");
-            }
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation(
+                "Successfully registered {AddedCount} recurring budgets for {Year}-{Month}.",
+                addedCount,
+                currentYear,
+                currentMonth);
         }
     }
 }

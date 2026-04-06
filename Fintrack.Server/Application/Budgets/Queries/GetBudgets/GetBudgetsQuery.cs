@@ -34,18 +34,15 @@ internal sealed class GetBudgetsQueryHandler : IQueryHandler<GetBudgetsQuery, Bu
     private readonly IBudgetRepository _budgetRepository;
     private readonly IRecurringIncomeRepository _recurringIncomeRepository;
     private readonly IExpenseRepository _expenseRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
     public GetBudgetsQueryHandler(
         IBudgetRepository budgetRepository,
         IRecurringIncomeRepository recurringIncomeRepository,
-        IExpenseRepository expenseRepository,
-        IUnitOfWork unitOfWork)
+        IExpenseRepository expenseRepository)
     {
         _budgetRepository = budgetRepository;
         _recurringIncomeRepository = recurringIncomeRepository;
         _expenseRepository = expenseRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<BudgetListDto>> Handle(GetBudgetsQuery request, CancellationToken cancellationToken)
@@ -63,43 +60,6 @@ internal sealed class GetBudgetsQueryHandler : IQueryHandler<GetBudgetsQuery, Bu
             request.Month,
             request.Year,
             cancellationToken)).ToList();
-
-        if (!userBudgets.Any())
-        {
-            var prevDate = startDate.AddMonths(-1);
-            var recurrentBudgets = await _budgetRepository.GetRecurrentBudgetsForMonthAsync(
-                request.UserId,
-                prevDate.Month,
-                prevDate.Year,
-                cancellationToken);
-
-            if (recurrentBudgets.Any())
-            {
-                foreach (var rb in recurrentBudgets)
-                {
-                    var createResult = Budget.Create(
-                        request.UserId,
-                        rb.CategoryId,
-                        rb.Amount,
-                        true,
-                        request.Month,
-                        request.Year);
-
-                    if (createResult.IsSuccess)
-                    {
-                        _budgetRepository.Add(createResult.Value);
-                    }
-                }
-
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                userBudgets = (await _budgetRepository.GetUserBudgetsByMonthWithCategoryAsync(
-                    request.UserId,
-                    request.Month,
-                    request.Year,
-                    cancellationToken)).ToList();
-            }
-        }
 
         var categoryIds = userBudgets.Select(b => b.CategoryId).ToList();
 

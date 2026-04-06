@@ -32,10 +32,9 @@ public interface IBudgetRepository
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Budgets marked recurrent for the given calendar month/year (any amount of rows).
+    /// Recurrent budgets for the given calendar month/year across all users (e.g. background roll-forward).
     /// </summary>
-    Task<IReadOnlyList<Budget>> GetRecurrentBudgetsForMonthAsync(
-        string userId,
+    Task<IReadOnlyList<Budget>> GetRecurrentBudgetsForMonthForAllUsersAsync(
         int month,
         int year,
         CancellationToken cancellationToken = default);
