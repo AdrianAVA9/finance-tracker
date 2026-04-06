@@ -28,6 +28,14 @@ Integration tests verify the full request pipeline:
 | `Respawner` | Database cleanup utility |
 | `TestAuthHandler` | Fake authentication handler |
 
+### Auth and permissions in API tests
+
+- **`X-Test-User-Id`** — required to authenticate; omit for `401 Unauthorized`.
+- **`X-Test-User-Permissions`** — comma-separated permission strings (e.g. `budgets:read`). Optional.
+- **`X-Test-User-Roles`** — comma-separated role names. When **no** role is sent, `IClaimsTransformation` may add **`Roles.User`**, which grants a broad default permission set (including budgets). To assert **`403 Forbidden`** for a specific policy, authenticate with a **dedicated integration-test role** (e.g. `Roles.IntegrationTestNoBudgets`) that maps in `RolePermissions` to only the permissions you need for that scenario.
+
+Use `BaseIntegrationTest.AuthenticateAs(userId, permissions, roles)` to set headers. Add new integration-only roles in `Roles` / `RolePermissions` when you need permission matrices that production roles do not provide.
+
 ---
 
 ## Test Project Structure

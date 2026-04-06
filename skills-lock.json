@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "maintenanceNote": "When a skill under .agents/skills/<name>/ is customized in this repo, remove that <name> entry from skills below (if present) so installers or sync tools that honor this file do not overwrite local changes. Some skills (e.g. unit-testing, integration-testing) are maintained only here and are not pinned.",
   "skills": {
     "audit-trail": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",

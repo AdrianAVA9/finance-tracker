@@ -1,7 +1,7 @@
 ---
 name: unit-testing
 description: "Generates unit tests for command and query handlers using xUnit and NSubstitute. Implements Arrange-Act-Assert pattern with comprehensive test coverage for success and failure scenarios."
-version: 1.1.0
+version: 1.2.0
 language: C#
 framework: .NET 8+
 dependencies: xUnit, NSubstitute, FluentAssertions
@@ -47,6 +47,19 @@ tests/
     │   └── BaseTest.cs
     └── {name}.Application.UnitTests.csproj
 ```
+
+### CeroBase monorepo (`Fintrack.Tests`)
+
+Handlers and validators live under **`Application/{Feature}/...`** mirroring the server. Also include:
+
+| Layer | Location | What to test |
+|-------|----------|----------------|
+| **Domain aggregates** | `Domain/{Aggregate}/{Entity}Tests.cs` | `Create`/`Update` invariants, `Result` failures, domain events (clear events between acts when needed). |
+| **EF repository implementations** | `Infrastructure/Repositories/{Entity}RepositoryTests.cs` | Query filters, includes, and `Add`/`Update`/`Remove` behavior using **EF Core InMemory** (or SQLite). **Do not** rely on InMemory for DB unique constraints or provider-specific SQL—cover those in integration tests. |
+| **FluentValidation** | Next to handler tests: `{Command}ValidatorTests.cs` | `TestValidate` / `ShouldHaveValidationErrorFor`. |
+| **API controllers (thin MediatR)** | `Api/Controllers/{Feature}/{Controller}Tests.cs` | Mock `ISender`, set `ControllerContext` + `ClaimsPrincipal` for `User`, assert `IActionResult` and `Send` received the expected command/query. Does **not** run `[Authorize]` / `[HasPermission]` filters. |
+
+**API surface, HTTP status codes, and permission policies** are **not** unit tests: place them in **`Fintrack.IntegrationTests`** (see [`integration-testing`](./integration-testing/SKILL.md)). Use `TestAuthHandler` headers for user id, optional `permission` claims, and **`X-Test-User-Roles`** when the default claims transformation would grant too many permissions (e.g. `Roles.User` includes budgets read/write).
 
 ---
 

@@ -73,6 +73,7 @@ This repository contains specialized instructions (skills) in `.agents/skills/` 
 - [`skill-creator`](.agents/skills/skill-creator/SKILL.md): Creating or updating new skills.
 
 ## 4. Development Norms
+- **Skills lock (`skills-lock.json`):** If you customize a skill under `.agents/skills/`, remove that skill’s entry from `skills-lock.json` when it appears there, so upstream skill installers do not overwrite local edits. See `maintenanceNote` in that file.
 - **Commit Messages:** Must strictly follow the Conventional Commits specification.
 - **Frontend Practices:** ALWAYS use Composition API (`<script setup>`) and TypeScript. Avoid Options API unless explicitly requested.
 - **Backend Practices:** Avoid putting business logic directly in controllers; delegate to MediatR handlers and maintain type safety.
