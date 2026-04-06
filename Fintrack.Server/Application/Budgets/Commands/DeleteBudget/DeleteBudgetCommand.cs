@@ -21,12 +21,14 @@ internal sealed class DeleteBudgetCommandHandler : ICommandHandler<DeleteBudgetC
     {
         var budget = await _budgetRepository.GetByIdAsync(request.Id, request.UserId, cancellationToken);
 
-        if (budget != null)
+        if (budget is null)
         {
-            budget.RegisterDeletion();
-            _budgetRepository.Remove(budget);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return Result.Failure(BudgetErrors.NotFound);
         }
+
+        budget.RegisterDeletion();
+        _budgetRepository.Remove(budget);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

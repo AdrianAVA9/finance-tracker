@@ -73,11 +73,24 @@ public class BudgetsControllerTests : BaseIntegrationTest
         var response = await DeleteAsync($"/api/v1/budgets/{budget.Id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
         DbContext.ChangeTracker.Clear();
         var deletedBudget = await FindAsync<Budget>(budget.Id);
         deletedBudget.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Delete_Should_ReturnNotFound_When_Budget_Does_Not_Exist()
+    {
+        var userId = Guid.NewGuid().ToString();
+        AuthenticateAs(userId);
+
+        var missingId = Guid.NewGuid();
+
+        var response = await DeleteAsync($"/api/v1/budgets/{missingId}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]

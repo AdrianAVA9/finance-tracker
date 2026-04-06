@@ -53,6 +53,16 @@ internal sealed class UpsertBudgetsCommandHandler : ICommandHandler<UpsertBudget
             }
             else
             {
+                if (await _budgetRepository.ExistsAsync(
+                    request.UserId,
+                    entry.CategoryId,
+                    request.Month,
+                    request.Year,
+                    cancellationToken))
+                {
+                    return Result.Failure(BudgetErrors.AlreadyExists);
+                }
+
                 var createResult = Budget.Create(
                     request.UserId,
                     entry.CategoryId,

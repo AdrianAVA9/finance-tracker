@@ -65,6 +65,16 @@ internal sealed class CopyPreviousMonthBudgetsCommandHandler : ICommandHandler<C
             }
             else
             {
+                if (await _budgetRepository.ExistsAsync(
+                    request.UserId,
+                    source.CategoryId,
+                    request.TargetMonth,
+                    request.TargetYear,
+                    cancellationToken))
+                {
+                    return Result.Failure(BudgetErrors.AlreadyExists);
+                }
+
                 var createResult = Budget.Create(
                     request.UserId,
                     source.CategoryId,
