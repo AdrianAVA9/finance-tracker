@@ -18,8 +18,13 @@ internal sealed class RecurringIncomeRepository : IRecurringIncomeRepository
         DateTime periodEndExclusive,
         CancellationToken cancellationToken = default)
     {
-        return await _dbContext.RecurringIncomes
+        // SQLite cannot translate Sum on decimal; sum in-memory (row set is small per user).
+        var amounts = await _dbContext.RecurringIncomes
+            .AsNoTracking()
             .Where(ri => ri.UserId == userId && ri.IsActive && ri.StartDate < periodEndExclusive)
-            .SumAsync(ri => ri.Amount, cancellationToken);
+            .Select(ri => ri.Amount)
+            .ToListAsync(cancellationToken);
+
+        return amounts.Sum();
     }
 }
