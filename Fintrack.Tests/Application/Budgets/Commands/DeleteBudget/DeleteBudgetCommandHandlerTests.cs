@@ -1,79 +1,81 @@
-using System;
 using Fintrack.Server.Application.Budgets.Commands.DeleteBudget;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
+using Fintrack.Tests.Abstractions;
+using Fintrack.Tests.TestData.Budgets;
+using FluentAssertions;
 using NSubstitute;
-using Xunit;
 
 namespace Fintrack.Tests.Application.Budgets.Commands.DeleteBudget;
 
-public class DeleteBudgetCommandHandlerTests
+public sealed class DeleteBudgetCommandHandlerTests : BaseUnitTest
 {
+    private readonly IBudgetRepository _budgetRepository = Mock<IBudgetRepository>();
+    private readonly IUnitOfWork _unitOfWork = Mock<IUnitOfWork>();
+
+    private DeleteBudgetCommandHandler CreateHandler() =>
+        new(_budgetRepository, _unitOfWork);
+
     [Fact]
-    public async Task Should_Delete_Budget_When_Exists_And_Belongs_To_User()
+    public async Task Handle_Should_RemoveBudget_When_ExistsForUser()
     {
-        var userId = "user-1";
-        var budget = Budget.Create(userId, 1, 100m, false, 1, 2024).Value;
+        // Arrange
+        var userId = BudgetTestDoubles.DefaultUserId;
+        var budget = BudgetTestDoubles.CreateBudget(userId, categoryId: 1, month: 1, year: 2024);
         var budgetId = budget.Id;
 
-        var repository = Substitute.For<IBudgetRepository>();
-        repository.GetByIdAsync(budgetId, userId, Arg.Any<CancellationToken>())
+        _budgetRepository
+            .GetByIdAsync(budgetId, userId, CancellationToken)
             .Returns(budget);
+        _unitOfWork.SaveChangesAsync(CancellationToken).Returns(1);
 
-        var unitOfWork = Substitute.For<IUnitOfWork>();
-        unitOfWork.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(1);
+        // Act
+        var result = await CreateHandler().Handle(new DeleteBudgetCommand(budgetId, userId), CancellationToken);
 
-        var handler = new DeleteBudgetCommandHandler(repository, unitOfWork);
-        var command = new DeleteBudgetCommand(budgetId, userId);
-
-        var result = await handler.Handle(command, CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        repository.Received(1).Remove(budget);
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        _budgetRepository.Received(1).Remove(budget);
+        await _unitOfWork.Received(1).SaveChangesAsync(CancellationToken);
     }
 
     [Fact]
-    public async Task Should_Return_NotFound_When_Budget_Belongs_To_Different_User()
+    public async Task Handle_Should_ReturnNotFound_When_BudgetOwnedByAnotherUser()
     {
-        var budget = Budget.Create("owner", 1, 100m, false, 1, 2024).Value;
+        // Arrange
+        var budget = BudgetTestDoubles.CreateBudget("owner", categoryId: 1, month: 1, year: 2024);
         var attackerId = "attacker";
-        var budgetId = budget.Id;
 
-        var repository = Substitute.For<IBudgetRepository>();
-        repository.GetByIdAsync(budgetId, attackerId, Arg.Any<CancellationToken>())
+        _budgetRepository
+            .GetByIdAsync(budget.Id, attackerId, CancellationToken)
             .Returns((Budget?)null);
 
-        var unitOfWork = Substitute.For<IUnitOfWork>();
+        // Act
+        var result = await CreateHandler().Handle(new DeleteBudgetCommand(budget.Id, attackerId), CancellationToken);
 
-        var handler = new DeleteBudgetCommandHandler(repository, unitOfWork);
-        var command = new DeleteBudgetCommand(budgetId, attackerId);
-
-        var result = await handler.Handle(command, CancellationToken.None);
-
-        Assert.True(result.IsFailure);
-        Assert.Equal(BudgetErrors.NotFound, result.Error);
-        repository.DidNotReceive().Remove(Arg.Any<Budget>());
-        await unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(BudgetErrors.NotFound);
+        _budgetRepository.DidNotReceive().Remove(Arg.Any<Budget>());
+        await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Should_Return_NotFound_When_Budget_Does_Not_Exist()
+    public async Task Handle_Should_ReturnNotFound_When_BudgetDoesNotExist()
     {
-        var repository = Substitute.For<IBudgetRepository>();
-        repository.GetByIdAsync(Arg.Any<Guid>(), "user-1", Arg.Any<CancellationToken>())
+        // Arrange
+        _budgetRepository
+            .GetByIdAsync(Arg.Any<Guid>(), BudgetTestDoubles.DefaultUserId, CancellationToken)
             .Returns((Budget?)null);
 
-        var unitOfWork = Substitute.For<IUnitOfWork>();
+        // Act
+        var result = await CreateHandler().Handle(
+            new DeleteBudgetCommand(Guid.NewGuid(), BudgetTestDoubles.DefaultUserId),
+            CancellationToken);
 
-        var handler = new DeleteBudgetCommandHandler(repository, unitOfWork);
-        var command = new DeleteBudgetCommand(Guid.NewGuid(), "user-1");
-
-        var result = await handler.Handle(command, CancellationToken.None);
-
-        Assert.True(result.IsFailure);
-        Assert.Equal(BudgetErrors.NotFound, result.Error);
-        repository.DidNotReceive().Remove(Arg.Any<Budget>());
-        await unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().Be(BudgetErrors.NotFound);
+        _budgetRepository.DidNotReceive().Remove(Arg.Any<Budget>());
+        await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

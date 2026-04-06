@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Fintrack.IntegrationTests.Infrastructure;
 using Fintrack.Server.Application.Budgets.Commands.UpsertBudgets;
+using Fintrack.Server.Application.Budgets.Queries.GetBudgetDetails;
 using Fintrack.Server.Api.Controllers.Budgets;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
@@ -135,6 +136,114 @@ public class BudgetsControllerTests : BaseIntegrationTest
         
         budgets.Should().HaveCount(1);
         budgets[0].Amount.Should().Be(1200.50m);
+    }
+
+    [Fact]
+    public async Task CopyPrevious_Should_CreateMarchBudgets_FromFebruary()
+    {
+        var userId = Guid.NewGuid().ToString();
+        AuthenticateAs(userId, BudgetUserPermissions);
+
+        var group = new ExpenseCategoryGroup { Name = "Copy group" };
+        var category = new ExpenseCategory { Name = "Copy category", Group = group };
+        await AddAsync(group);
+        await AddAsync(category);
+
+        var feb = Budget.Create(userId, category.Id, 750m, isRecurrent: true, month: 2, year: 2024);
+        feb.IsSuccess.Should().BeTrue();
+        await AddAsync(feb.Value);
+
+        var response = await PostAsync(
+            "/api/v1/budgets/copy-previous",
+            new CopyPreviousRequest(Month: 3, Year: 2024));
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        DbContext.ChangeTracker.Clear();
+        var march = await DbContext.Budgets
+            .Where(b => b.UserId == userId && b.Month == 3 && b.Year == 2024)
+            .SingleAsync();
+        march.CategoryId.Should().Be(category.Id);
+        march.Amount.Should().Be(750m);
+        march.IsRecurrent.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task CopyPrevious_Should_Succeed_When_PreviousMonthHasNoBudgets()
+    {
+        var userId = Guid.NewGuid().ToString();
+        AuthenticateAs(userId, BudgetUserPermissions);
+
+        var response = await PostAsync(
+            "/api/v1/budgets/copy-previous",
+            new CopyPreviousRequest(Month: 3, Year: 2024));
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        DbContext.ChangeTracker.Clear();
+        var count = await DbContext.Budgets.CountAsync(b => b.UserId == userId);
+        count.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task GetById_Should_ReturnDetails_When_BudgetExists()
+    {
+        var userId = Guid.NewGuid().ToString();
+        AuthenticateAs(userId, BudgetUserPermissions);
+
+        var group = new ExpenseCategoryGroup { Name = "Details group" };
+        var category = new ExpenseCategory { Name = "Details category", Group = group };
+        await AddAsync(group);
+        await AddAsync(category);
+
+        var budgetResult = Budget.Create(userId, category.Id, 400m, false, month: 5, year: 2024);
+        budgetResult.IsSuccess.Should().BeTrue();
+        var budget = budgetResult.Value;
+        await AddAsync(budget);
+
+        var response = await GetAsync($"/api/v1/budgets/{budget.Id}?month=5&year=2024");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var dto = await response.Content.ReadFromJsonAsync<BudgetDetailsDto>();
+        dto.Should().NotBeNull();
+        dto!.Id.Should().Be(budget.Id);
+        dto.CategoryName.Should().Be("Details category");
+        dto.LimitAmount.Should().Be(400m);
+        dto.MonthlyHistory.Should().HaveCount(12);
+    }
+
+    [Fact]
+    public async Task GetById_Should_ReturnNotFound_When_BudgetMissing()
+    {
+        var userId = Guid.NewGuid().ToString();
+        AuthenticateAs(userId, BudgetUserPermissions);
+
+        var response = await GetAsync($"/api/v1/budgets/{Guid.NewGuid()}?month=1&year=2024");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task GetById_Should_ReturnNotFound_When_BudgetBelongsToAnotherUser()
+    {
+        var ownerId = Guid.NewGuid().ToString();
+        var otherId = Guid.NewGuid().ToString();
+
+        var group = new ExpenseCategoryGroup { Name = "Iso group" };
+        var category = new ExpenseCategory { Name = "Iso category", Group = group };
+        await AddAsync(group);
+        await AddAsync(category);
+
+        var budgetResult = Budget.Create(ownerId, category.Id, 100m, false, 4, 2024);
+        budgetResult.IsSuccess.Should().BeTrue();
+        await AddAsync(budgetResult.Value);
+        var budgetId = budgetResult.Value.Id;
+
+        AuthenticateAs(otherId, BudgetUserPermissions);
+
+        var response = await GetAsync($"/api/v1/budgets/{budgetId}?month=4&year=2024");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     private sealed class BudgetListResponse

@@ -55,7 +55,9 @@ namespace Fintrack.Server.Api.Middleware
                 {
                     Status = StatusCodes.Status400BadRequest,
                     Title = "Validation Error",
-                    Detail = "One or more validation errors occurred.",
+                    Detail = validationException.Errors.Count > 0
+                        ? "One or more validation errors occurred."
+                        : validationException.Message,
                     Extensions = { ["errors"] = validationException.Errors }
                 },
                 NotFoundException => new ProblemDetails

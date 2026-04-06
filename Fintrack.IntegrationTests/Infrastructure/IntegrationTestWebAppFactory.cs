@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Fintrack.Server.Application.Abstractions.Vision;
 using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
@@ -32,6 +33,12 @@ namespace Fintrack.IntegrationTests.Infrastructure
         /// </summary>
         public IEmailSender<ApplicationUser> MockEmailSender { get; } =
             Substitute.For<IEmailSender<ApplicationUser>>();
+
+        /// <summary>
+        /// Replace Gemini in tests so receipt processing does not call the network and uses the same host/DB as other integration tests.
+        /// </summary>
+        public IVisionExtractionProvider VisionExtractionProviderMock { get; } =
+            Substitute.For<IVisionExtractionProvider>();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -63,6 +70,9 @@ namespace Fintrack.IntegrationTests.Infrastructure
                 // without requiring a real SMTP server.
                 services.RemoveAll(typeof(IEmailSender<ApplicationUser>));
                 services.AddSingleton(MockEmailSender);
+
+                services.RemoveAll<IVisionExtractionProvider>();
+                services.AddSingleton(VisionExtractionProviderMock);
             });
 
             builder.UseEnvironment("Testing");

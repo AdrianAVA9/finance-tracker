@@ -17,6 +17,16 @@ namespace Fintrack.Server.Infrastructure.Authorization
                 Permissions.ExpensesRead, Permissions.ExpensesWrite, Permissions.ExpensesDelete,
                 Permissions.InvoicesRead, Permissions.InvoicesWrite, Permissions.InvoicesDelete,
                 Permissions.BudgetsRead, Permissions.BudgetsWrite
+            },
+            // Authenticated user with no budget permissions (integration / authZ tests only)
+            [Roles.IntegrationTestNoBudgets] = new HashSet<string>
+            {
+                Permissions.CategoriesRead
+            },
+            [Roles.IntegrationTestBudgetReadOnly] = new HashSet<string>
+            {
+                Permissions.CategoriesRead,
+                Permissions.BudgetsRead
             }
         };
 

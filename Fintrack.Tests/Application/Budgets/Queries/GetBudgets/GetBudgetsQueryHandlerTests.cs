@@ -1,164 +1,144 @@
 using Fintrack.Server.Application.Budgets.Queries.GetBudgets;
 using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;
 using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Infrastructure.Data;
-using Fintrack.Server.Infrastructure.Repositories;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Fintrack.Tests.Abstractions;
+using Fintrack.Tests.TestData.Budgets;
+using FluentAssertions;
 using NSubstitute;
-using Xunit;
 
 namespace Fintrack.Tests.Application.Budgets.Queries.GetBudgets;
 
-public class GetBudgetsQueryHandlerTests
+public sealed class GetBudgetsQueryHandlerTests : BaseUnitTest
 {
-    private ApplicationDbContext GetInMemoryContext()
-    {
-        var publisher = Substitute.For<IPublisher>();
-        publisher.Publish(Arg.Any<INotification>(), Arg.Any<CancellationToken>())
-            .Returns(Task.CompletedTask);
+    private readonly IBudgetRepository _budgetRepository = Mock<IBudgetRepository>();
+    private readonly IRecurringIncomeRepository _recurringIncomeRepository = Mock<IRecurringIncomeRepository>();
+    private readonly IExpenseRepository _expenseRepository = Mock<IExpenseRepository>();
+    private readonly GetBudgetsQueryHandler _handler;
 
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-        return new ApplicationDbContext(options, publisher);
+    public GetBudgetsQueryHandlerTests()
+    {
+        _handler = new GetBudgetsQueryHandler(
+            _budgetRepository,
+            _recurringIncomeRepository,
+            _expenseRepository);
     }
 
     [Fact]
-    public async Task Should_Return_Budgets_With_Correct_SpentAmounts()
+    public async Task Handle_Should_ReturnBudgets_WithSpentAmountsAndIncome_When_DataExists()
     {
-        using var context = GetInMemoryContext();
-
-        var userId = "test-user";
+        // Arrange
+        var userId = BudgetTestDoubles.DefaultUserId;
         var month = 3;
         var year = 2024;
+        var category = BudgetTestDoubles.CreateCategory();
+        var budget = BudgetTestDoubles.CreateBudgetWithCategory(category, userId, amount: 1000m, month: month, year: year);
 
-        var group = new ExpenseCategoryGroup { Id = 1, Name = "Vivienda" };
-        var category = new ExpenseCategory
-        {
-            Id = 1,
-            Name = "Alquiler",
-            GroupId = 1,
-            Group = group,
-            Color = "#FF0000",
-            Icon = "home"
-        };
-        context.ExpenseCategoryGroups.Add(group);
-        context.ExpenseCategories.Add(category);
+        _budgetRepository
+            .GetUserBudgetsByMonthWithCategoryAsync(userId, month, year, CancellationToken)
+            .Returns(new List<Budget> { budget });
 
-        var budgetResult = Budget.Create(userId, category.Id, 1000.00m, false, month, year);
-        Assert.True(budgetResult.IsSuccess);
-        var budget = budgetResult.Value;
-        context.Budgets.Add(budget);
+        _recurringIncomeRepository
+            .SumActiveAmountForUserBeforeAsync(
+                userId,
+                Arg.Is<DateTime>(d => d == new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(1)),
+                CancellationToken)
+            .Returns(5000m);
 
-        var recurringIncome = new RecurringIncome
-        {
-            UserId = userId,
-            Source = "Salario",
-            Amount = 5000.00m,
-            CategoryId = 1,
-            IsActive = true,
-            StartDate = new DateTime(2024, 1, 1),
-            NextProcessingDate = new DateTime(2024, 3, 1),
-            Frequency = Fintrack.Server.Domain.Enums.RecurringFrequency.Monthly
-        };
-        context.RecurringIncomes.Add(recurringIncome);
+        var spentByCategory = new Dictionary<int, decimal> { { category.Id, 800m } };
+        _expenseRepository
+            .SumItemAmountsByCategoryAsync(
+                userId,
+                Arg.Is<DateTime>(d => d == new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc)),
+                Arg.Is<DateTime>(d => d == new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(1)),
+                Arg.Is<IReadOnlyCollection<int>>(ids => ids.SequenceEqual(new[] { category.Id })),
+                CancellationToken)
+            .Returns(spentByCategory);
 
-        var expense = new Expense
-        {
-            Id = 1,
-            UserId = userId,
-            Date = new DateTime(year, month, 15),
-            Merchant = "Rent Corp",
-            TotalAmount = 800.00m
-        };
-        context.Expenses.Add(expense);
-
-        var expenseItem = new ExpenseItem
-        {
-            Id = 1,
-            ExpenseId = 1,
-            CategoryId = 1,
-            ItemAmount = 800.00m,
-            Description = "Marzo Rent"
-        };
-        context.ExpenseItems.Add(expenseItem);
-
-        await context.SaveChangesAsync();
-
-        var handler = new GetBudgetsQueryHandler(
-            new BudgetRepository(context),
-            new RecurringIncomeRepository(context),
-            new ExpenseRepository(context));
         var query = new GetBudgetsQuery(userId, month, year);
 
-        var result = await handler.Handle(query, CancellationToken.None);
+        // Act
+        var result = await _handler.Handle(query, CancellationToken);
 
-        Assert.True(result.IsSuccess);
-        Assert.Single(result.Value.Budgets);
-        var dto = result.Value.Budgets.First();
-        Assert.Equal(budget.Id, dto.Id);
-        Assert.Equal(1, dto.CategoryId);
-        Assert.Equal(1000.00m, dto.LimitAmount);
-        Assert.Equal(800.00m, dto.SpentAmount);
-        Assert.Equal(5000.00m, result.Value.MonthlyIncome);
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.MonthlyIncome.Should().Be(5000m);
+        result.Value.Budgets.Should().ContainSingle();
+        var dto = result.Value.Budgets[0];
+        dto.Id.Should().Be(budget.Id);
+        dto.CategoryId.Should().Be(category.Id);
+        dto.CategoryName.Should().Be(category.Name);
+        dto.CategoryIcon.Should().Be(category.Icon);
+        dto.CategoryColor.Should().Be(category.Color);
+        dto.CategoryGroup.Should().Be(category.Group!.Name);
+        dto.LimitAmount.Should().Be(1000m);
+        dto.SpentAmount.Should().Be(800m);
+        dto.IsRecurrent.Should().BeFalse();
     }
 
     [Fact]
-    public async Task Should_Return_Empty_List_When_No_Budgets_Exist()
+    public async Task Handle_Should_ReturnEmptyBudgets_When_UserHasNoBudgetsForMonth()
     {
-        using var context = GetInMemoryContext();
-        var handler = new GetBudgetsQueryHandler(
-            new BudgetRepository(context),
-            new RecurringIncomeRepository(context),
-            new ExpenseRepository(context));
-        var query = new GetBudgetsQuery("user-1", 1, 2024);
+        // Arrange
+        _budgetRepository
+            .GetUserBudgetsByMonthWithCategoryAsync(BudgetTestDoubles.DefaultUserId, 1, 2024, CancellationToken)
+            .Returns(Array.Empty<Budget>());
 
-        var result = await handler.Handle(query, CancellationToken.None);
+        _recurringIncomeRepository
+            .SumActiveAmountForUserBeforeAsync(
+                Arg.Any<string>(),
+                Arg.Any<DateTime>(),
+                CancellationToken)
+            .Returns(0m);
 
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Value.Budgets);
-        Assert.Equal(0, result.Value.MonthlyIncome);
+        _expenseRepository
+            .SumItemAmountsByCategoryAsync(
+                Arg.Any<string>(),
+                Arg.Any<DateTime>(),
+                Arg.Any<DateTime>(),
+                Arg.Is<IReadOnlyCollection<int>>(ids => ids.Count == 0),
+                CancellationToken)
+            .Returns(new Dictionary<int, decimal>());
+
+        var query = new GetBudgetsQuery(BudgetTestDoubles.DefaultUserId, 1, 2024);
+
+        // Act
+        var result = await _handler.Handle(query, CancellationToken);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Budgets.Should().BeEmpty();
+        result.Value.MonthlyIncome.Should().Be(0m);
     }
 
     [Fact]
-    public async Task Should_Not_Materialize_Next_Month_From_Recurrent_Previous_Month_On_Read()
+    public async Task Handle_Should_NotReturnOtherMonthBudgets_When_QueryTargetsDifferentMonth()
     {
-        using var context = GetInMemoryContext();
-        var userId = "test-user";
+        // Arrange — repository has no rows for March (e.g. only February exists in DB); read path does not roll forward.
+        var userId = BudgetTestDoubles.DefaultUserId;
 
-        var group = new ExpenseCategoryGroup { Id = 1, Name = "Group" };
-        var category = new ExpenseCategory
-        {
-            Id = 1,
-            Name = "Cat",
-            GroupId = 1,
-            Group = group
-        };
-        context.ExpenseCategoryGroups.Add(group);
-        context.ExpenseCategories.Add(category);
+        _budgetRepository
+            .GetUserBudgetsByMonthWithCategoryAsync(userId, 3, 2024, CancellationToken)
+            .Returns(Array.Empty<Budget>());
 
-        var feb = Budget.Create(userId, category.Id, 500m, isRecurrent: true, month: 2, year: 2024);
-        Assert.True(feb.IsSuccess);
-        context.Budgets.Add(feb.Value);
-        await context.SaveChangesAsync();
+        _recurringIncomeRepository
+            .SumActiveAmountForUserBeforeAsync(userId, Arg.Any<DateTime>(), CancellationToken)
+            .Returns(0m);
 
-        var handler = new GetBudgetsQueryHandler(
-            new BudgetRepository(context),
-            new RecurringIncomeRepository(context),
-            new ExpenseRepository(context));
+        _expenseRepository
+            .SumItemAmountsByCategoryAsync(
+                userId,
+                Arg.Any<DateTime>(),
+                Arg.Any<DateTime>(),
+                Arg.Is<IReadOnlyCollection<int>>(ids => ids.Count == 0),
+                CancellationToken)
+            .Returns(new Dictionary<int, decimal>());
 
-        var result = await handler.Handle(
-            new GetBudgetsQuery(userId, Month: 3, Year: 2024),
-            CancellationToken.None);
+        // Act
+        var result = await _handler.Handle(new GetBudgetsQuery(userId, 3, 2024), CancellationToken);
 
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Value.Budgets);
-
-        var marchCount = context.Budgets.Count(b =>
-            b.UserId == userId && b.Month == 3 && b.Year == 2024);
-        Assert.Equal(0, marchCount);
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Budgets.Should().BeEmpty();
     }
 }
