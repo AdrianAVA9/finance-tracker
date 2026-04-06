@@ -95,6 +95,7 @@ When performing these actions, ALWAYS invoke the corresponding skill FIRST:
 | Creating a background job | `quartz-background-jobs` |
 | Writing unit tests | `unit-testing` |
 | Writing integration tests | `integration-testing` |
+| Testing repository implementations | `unit-testing` |
 | Creating or modifying Vue components | `vue-best-practices` |
 | Adding views, routes, or layouts to the client | `vue-client-architecture` |
 | Creating a composable | `create-adaptable-composable` |

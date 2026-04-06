@@ -65,6 +65,7 @@ When performing these actions inside `Fintrack.Server/`, ALWAYS invoke the corre
 | Creating a background job | `quartz-background-jobs` |
 | Writing unit tests | `unit-testing` |
 | Writing integration tests | `integration-testing` |
+| Testing repository implementations | `unit-testing` |
 
 ## 5. Coding Conventions
 - **Application layout:** Under `Application/{Feature}/`, place each use case under **`Queries/{UseCase}/`** (reads) or **`Commands/{UseCase}/`** (writes), e.g. `Budgets/Queries/GetBudgets/`, `Budgets/Commands/UpsertBudgets/`. Namespace matches the path. See [`dotnet-clean-architecture`](../.agents/skills/dotnet-clean-architecture/SKILL.md).
