@@ -3,6 +3,7 @@ using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.Expenses;
 using Fintrack.Tests.Abstractions;
 using Fintrack.Tests.TestData.Budgets;
+using Fintrack.Tests.TestData.Expenses;
 using FluentAssertions;
 using NSubstitute;
 
@@ -50,23 +51,11 @@ public sealed class GetBudgetDetailsQueryHandlerTests : BaseUnitTest
             .Returns(budget);
 
         var expenseDate = new DateTime(2024, 3, 10, 0, 0, 0, DateTimeKind.Utc);
+        var parentExpense = ExpenseTestDoubles.CreateExpense(userId, 25m, expenseDate, "Cafe");
+
         var items = new List<ExpenseItem>
         {
-            new()
-            {
-                Id = 1,
-                CategoryId = category.Id,
-                ItemAmount = 25m,
-                Description = "Lunch",
-                Expense = new Expense
-                {
-                    Id = 10,
-                    UserId = userId,
-                    Date = expenseDate,
-                    Merchant = "Cafe",
-                    TotalAmount = 25m
-                }
-            }
+            ExpenseTestDoubles.CreateItemWithExpense(category.Id, 25m, "Lunch", parentExpense)
         };
 
         _expenseRepository
@@ -107,23 +96,12 @@ public sealed class GetBudgetDetailsQueryHandlerTests : BaseUnitTest
             .GetByIdWithCategoryAsync(budget.Id, userId, CancellationToken)
             .Returns(budget);
 
+        var expenseDate = new DateTime(2024, 2, 5, 0, 0, 0, DateTimeKind.Utc);
+        var parentExpense = ExpenseTestDoubles.CreateExpense(userId, 10m, expenseDate, "X");
+
         var items = new List<ExpenseItem>
         {
-            new()
-            {
-                Id = 2,
-                CategoryId = category.Id,
-                ItemAmount = 10m,
-                Description = null,
-                Expense = new Expense
-                {
-                    Id = 11,
-                    UserId = userId,
-                    Date = new DateTime(2024, 2, 5, 0, 0, 0, DateTimeKind.Utc),
-                    Merchant = "X",
-                    TotalAmount = 10m
-                }
-            }
+            ExpenseTestDoubles.CreateItemWithExpense(category.Id, 10m, null, parentExpense)
         };
 
         _expenseRepository

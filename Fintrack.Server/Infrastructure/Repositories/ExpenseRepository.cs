@@ -4,18 +4,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fintrack.Server.Infrastructure.Repositories;
 
-public class ExpenseRepository : IExpenseRepository
+internal sealed class ExpenseRepository : IExpenseRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ApplicationDbContext _dbContext;
 
-    public ExpenseRepository(ApplicationDbContext context)
+    public ExpenseRepository(ApplicationDbContext dbContext)
     {
-        _context = context;
+        _dbContext = dbContext;
     }
 
-    public async Task AddAsync(Expense expense, CancellationToken cancellationToken = default)
+    public async Task<Expense?> GetByIdAsync(
+        Guid id,
+        string userId,
+        CancellationToken cancellationToken = default)
     {
-        await _context.Expenses.AddAsync(expense, cancellationToken);
+        return await _dbContext.Expenses
+            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId, cancellationToken);
+    }
+
+    public async Task<Expense?> GetByIdWithItemsAsync(
+        Guid id,
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Expenses
+            .Include(e => e.Items)
+            .ThenInclude(i => i.Category)
+            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId, cancellationToken);
     }
 
     public async Task<IReadOnlyDictionary<Guid, decimal>> SumItemAmountsByCategoryAsync(
@@ -30,7 +45,7 @@ public class ExpenseRepository : IExpenseRepository
             return new Dictionary<Guid, decimal>();
         }
 
-        var spentItems = await _context.ExpenseItems
+        var spentItems = await _dbContext.ExpenseItems
             .Include(i => i.Expense)
             .Where(i =>
                 i.Expense != null &&
@@ -53,7 +68,7 @@ public class ExpenseRepository : IExpenseRepository
         DateTime endExclusive,
         CancellationToken cancellationToken = default)
     {
-        return await _context.ExpenseItems
+        return await _dbContext.ExpenseItems
             .Include(i => i.Expense)
             .Where(i =>
                 i.Expense != null &&
@@ -63,5 +78,20 @@ public class ExpenseRepository : IExpenseRepository
                 i.Expense.Date < endExclusive)
             .OrderByDescending(i => i.Expense!.Date)
             .ToListAsync(cancellationToken);
+    }
+
+    public void Add(Expense expense)
+    {
+        _dbContext.Expenses.Add(expense);
+    }
+
+    public void Update(Expense expense)
+    {
+        _dbContext.Expenses.Update(expense);
+    }
+
+    public void Remove(Expense expense)
+    {
+        _dbContext.Expenses.Remove(expense);
     }
 }

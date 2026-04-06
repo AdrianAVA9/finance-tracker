@@ -27,6 +27,15 @@ namespace Fintrack.Server.Infrastructure.Authorization
             {
                 Permissions.CategoriesRead,
                 Permissions.BudgetsRead
+            },
+            [Roles.IntegrationTestNoExpenses] = new HashSet<string>
+            {
+                Permissions.CategoriesRead
+            },
+            [Roles.IntegrationTestExpenseReadOnly] = new HashSet<string>
+            {
+                Permissions.CategoriesRead,
+                Permissions.ExpensesRead
             }
         };
 

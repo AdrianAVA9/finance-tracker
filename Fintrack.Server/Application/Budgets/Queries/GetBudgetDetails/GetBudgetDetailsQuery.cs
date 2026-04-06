@@ -6,7 +6,7 @@ using Fintrack.Server.Domain.Expenses;
 namespace Fintrack.Server.Application.Budgets.Queries.GetBudgetDetails;
 
 public record ExpenseItemDto(
-    int Id,
+    Guid Id,
     string Description,
     decimal Amount,
     DateTime Date

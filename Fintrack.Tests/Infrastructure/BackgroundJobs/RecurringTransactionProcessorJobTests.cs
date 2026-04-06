@@ -20,9 +20,7 @@ using Fintrack.Server.Domain.Incomes;
 using Fintrack.Server.Domain.Invoices;
 using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
-using Fintrack.Server.Domain.Enums;
 using MediatR;
-using NSubstitute;
 
 namespace Fintrack.Tests.Infrastructure.BackgroundJobs
 {
@@ -48,20 +46,19 @@ namespace Fintrack.Tests.Infrastructure.BackgroundJobs
             var logger = Substitute.For<ILogger<RecurringTransactionProcessorJob>>();
             var job = new RecurringTransactionProcessorJob(serviceProvider, logger);
  
-            // Reflection to access the private CalculateNextDate method
-            var methodInfo = typeof(RecurringTransactionProcessorJob).GetMethod("CalculateNextDate", BindingFlags.NonPublic | BindingFlags.Instance);
+            var methodInfo = typeof(RecurringTransactionProcessorJob)
+                .GetMethod("CalculateNextDate", BindingFlags.NonPublic | BindingFlags.Static)!;
 
             // Edge Case 1: Monthly from Jan 31st. Should be Feb 28th (or 29th on leap year).
             var jan31 = new DateTime(2025, 1, 31);
             var today = new DateTime(2025, 1, 31);
-            var nextDate1 = (DateTime)methodInfo.Invoke(job, new object[] { jan31, RecurringFrequency.Monthly, today });
+            var nextDate1 = (DateTime)methodInfo.Invoke(null, new object[] { jan31, RecurringFrequency.Monthly, today })!;
             Assert.Equal(new DateTime(2025, 2, 28), nextDate1.Date);
 
             // Edge Case 2: Past due dates (catch-up mechanism)
-            // If the job was paused and a weekly expense from 10 days ago needs processing today
             var pastWeekly = new DateTime(2025, 1, 10);
             var currentToday = new DateTime(2025, 1, 20);
-            var nextDateCatchup = (DateTime)methodInfo.Invoke(job, new object[] { pastWeekly, RecurringFrequency.Weekly, currentToday });
+            var nextDateCatchup = (DateTime)methodInfo.Invoke(null, new object[] { pastWeekly, RecurringFrequency.Weekly, currentToday })!;
             
             // Should increment 7 days iteratively until strictly > today:
             // 10 + 7 = 17 (<= 20) -> loop
@@ -103,8 +100,9 @@ namespace Fintrack.Tests.Infrastructure.BackgroundJobs
             var job = new RecurringTransactionProcessorJob(serviceProvider, logger);
  
             // Act - invoking the private logic directly to avoid the infinite while loop in ExecuteAsync
-            var methodInfo = typeof(RecurringTransactionProcessorJob).GetMethod("ProcessRecurringExpensesAsync", BindingFlags.NonPublic | BindingFlags.Instance);
-            var task = (Task)methodInfo.Invoke(job, new object[] { CancellationToken.None });
+            var methodInfo = typeof(RecurringTransactionProcessorJob)
+                .GetMethod("ProcessRecurringExpensesAsync", BindingFlags.NonPublic | BindingFlags.Instance)!;
+            var task = (Task)methodInfo.Invoke(job, new object[] { CancellationToken.None })!;
             await task;
 
             // Assert

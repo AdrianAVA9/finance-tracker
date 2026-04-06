@@ -1,11 +1,8 @@
 using Fintrack.Server.Domain.ExpenseCategories;
-using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Infrastructure.Repositories;
 using Fintrack.Tests.TestData.Budgets;
 using FluentAssertions;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using NSubstitute;
 
 namespace Fintrack.Tests.Infrastructure.Repositories;
 
@@ -13,20 +10,8 @@ namespace Fintrack.Tests.Infrastructure.Repositories;
 /// Exercises <see cref="ExpenseCategoryRepository"/> against EF Core InMemory (query shapes, filters, includes).
 /// Provider-specific SQL and unique constraints belong in integration tests with PostgreSQL.
 /// </summary>
-public sealed class ExpenseCategoryRepositoryTests
+public sealed class ExpenseCategoryRepositoryTests : RepositoryTestBase
 {
-    private static ApplicationDbContext CreateContext()
-    {
-        var publisher = Substitute.For<IPublisher>();
-        publisher.Publish(Arg.Any<INotification>(), Arg.Any<CancellationToken>())
-            .Returns(Task.CompletedTask);
-
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        return new ApplicationDbContext(options, publisher);
-    }
 
     private static ExpenseCategory CreateCategory(
         string name = "Test Category",

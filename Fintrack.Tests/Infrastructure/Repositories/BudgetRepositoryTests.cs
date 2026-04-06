@@ -1,12 +1,9 @@
 using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.ExpenseCategories;
-using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Infrastructure.Repositories;
 using Fintrack.Tests.TestData.Budgets;
 using FluentAssertions;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using NSubstitute;
 
 namespace Fintrack.Tests.Infrastructure.Repositories;
 
@@ -14,20 +11,8 @@ namespace Fintrack.Tests.Infrastructure.Repositories;
 /// Exercises <see cref="BudgetRepository"/> against EF Core InMemory (query shapes, filters, includes).
 /// Unique constraints and provider-specific SQL belong in integration tests with the real database.
 /// </summary>
-public sealed class BudgetRepositoryTests
+public sealed class BudgetRepositoryTests : RepositoryTestBase
 {
-    private static ApplicationDbContext CreateContext()
-    {
-        var publisher = Substitute.For<IPublisher>();
-        publisher.Publish(Arg.Any<INotification>(), Arg.Any<CancellationToken>())
-            .Returns(Task.CompletedTask);
-
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        return new ApplicationDbContext(options, publisher);
-    }
 
     [Fact]
     public async Task GetByIdAsync_Should_ReturnBudget_When_UserMatches()

@@ -2,7 +2,15 @@ namespace Fintrack.Server.Domain.Expenses;
 
 public interface IExpenseRepository
 {
-    Task AddAsync(Expense expense, CancellationToken cancellationToken = default);
+    Task<Expense?> GetByIdAsync(
+        Guid id,
+        string userId,
+        CancellationToken cancellationToken = default);
+
+    Task<Expense?> GetByIdWithItemsAsync(
+        Guid id,
+        string userId,
+        CancellationToken cancellationToken = default);
 
     Task<IReadOnlyDictionary<Guid, decimal>> SumItemAmountsByCategoryAsync(
         string userId,
@@ -17,4 +25,10 @@ public interface IExpenseRepository
         DateTime startInclusive,
         DateTime endExclusive,
         CancellationToken cancellationToken = default);
+
+    void Add(Expense expense);
+
+    void Update(Expense expense);
+
+    void Remove(Expense expense);
 }

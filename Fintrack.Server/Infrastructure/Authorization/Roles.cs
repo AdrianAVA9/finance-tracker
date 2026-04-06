@@ -15,5 +15,15 @@ namespace Fintrack.Server.Infrastructure.Authorization
         /// Integration tests: can read budgets but not mutate them.
         /// </summary>
         public const string IntegrationTestBudgetReadOnly = "IntegrationTest.BudgetReadOnly";
+
+        /// <summary>
+        /// Integration tests: authenticated but has no expense permissions.
+        /// </summary>
+        public const string IntegrationTestNoExpenses = "IntegrationTest.NoExpenses";
+
+        /// <summary>
+        /// Integration tests: can read expenses but not create, update, or delete them.
+        /// </summary>
+        public const string IntegrationTestExpenseReadOnly = "IntegrationTest.ExpenseReadOnly";
     }
 }

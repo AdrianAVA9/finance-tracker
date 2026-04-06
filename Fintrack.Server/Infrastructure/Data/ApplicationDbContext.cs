@@ -121,35 +121,42 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
             .HasForeignKey(ec => ec.GroupId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        builder.Entity<ExpenseItem>()
-            .HasOne(ei => ei.Expense)
-            .WithMany(e => e.Items)
-            .HasForeignKey(ei => ei.ExpenseId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<Expense>(entity =>
+        {
+            entity.HasOne(e => e.ExpenseCategory)
+                .WithMany()
+                .HasForeignKey(e => e.ExpenseCategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
 
-        builder.Entity<ExpenseItem>()
-            .HasOne(ei => ei.Category)
-            .WithMany()
-            .HasForeignKey(ei => ei.CategoryId)
-            .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(e => e.Invoice)
+                .WithMany()
+                .HasForeignKey(e => e.InvoiceId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasMany(e => e.Items)
+                .WithOne(i => i.Expense)
+                .HasForeignKey(i => i.ExpenseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Navigation(e => e.Items)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+        });
+
+        builder.Entity<ExpenseItem>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(ei => ei.Category)
+                .WithMany()
+                .HasForeignKey(ei => ei.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
 
         builder.Entity<RecurringExpense>()
             .HasOne(re => re.Category)
             .WithMany()
             .HasForeignKey(re => re.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<Expense>()
-            .HasOne(e => e.ExpenseCategory)
-            .WithMany()
-            .HasForeignKey(e => e.ExpenseCategoryId)
-            .OnDelete(DeleteBehavior.SetNull);
-
-        builder.Entity<Expense>()
-            .HasOne(e => e.Invoice)
-            .WithMany()
-            .HasForeignKey(e => e.InvoiceId)
-            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Entity<InvoiceItem>()
             .HasOne(i => i.AssignedCategory)
