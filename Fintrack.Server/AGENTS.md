@@ -2,63 +2,72 @@
 
 This document provides specialized context and rules for AI agents working within the `Fintrack.Server` directory. It overrides general knowledge and ensures code aligns with the established backend architecture and standards.
 
+## How to Use This Guide
+
+- This file is the **authoritative** reference for all backend work in `Fintrack.Server/`.
+- For cross-project norms, see the root [`AGENTS.md`](../AGENTS.md).
+- Skills live in `../.agents/skills/`. Always read a skill file before applying it.
+- The in-repo `Budgets` feature (`Domain/Budgets/`, `Application/Budgets/`, etc.) is the **gold-standard pattern**. Match its structure when implementing or refactoring any feature.
+
 ## 1. Context & Tech Stack
-The `Fintrack.Server` is a RESTful API built with:
-- **Framework:** .NET 8, ASP.NET Core
-- **Language:** C#
-- **Database ORM:** Entity Framework Core (EF Core)
-- **Database Provider:** PostgreSQL (Npgsql)
-- **Architecture Pattern:** Clean Architecture, CQRS (via MediatR)
-- **Testing:** xUnit, NSubstitute, WebApplicationFactory, Testcontainers
-- **Refactors & consistency:** For any multi-layer backend change (domain, application, infrastructure, API, migrations), use [`backend-refactor-quality-gate`](../.agents/skills/backend-refactor-quality-gate/SKILL.md) as the completion checklist; it references the other backend skills and the in-repo `Budgets` feature as the pattern to match.
+| Item | Details |
+|------|---------|
+| Framework | .NET 8, ASP.NET Core |
+| Language | C# |
+| Database ORM | Entity Framework Core (EF Core) |
+| Database Provider | PostgreSQL (Npgsql) |
+| Architecture | Clean Architecture, CQRS (via MediatR) |
+| Testing | xUnit, NSubstitute, WebApplicationFactory, Testcontainers |
 
 ## 2. Architecture: Clean Architecture
 The backend adheres strictly to Clean Architecture principles. Agents MUST respect these boundaries:
 - **`Domain/`**: Enterprise logic and entities. No dependencies on outer layers.
 - **`Application/`**: Business logic, use cases (CQRS handlers), and DTOs. Depends only on `Domain`.
 - **`Infrastructure/`**: Data access, external services, and identity implementations.
-- **`Api/`** (or `Controllers/`): The presentation layer. HTTP endpoints, middleware, and dependency injection setup.
+- **`Api/`** (or `Controllers/`): The presentation layer. HTTP endpoints, middleware, and DI setup.
 
-## 3. Mandatory Development Workflow & Skills
-Every new backend feature MUST be implemented following these numbered steps (0–6). You must not skip steps. **Testing (Step 6) is strictly mandatory for every feature.** Leverage the following skills (located in `../.agents/skills/`) for each step:
+## 3. Mandatory Development Workflow
 
-**0. Solution structure & refactor gates**
-- [`backend-refactor-quality-gate`](../.agents/skills/backend-refactor-quality-gate/SKILL.md): Completion checklist for Fintrack.Server refactors; references other skills for details and points to `Budgets` as the in-repo pattern.
-- [`dotnet-clean-architecture`](../.agents/skills/dotnet-clean-architecture/SKILL.md): Layer boundaries, CQRS folder layout (`Commands/<UseCase>/`, `Queries/<UseCase>/`), and dependency rules.
+Every new backend feature MUST be implemented following these numbered steps (0-6). Do not skip steps. Testing (Step 6) is strictly mandatory.
 
-**1. Enterprise Business Rules (Domain Layer)**
-- [`domain-entity-generator`](../.agents/skills/domain-entity-generator/SKILL.md): Generating Domain Entities following strict DDD principles.
-- [`domain-events-generator`](../.agents/skills/domain-events-generator/SKILL.md): Generating Domain Events and their MediatR handlers.
+| Step | Layer | Skills |
+|------|-------|--------|
+| 0 | Structure & refactor gates | [`backend-refactor-quality-gate`](../.agents/skills/backend-refactor-quality-gate/SKILL.md), [`dotnet-clean-architecture`](../.agents/skills/dotnet-clean-architecture/SKILL.md) |
+| 1 | Domain | [`domain-entity-generator`](../.agents/skills/domain-entity-generator/SKILL.md), [`domain-events-generator`](../.agents/skills/domain-events-generator/SKILL.md) |
+| 2 | Application | [`cqrs-command-generator`](../.agents/skills/cqrs-command-generator/SKILL.md), [`cqrs-query-generator`](../.agents/skills/cqrs-query-generator/SKILL.md), [`fluent-validation`](../.agents/skills/fluent-validation/SKILL.md), [`result-pattern`](../.agents/skills/result-pattern/SKILL.md) |
+| 3 | Infrastructure | [`repository-pattern`](../.agents/skills/repository-pattern/SKILL.md), [`specification-pattern`](../.agents/skills/specification-pattern/SKILL.md), [`ef-core-configuration`](../.agents/skills/ef-core-configuration/SKILL.md), [`supabase-postgres-best-practices`](../.agents/skills/supabase-postgres-best-practices/SKILL.md) |
+| 4 | API & Security | [`api-controller-generator`](../.agents/skills/api-controller-generator/SKILL.md), [`permission-authorization`](../.agents/skills/permission-authorization/SKILL.md) |
+| 5 | Cross-Cutting | [`audit-trail`](../.agents/skills/audit-trail/SKILL.md), [`outbox-pattern`](../.agents/skills/outbox-pattern/SKILL.md), [`pipeline-behaviors`](../.agents/skills/pipeline-behaviors/SKILL.md), [`quartz-background-jobs`](../.agents/skills/quartz-background-jobs/SKILL.md), [`health-checks`](../.agents/skills/health-checks/SKILL.md) |
+| 6 | Testing | [`unit-testing`](../.agents/skills/unit-testing/SKILL.md), [`integration-testing`](../.agents/skills/integration-testing/SKILL.md) |
 
-**2. Feature Implementation (Application Layer)**
-- [`cqrs-command-generator`](../.agents/skills/cqrs-command-generator/SKILL.md): Generating MediatR Commands and handlers.
-- [`cqrs-query-generator`](../.agents/skills/cqrs-query-generator/SKILL.md): Generating MediatR Queries and handlers (reads via EF Core abstractions by default; Dapper optional).
-- [`fluent-validation`](../.agents/skills/fluent-validation/SKILL.md): Creating and enforcing validation rules for commands/queries.
-- [`result-pattern`](../.agents/skills/result-pattern/SKILL.md): Standardized error handling and result wrapping.
+## 4. Auto-invoke Skills
 
-**3. Data Access & Persistence (Infrastructure Layer)**
-- [`repository-pattern`](../.agents/skills/repository-pattern/SKILL.md): Data access abstraction with EF Core.
-- [`specification-pattern`](../.agents/skills/specification-pattern/SKILL.md): Encapsulating reusable query logic.
-- [`ef-core-configuration`](../.agents/skills/ef-core-configuration/SKILL.md): Configuring EF Core entity mappings (Fluent API).
-- [`supabase-postgres-best-practices`](../.agents/skills/supabase-postgres-best-practices/SKILL.md): Database optimization and query best practices.
+When performing these actions inside `Fintrack.Server/`, ALWAYS invoke the corresponding skill FIRST:
 
-**4. API & Security (Presentation Layer)**
-- [`api-controller-generator`](../.agents/skills/api-controller-generator/SKILL.md): Generating RESTful controllers with MediatR.
-- [`permission-authorization`](../.agents/skills/permission-authorization/SKILL.md): Granular access control using custom attributes and policies.
+| Action | Skill |
+|--------|-------|
+| Refactoring a domain entity or aggregate across layers | `backend-refactor-quality-gate` |
+| Migrating an entity to `BaseAuditableEntityGuid` or changing PK types | `backend-refactor-quality-gate` |
+| Aligning a feature with the `Budgets` pattern | `backend-refactor-quality-gate` |
+| Creating or restructuring Application commands/queries | `dotnet-clean-architecture` |
+| Creating a new domain entity or aggregate root | `domain-entity-generator` |
+| Adding domain events to an entity | `domain-events-generator` |
+| Creating a new MediatR command | `cqrs-command-generator` |
+| Creating a new MediatR query | `cqrs-query-generator` |
+| Adding FluentValidation to a command or query | `fluent-validation` |
+| Implementing error handling with Result types | `result-pattern` |
+| Creating a new repository | `repository-pattern` |
+| Configuring EF Core entity mappings | `ef-core-configuration` |
+| Writing or optimizing raw SQL / Postgres queries | `supabase-postgres-best-practices` |
+| Creating a new API controller | `api-controller-generator` |
+| Adding permission-based authorization | `permission-authorization` |
+| Adding audit fields to an entity | `audit-trail` |
+| Creating a background job | `quartz-background-jobs` |
+| Writing unit tests | `unit-testing` |
+| Writing integration tests | `integration-testing` |
 
-**5. Cross-Cutting Concerns & Monitoring**
-- [`audit-trail`](../.agents/skills/audit-trail/SKILL.md): Implementing entity audit logging.
-- [`outbox-pattern`](../.agents/skills/outbox-pattern/SKILL.md): Ensuring reliable domain event processing.
-- [`pipeline-behaviors`](../.agents/skills/pipeline-behaviors/SKILL.md): MediatR behaviors for logging, validation, and performance.
-- [`quartz-background-jobs`](../.agents/skills/quartz-background-jobs/SKILL.md): Creating scheduled background jobs.
-- [`health-checks`](../.agents/skills/health-checks/SKILL.md): Implementing application and database health checks.
-
-**6. Verification & Testing**
-- [`unit-testing`](../.agents/skills/unit-testing/SKILL.md): AAA pattern using xUnit and NSubstitute.
-- [`integration-testing`](../.agents/skills/integration-testing/SKILL.md): Testing with real dependencies using Testcontainers.
-
-## 4. Coding Conventions
-- **Application layout:** Under `Application/{Feature}/`, place each use case under **`Queries/{UseCase}/`** (reads) or **`Commands/{UseCase}/`** (writes), e.g. `Budgets/Queries/GetBudgets/`, `Budgets/Commands/UpsertBudgets/`. Namespace matches the path (e.g. `...Budgets.Queries.GetBudgets`). See [`dotnet-clean-architecture`](../.agents/skills/dotnet-clean-architecture/SKILL.md).
+## 5. Coding Conventions
+- **Application layout:** Under `Application/{Feature}/`, place each use case under **`Queries/{UseCase}/`** (reads) or **`Commands/{UseCase}/`** (writes), e.g. `Budgets/Queries/GetBudgets/`, `Budgets/Commands/UpsertBudgets/`. Namespace matches the path. See [`dotnet-clean-architecture`](../.agents/skills/dotnet-clean-architecture/SKILL.md).
 - **Refactors:** When refactoring or extending behavior across layers, follow [`backend-refactor-quality-gate`](../.agents/skills/backend-refactor-quality-gate/SKILL.md) before considering the work complete.
 - **CQRS & MediatR:** Keep controllers thin. All business logic must be delegated to MediatR Queries and Commands in the `Application` layer.
 - **Repository Pattern:** Do not use `DbContext` directly in the `Application` layer. Use repositories to abstract data access.
