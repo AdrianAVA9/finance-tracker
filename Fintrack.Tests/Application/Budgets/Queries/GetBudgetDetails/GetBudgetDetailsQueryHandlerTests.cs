@@ -34,7 +34,7 @@ public sealed class GetBudgetDetailsQueryHandlerTests : BaseUnitTest
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Be(BudgetErrors.NotFound);
         await _expenseRepository.DidNotReceive()
-            .GetItemsForUserCategoryInDateRangeAsync(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<DateTime>(), Arg.Any<DateTime>(), Arg.Any<CancellationToken>());
+            .GetItemsForUserCategoryInDateRangeAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<DateTime>(), Arg.Any<DateTime>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

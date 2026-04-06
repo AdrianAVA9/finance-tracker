@@ -25,13 +25,14 @@ namespace Fintrack.Server.Migrations
             modelBuilder.Entity("Fintrack.Server.Domain.Budgets.Budget", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -70,11 +71,9 @@ namespace Fintrack.Server.Migrations
 
             modelBuilder.Entity("Fintrack.Server.Domain.ExpenseCategories.ExpenseCategory", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Color")
                         .HasColumnType("text");
@@ -179,8 +178,8 @@ namespace Fintrack.Server.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("ExpenseCategoryId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("ExpenseCategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<int?>("InvoiceId")
                         .HasColumnType("integer");
@@ -229,8 +228,8 @@ namespace Fintrack.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -273,8 +272,8 @@ namespace Fintrack.Server.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -506,8 +505,8 @@ namespace Fintrack.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AssignedCategoryId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("AssignedCategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("InvoiceId")
                         .HasColumnType("integer");

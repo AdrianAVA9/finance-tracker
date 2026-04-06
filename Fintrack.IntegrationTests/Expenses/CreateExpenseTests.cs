@@ -29,7 +29,7 @@ public class CreateExpenseTests : BaseIntegrationTest
             IsRecurring = false,
             Items = new List<RequestExpenseItemData>
             {
-                new RequestExpenseItemData(1, 100.00m, "Test note") // Match simple expense logic
+                new RequestExpenseItemData(Guid.NewGuid(), 100.00m, "Test note") // Match simple expense logic
             }
         };
 
@@ -58,8 +58,8 @@ public class CreateExpenseTests : BaseIntegrationTest
             IsRecurring = false,
             Items = new List<RequestExpenseItemData>
             {
-                new RequestExpenseItemData(1, 50.00m, "Item 1"),
-                new RequestExpenseItemData(2, 30.00m, "Item 2")
+                new RequestExpenseItemData(Guid.NewGuid(), 50.00m, "Item 1"),
+                new RequestExpenseItemData(Guid.NewGuid(), 30.00m, "Item 2")
                 // Total is 80, but stated is 100
             }
         };

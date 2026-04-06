@@ -19,7 +19,7 @@ using Fintrack.Server.Infrastructure.Data;
 
 namespace Fintrack.Server.Application.Expenses.Commands
 {
-    public record ExpenseItemDto(int CategoryId, decimal ItemAmount, string? Description);
+    public record ExpenseItemDto(Guid CategoryId, decimal ItemAmount, string? Description);
 
     public record CreateExpenseCommand(
         string UserId,

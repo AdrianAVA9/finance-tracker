@@ -10,7 +10,7 @@ public class InvoiceItem : Entity
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
     public decimal TotalPrice { get; set; }
-    public int? AssignedCategoryId { get; set; }
+    public Guid? AssignedCategoryId { get; set; }
 
     public virtual Invoice? Invoice { get; set; }
     public virtual ExpenseCategory? AssignedCategory { get; set; }

@@ -34,7 +34,7 @@ internal sealed class BudgetRepository : IBudgetRepository
 
     public async Task<Budget?> GetUserBudgetAsync(
         string userId,
-        int categoryId,
+        Guid categoryId,
         int month,
         int year,
         CancellationToken cancellationToken = default)
@@ -84,7 +84,7 @@ internal sealed class BudgetRepository : IBudgetRepository
 
     public async Task<bool> ExistsAsync(
         string userId,
-        int categoryId,
+        Guid categoryId,
         int month,
         int year,
         CancellationToken cancellationToken = default)

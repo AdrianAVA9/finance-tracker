@@ -89,7 +89,7 @@ public class ReceiptProcessingService
         var categoryDict = userCategories.ToDictionary(c => c.Name, c => c.Id, StringComparer.OrdinalIgnoreCase);
 
         // Resolve Overall Category ID for the Expense
-        int overallCategoryId = 0;
+        Guid overallCategoryId = Guid.Empty;
         if (!string.IsNullOrWhiteSpace(extractedData.Expense.OverallCategory) && 
             categoryDict.TryGetValue(extractedData.Expense.OverallCategory, out var oId))
         {
@@ -99,7 +99,7 @@ public class ReceiptProcessingService
         // 4. Map Line Items
         foreach (var extractedItem in extractedData.LineItems)
         {
-            int categoryId = overallCategoryId; // Default to overall categorization
+            Guid categoryId = overallCategoryId; // Default to overall categorization
             if (!string.IsNullOrWhiteSpace(extractedItem.Category) && 
                 categoryDict.TryGetValue(extractedItem.Category, out var id))
             {
@@ -107,9 +107,9 @@ public class ReceiptProcessingService
             }
             
             // If still zero, fallback to a default or first available just for robustness 
-            if (categoryId == 0)
+            if (categoryId == Guid.Empty)
             {
-                categoryId = userCategories.FirstOrDefault()?.Id ?? 0;
+                categoryId = userCategories.FirstOrDefault()?.Id ?? Guid.Empty;
             }
 
             // Link Items to Expense

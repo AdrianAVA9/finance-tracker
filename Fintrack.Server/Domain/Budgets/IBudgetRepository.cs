@@ -14,7 +14,7 @@ public interface IBudgetRepository
 
     Task<Budget?> GetUserBudgetAsync(
         string userId,
-        int categoryId,
+        Guid categoryId,
         int month,
         int year,
         CancellationToken cancellationToken = default);
@@ -41,7 +41,7 @@ public interface IBudgetRepository
 
     Task<bool> ExistsAsync(
         string userId,
-        int categoryId,
+        Guid categoryId,
         int month,
         int year,
         CancellationToken cancellationToken = default);

@@ -6,7 +6,7 @@ using Fintrack.Server.Domain.Enums;
 
 namespace Fintrack.Server.Api.Controllers.Expenses;
 
-public sealed record RequestExpenseItemData(int CategoryId, decimal ItemAmount, string? Description);
+public sealed record RequestExpenseItemData(Guid CategoryId, decimal ItemAmount, string? Description);
 
 public sealed class RequestCreateExpense
 {

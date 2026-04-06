@@ -17,7 +17,7 @@ using System.Linq;
 
 namespace Fintrack.Server.Application.Expenses.Queries
 {
-    public record ExpenseItemDetailsDto(int Id, int CategoryId, string CategoryName, decimal ItemAmount, string? Description);
+    public record ExpenseItemDetailsDto(int Id, Guid CategoryId, string CategoryName, decimal ItemAmount, string? Description);
     
     public record ExpenseDetailsDto(
         int Id,

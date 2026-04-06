@@ -11,7 +11,7 @@ internal static class BudgetSlotHelper
     public static async Task<Result> TryAddNewBudgetSlotAsync(
         IBudgetRepository repository,
         string userId,
-        int categoryId,
+        Guid categoryId,
         decimal amount,
         bool isRecurrent,
         int month,

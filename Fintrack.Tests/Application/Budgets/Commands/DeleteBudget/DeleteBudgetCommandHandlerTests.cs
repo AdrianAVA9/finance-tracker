@@ -21,7 +21,7 @@ public sealed class DeleteBudgetCommandHandlerTests : BaseUnitTest
     {
         // Arrange
         var userId = BudgetTestDoubles.DefaultUserId;
-        var budget = BudgetTestDoubles.CreateBudget(userId, categoryId: 1, month: 1, year: 2024);
+        var budget = BudgetTestDoubles.CreateBudget(userId, categoryId: Guid.NewGuid(), month: 1, year: 2024);
         var budgetId = budget.Id;
 
         _budgetRepository
@@ -42,7 +42,7 @@ public sealed class DeleteBudgetCommandHandlerTests : BaseUnitTest
     public async Task Handle_Should_ReturnNotFound_When_BudgetOwnedByAnotherUser()
     {
         // Arrange
-        var budget = BudgetTestDoubles.CreateBudget("owner", categoryId: 1, month: 1, year: 2024);
+        var budget = BudgetTestDoubles.CreateBudget("owner", categoryId: Guid.NewGuid(), month: 1, year: 2024);
         var attackerId = "attacker";
 
         _budgetRepository

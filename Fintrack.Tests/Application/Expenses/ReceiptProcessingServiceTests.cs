@@ -57,11 +57,9 @@ public class ReceiptProcessingServiceTests
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes("fake-image-content"));
         var mimeType = "image/jpeg";
 
-        var categories = new List<ExpenseCategory>
-        {
-            new ExpenseCategory { Id = 1, Name = "Food" },
-            new ExpenseCategory { Id = 2, Name = "Transport" }
-        };
+        var food = ExpenseCategory.Create("Food", null, null, null, null, null, true).Value;
+        var transport = ExpenseCategory.Create("Transport", null, null, null, null, null, true).Value;
+        var categories = new List<ExpenseCategory> { food, transport };
 
         _categoryRepository.GetAllByUserIdAsync(userId, Arg.Any<CancellationToken>())
             .Returns(categories);
@@ -90,7 +88,7 @@ public class ReceiptProcessingServiceTests
         expense.Status.Should().Be(ExpenseStatus.NeedsReview);
         expense.TotalAmount.Should().Be(15.5m);
         expense.Items.Should().ContainSingle();
-        expense.Items.First().CategoryId.Should().Be(1);
+        expense.Items.First().CategoryId.Should().Be(food.Id);
 
         await _expenseRepository.Received(1).AddAsync(Arg.Any<Expense>(), Arg.Any<CancellationToken>());
         await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
@@ -104,10 +102,8 @@ public class ReceiptProcessingServiceTests
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes("fake-image-content"));
         var mimeType = "image/jpeg";
 
-        var categories = new List<ExpenseCategory>
-        {
-            new ExpenseCategory { Id = 99, Name = "DefaultFallback" }
-        };
+        var fallback = ExpenseCategory.Create("DefaultFallback", null, null, null, null, null, true).Value;
+        var categories = new List<ExpenseCategory> { fallback };
 
         _categoryRepository.GetAllByUserIdAsync(userId, Arg.Any<CancellationToken>())
             .Returns(categories);
@@ -134,6 +130,6 @@ public class ReceiptProcessingServiceTests
         var expenseWithItem = await _service.ProcessReceiptAsync(stream, mimeType, userId);
         
         expenseWithItem.Items.Should().ContainSingle();
-        expenseWithItem.Items.First().CategoryId.Should().Be(99); // Fallbacks to first available
+        expenseWithItem.Items.First().CategoryId.Should().Be(fallback.Id); // Fallbacks to first available
     }
 }

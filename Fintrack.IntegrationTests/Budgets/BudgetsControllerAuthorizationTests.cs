@@ -69,8 +69,8 @@ public sealed class BudgetsControllerAuthorizationTests : BaseIntegrationTest
             roles: new[] { Roles.IntegrationTestBudgetReadOnly });
 
         var group = new ExpenseCategoryGroup { Name = "G" };
-        var category = new ExpenseCategory { Name = "C", Group = group };
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "C");
         await AddAsync(category);
 
         var request = new UpsertBudgetsRequest(1, 2024, new List<BudgetEntryDto> { new(category.Id, 50m) });
@@ -101,8 +101,8 @@ public sealed class BudgetsControllerAuthorizationTests : BaseIntegrationTest
     {
         var userId = Guid.NewGuid().ToString();
         var group = new ExpenseCategoryGroup { Name = "G" };
-        var category = new ExpenseCategory { Name = "C", Group = group };
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "C");
         await AddAsync(category);
 
         var budget = Budget.Create(userId, category.Id, 10m, false, 2, 2024).Value;

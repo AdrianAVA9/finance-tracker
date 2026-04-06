@@ -21,7 +21,8 @@ public sealed class CopyPreviousMonthBudgetsCommandHandlerTests : BaseUnitTest
     {
         // Arrange
         var userId = BudgetTestDoubles.DefaultUserId;
-        var source = BudgetTestDoubles.CreateBudget(userId, categoryId: 7, amount: 200m, isRecurrent: true, month: 2, year: 2024);
+        var categoryId = Guid.NewGuid();
+        var source = BudgetTestDoubles.CreateBudget(userId, categoryId: categoryId, amount: 200m, isRecurrent: true, month: 2, year: 2024);
 
         _budgetRepository
             .GetUserBudgetsByMonthAsync(userId, 2, 2024, CancellationToken)
@@ -30,7 +31,7 @@ public sealed class CopyPreviousMonthBudgetsCommandHandlerTests : BaseUnitTest
             .GetUserBudgetsByMonthAsync(userId, 3, 2024, CancellationToken)
             .Returns(new List<Budget>());
         _budgetRepository
-            .ExistsAsync(userId, 7, 3, 2024, CancellationToken)
+            .ExistsAsync(userId, categoryId, 3, 2024, CancellationToken)
             .Returns(true);
 
         // Act
@@ -67,7 +68,8 @@ public sealed class CopyPreviousMonthBudgetsCommandHandlerTests : BaseUnitTest
     {
         // Arrange — previous month of Jan 2025 is Dec 2024
         var userId = BudgetTestDoubles.DefaultUserId;
-        var source = BudgetTestDoubles.CreateBudget(userId, categoryId: 3, amount: 150m, month: 12, year: 2024);
+        var categoryId = Guid.NewGuid();
+        var source = BudgetTestDoubles.CreateBudget(userId, categoryId: categoryId, amount: 150m, month: 12, year: 2024);
 
         _budgetRepository
             .GetUserBudgetsByMonthAsync(userId, 12, 2024, CancellationToken)
@@ -76,7 +78,7 @@ public sealed class CopyPreviousMonthBudgetsCommandHandlerTests : BaseUnitTest
             .GetUserBudgetsByMonthAsync(userId, 1, 2025, CancellationToken)
             .Returns(Array.Empty<Budget>());
         _budgetRepository
-            .ExistsAsync(userId, 3, 1, 2025, CancellationToken)
+            .ExistsAsync(userId, categoryId, 1, 2025, CancellationToken)
             .Returns(false);
         _unitOfWork.SaveChangesAsync(CancellationToken).Returns(1);
 
@@ -86,7 +88,7 @@ public sealed class CopyPreviousMonthBudgetsCommandHandlerTests : BaseUnitTest
         // Assert
         result.IsSuccess.Should().BeTrue();
         _budgetRepository.Received(1).Add(Arg.Is<Budget>(b =>
-            b.Month == 1 && b.Year == 2025 && b.CategoryId == 3 && b.Amount == 150m));
+            b.Month == 1 && b.Year == 2025 && b.CategoryId == categoryId && b.Amount == 150m));
         await _unitOfWork.Received(1).SaveChangesAsync(CancellationToken);
     }
 
@@ -95,8 +97,9 @@ public sealed class CopyPreviousMonthBudgetsCommandHandlerTests : BaseUnitTest
     {
         // Arrange
         var userId = BudgetTestDoubles.DefaultUserId;
-        var source = BudgetTestDoubles.CreateBudget(userId, categoryId: 7, amount: 200m, isRecurrent: true, month: 2, year: 2024);
-        var targetExisting = BudgetTestDoubles.CreateBudget(userId, categoryId: 7, amount: 50m, isRecurrent: false, month: 3, year: 2024);
+        var categoryId = Guid.NewGuid();
+        var source = BudgetTestDoubles.CreateBudget(userId, categoryId: categoryId, amount: 200m, isRecurrent: true, month: 2, year: 2024);
+        var targetExisting = BudgetTestDoubles.CreateBudget(userId, categoryId: categoryId, amount: 50m, isRecurrent: false, month: 3, year: 2024);
 
         _budgetRepository
             .GetUserBudgetsByMonthAsync(userId, 2, 2024, CancellationToken)

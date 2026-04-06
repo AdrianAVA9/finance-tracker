@@ -81,7 +81,7 @@ namespace Fintrack.Tests.Infrastructure.BackgroundJobs
                 UserId = "user-1",
                 Merchant = "Netflix",
                 Amount = 15.99m,
-                CategoryId = 1,
+                CategoryId = Guid.NewGuid(),
                 Frequency = RecurringFrequency.Monthly,
                 StartDate = DateTime.UtcNow.AddMonths(-1),
                 NextProcessingDate = DateTime.UtcNow.AddDays(-1), // Due yesterday

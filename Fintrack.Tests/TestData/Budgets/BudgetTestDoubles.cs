@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.ExpenseCategories;
 
@@ -20,33 +21,66 @@ internal static class BudgetTestDoubles
         };
 
     public static ExpenseCategory CreateCategory(
-        int id = 1,
+        Guid? id = null,
         string name = "Alquiler",
         ExpenseCategoryGroup? group = null,
         string? color = "#FF0000",
         string? icon = "home")
     {
         group ??= CreateGroup();
-        return new ExpenseCategory
+        var groupId = group.Id != 0 ? group.Id : (int?)null;
+        var result = ExpenseCategory.Create(
+            name,
+            description: null,
+            icon: icon,
+            color: color,
+            groupId: groupId,
+            userId: null,
+            isEditable: true);
+
+        if (result.IsFailure)
         {
-            Id = id,
-            Name = name,
-            GroupId = group.Id,
-            Group = group,
-            Color = color,
-            Icon = icon
-        };
+            throw new InvalidOperationException(result.Error.Description);
+        }
+
+        var category = result.Value;
+        AttachGroup(category, group);
+
+        if (id.HasValue)
+        {
+            SetEntityId(category, id.Value);
+        }
+
+        return category;
+    }
+
+    private static void AttachGroup(ExpenseCategory category, ExpenseCategoryGroup group)
+    {
+        var prop = typeof(ExpenseCategory).GetProperty(nameof(ExpenseCategory.Group))
+                   ?? throw new InvalidOperationException("ExpenseCategory.Group not found");
+        var setter = prop.GetSetMethod(nonPublic: true)
+                     ?? throw new InvalidOperationException("ExpenseCategory.Group has no setter");
+        setter.Invoke(category, new object?[] { group });
+    }
+
+    private static void SetEntityId(ExpenseCategory category, Guid id)
+    {
+        var prop = typeof(BaseAuditableEntityGuid).GetProperty(nameof(BaseAuditableEntityGuid.Id))
+                   ?? throw new InvalidOperationException("Id not found");
+        var setter = prop.GetSetMethod(nonPublic: true)
+                     ?? throw new InvalidOperationException("Id has no setter");
+        setter.Invoke(category, new object[] { id });
     }
 
     public static Budget CreateBudget(
         string userId = DefaultUserId,
-        int categoryId = 1,
+        Guid? categoryId = null,
         decimal amount = 1000m,
         bool isRecurrent = false,
         int month = 3,
         int year = 2024)
     {
-        var result = Budget.Create(userId, categoryId, amount, isRecurrent, month, year);
+        var result = Budget.Create(userId, categoryId ?? Guid.NewGuid(), amount, isRecurrent, month, year);
         if (result.IsFailure)
         {
             throw new InvalidOperationException(result.Error.Description);

@@ -7,7 +7,7 @@ namespace Fintrack.Server.Domain.ExpenseCategories;
 public interface IExpenseCategoryRepository
 {
     Task<ExpenseCategory?> GetByIdAsync(
-        int id,
+        Guid id,
         CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<ExpenseCategory>> GetAllByUserIdAsync(
@@ -15,7 +15,7 @@ public interface IExpenseCategoryRepository
         CancellationToken cancellationToken = default);
 
     Task<bool> ExistsAsync(
-        int id,
+        Guid id,
         CancellationToken cancellationToken = default);
 
     void Add(ExpenseCategory expenseCategory);

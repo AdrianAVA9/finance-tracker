@@ -10,7 +10,7 @@ public class RecurringExpense : BaseAuditableEntity
     public string UserId { get; set; } = string.Empty;
     public string? Merchant { get; set; }
     public decimal Amount { get; set; }
-    public int CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
     public RecurringFrequency Frequency { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime NextProcessingDate { get; set; }

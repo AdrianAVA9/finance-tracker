@@ -34,7 +34,7 @@ public sealed class BudgetRepositoryTests
     {
         using var context = CreateContext();
         var repo = new BudgetRepository(context);
-        var budget = BudgetTestDoubles.CreateBudget("u1", 1, 100m, month: 5, year: 2024);
+        var budget = BudgetTestDoubles.CreateBudget("u1", Guid.NewGuid(), 100m, month: 5, year: 2024);
         context.Budgets.Add(budget);
         await context.SaveChangesAsync();
 
@@ -49,7 +49,7 @@ public sealed class BudgetRepositoryTests
     {
         using var context = CreateContext();
         var repo = new BudgetRepository(context);
-        var budget = BudgetTestDoubles.CreateBudget("owner", 1, 100m, month: 5, year: 2024);
+        var budget = BudgetTestDoubles.CreateBudget("owner", Guid.NewGuid(), 100m, month: 5, year: 2024);
         context.Budgets.Add(budget);
         await context.SaveChangesAsync();
 
@@ -85,16 +85,18 @@ public sealed class BudgetRepositoryTests
     {
         using var context = CreateContext();
         var repo = new BudgetRepository(context);
-        var a = BudgetTestDoubles.CreateBudget("u1", 1, 10m, month: 3, year: 2024);
-        var b = BudgetTestDoubles.CreateBudget("u1", 2, 20m, month: 4, year: 2024);
-        var c = BudgetTestDoubles.CreateBudget("u2", 1, 30m, month: 3, year: 2024);
+        var categoryA = Guid.NewGuid();
+        var categoryB = Guid.NewGuid();
+        var a = BudgetTestDoubles.CreateBudget("u1", categoryA, 10m, month: 3, year: 2024);
+        var b = BudgetTestDoubles.CreateBudget("u1", categoryB, 20m, month: 4, year: 2024);
+        var c = BudgetTestDoubles.CreateBudget("u2", categoryA, 30m, month: 3, year: 2024);
         context.Budgets.AddRange(a, b, c);
         await context.SaveChangesAsync();
 
         var list = await repo.GetUserBudgetsByMonthAsync("u1", 3, 2024, CancellationToken.None);
 
         list.Should().ContainSingle();
-        list[0].CategoryId.Should().Be(1);
+        list[0].CategoryId.Should().Be(categoryA);
     }
 
     [Fact]
@@ -102,11 +104,12 @@ public sealed class BudgetRepositoryTests
     {
         using var context = CreateContext();
         var repo = new BudgetRepository(context);
-        var budget = BudgetTestDoubles.CreateBudget("u1", 5, 1m, month: 6, year: 2025);
+        var categoryId = Guid.NewGuid();
+        var budget = BudgetTestDoubles.CreateBudget("u1", categoryId, 1m, month: 6, year: 2025);
         context.Budgets.Add(budget);
         await context.SaveChangesAsync();
 
-        var exists = await repo.ExistsAsync("u1", 5, 6, 2025, CancellationToken.None);
+        var exists = await repo.ExistsAsync("u1", categoryId, 6, 2025, CancellationToken.None);
 
         exists.Should().BeTrue();
     }
@@ -116,9 +119,9 @@ public sealed class BudgetRepositoryTests
     {
         using var context = CreateContext();
         var repo = new BudgetRepository(context);
-        var recurrent = BudgetTestDoubles.CreateBudget("a", 1, 100m, isRecurrent: true, month: 2, year: 2024);
-        var nonRec = BudgetTestDoubles.CreateBudget("b", 2, 200m, isRecurrent: false, month: 2, year: 2024);
-        var otherMonth = BudgetTestDoubles.CreateBudget("c", 3, 300m, isRecurrent: true, month: 3, year: 2024);
+        var recurrent = BudgetTestDoubles.CreateBudget("a", Guid.NewGuid(), 100m, isRecurrent: true, month: 2, year: 2024);
+        var nonRec = BudgetTestDoubles.CreateBudget("b", Guid.NewGuid(), 200m, isRecurrent: false, month: 2, year: 2024);
+        var otherMonth = BudgetTestDoubles.CreateBudget("c", Guid.NewGuid(), 300m, isRecurrent: true, month: 3, year: 2024);
         context.Budgets.AddRange(recurrent, nonRec, otherMonth);
         await context.SaveChangesAsync();
 
@@ -134,7 +137,7 @@ public sealed class BudgetRepositoryTests
     {
         using var context = CreateContext();
         var repo = new BudgetRepository(context);
-        var budget = BudgetTestDoubles.CreateBudget("u1", 1, 1m, month: 1, year: 2024);
+        var budget = BudgetTestDoubles.CreateBudget("u1", Guid.NewGuid(), 1m, month: 1, year: 2024);
         context.Budgets.Add(budget);
         context.SaveChanges();
 

@@ -8,7 +8,7 @@ namespace Fintrack.Server.Application.Budgets.Queries.GetBudgets;
 
 public record BudgetDto(
     Guid Id,
-    int CategoryId,
+    Guid CategoryId,
     string CategoryName,
     string? CategoryIcon,
     string? CategoryColor,
@@ -78,7 +78,7 @@ internal sealed class GetBudgetsQueryHandler : IQueryHandler<GetBudgetsQuery, Bu
             b.Category!.Color,
             b.Category?.Group?.Name,
             b.Amount,
-            spentAmounts.GetValueOrDefault(b.CategoryId, 0),
+            spentAmounts.GetValueOrDefault(b.CategoryId, 0m),
             b.IsRecurrent
         )).ToList();
 

@@ -55,8 +55,8 @@ namespace Fintrack.Tests.Application.Expenses.Commands
                 Frequency: null,
                 Items: new List<ExpenseItemDto>
                 {
-                    new ExpenseItemDto(1, 50.00m, "Item 1"),
-                    new ExpenseItemDto(2, 49.99m, "Item 2") // Sum is 99.99, not 100.00
+                    new ExpenseItemDto(Guid.NewGuid(), 50.00m, "Item 1"),
+                    new ExpenseItemDto(Guid.NewGuid(), 49.99m, "Item 2") // Sum is 99.99, not 100.00
                 }
             );
 
@@ -87,8 +87,8 @@ namespace Fintrack.Tests.Application.Expenses.Commands
                 Frequency: RecurringFrequency.Monthly,
                 Items: new List<ExpenseItemDto>
                 {
-                    new ExpenseItemDto(1, 50.00m, "Item 1"),
-                    new ExpenseItemDto(2, 50.00m, "Item 2")
+                    new ExpenseItemDto(Guid.NewGuid(), 50.00m, "Item 1"),
+                    new ExpenseItemDto(Guid.NewGuid(), 50.00m, "Item 2")
                 }
             );
 

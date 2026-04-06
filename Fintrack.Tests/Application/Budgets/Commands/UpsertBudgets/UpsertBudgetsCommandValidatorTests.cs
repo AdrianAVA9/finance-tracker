@@ -15,7 +15,7 @@ public sealed class UpsertBudgetsCommandValidatorTests : BaseUnitTest
             UserId: string.Empty,
             Month: 3,
             Year: 2024,
-            Budgets: new List<BudgetEntryDto> { new(1, 10m) });
+            Budgets: new List<BudgetEntryDto> { new(Guid.NewGuid(), 10m) });
 
         var result = _validator.TestValidate(command);
 
@@ -25,7 +25,7 @@ public sealed class UpsertBudgetsCommandValidatorTests : BaseUnitTest
     [Fact]
     public void Validate_Should_HaveError_When_MonthOutOfRange()
     {
-        var command = new UpsertBudgetsCommand("u1", Month: 13, Year: 2024, Budgets: new List<BudgetEntryDto> { new(1, 10m) });
+        var command = new UpsertBudgetsCommand("u1", Month: 13, Year: 2024, Budgets: new List<BudgetEntryDto> { new(Guid.NewGuid(), 10m) });
 
         var result = _validator.TestValidate(command);
 
@@ -33,9 +33,9 @@ public sealed class UpsertBudgetsCommandValidatorTests : BaseUnitTest
     }
 
     [Fact]
-    public void Validate_Should_HaveError_When_CategoryIdNotPositive()
+    public void Validate_Should_HaveError_When_CategoryIdIsEmpty()
     {
-        var command = new UpsertBudgetsCommand("u1", 3, 2024, new List<BudgetEntryDto> { new(0, 10m) });
+        var command = new UpsertBudgetsCommand("u1", 3, 2024, new List<BudgetEntryDto> { new(Guid.Empty, 10m) });
 
         var result = _validator.TestValidate(command);
 
@@ -45,7 +45,7 @@ public sealed class UpsertBudgetsCommandValidatorTests : BaseUnitTest
     [Fact]
     public void Validate_Should_HaveError_When_AmountNegative()
     {
-        var command = new UpsertBudgetsCommand("u1", 3, 2024, new List<BudgetEntryDto> { new(1, -0.01m) });
+        var command = new UpsertBudgetsCommand("u1", 3, 2024, new List<BudgetEntryDto> { new(Guid.NewGuid(), -0.01m) });
 
         var result = _validator.TestValidate(command);
 
@@ -59,7 +59,7 @@ public sealed class UpsertBudgetsCommandValidatorTests : BaseUnitTest
             "u1",
             3,
             2024,
-            new List<BudgetEntryDto> { new(5, 0m, IsRecurrent: true) });
+            new List<BudgetEntryDto> { new(Guid.NewGuid(), 0m, IsRecurrent: true) });
 
         var result = _validator.TestValidate(command);
 

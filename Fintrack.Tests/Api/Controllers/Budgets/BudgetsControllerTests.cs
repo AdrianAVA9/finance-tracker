@@ -87,7 +87,7 @@ public sealed class BudgetsControllerTests : BaseUnitTest
     {
         var userId = "user-1";
         var controller = CreateController(_sender, userId);
-        var entries = new List<BudgetEntryDto> { new(5, 100m) };
+        var entries = new List<BudgetEntryDto> { new(Guid.NewGuid(), 100m) };
         var request = new UpsertBudgetsRequest(2, 2025, entries);
         _sender.Send(Arg.Any<UpsertBudgetsCommand>(), CancellationToken).Returns(Result.Success());
 

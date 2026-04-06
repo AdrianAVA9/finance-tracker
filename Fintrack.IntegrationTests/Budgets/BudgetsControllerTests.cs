@@ -44,8 +44,8 @@ public class BudgetsControllerTests : BaseIntegrationTest
         AuthenticateAs(userId, BudgetUserPermissions);
 
         var group = new ExpenseCategoryGroup { Name = "Test group" };
-        var category = new ExpenseCategory { Name = "Test category", Group = group };
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Test category");
         await AddAsync(category);
 
         var budgetResult = Budget.Create(userId, category.Id, 500, false, 3, 2024);
@@ -70,8 +70,8 @@ public class BudgetsControllerTests : BaseIntegrationTest
         AuthenticateAs(userId, BudgetUserPermissions);
 
         var group = new ExpenseCategoryGroup { Name = "Test group" };
-        var category = new ExpenseCategory { Name = "Test category", Group = group };
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Test category");
         await AddAsync(category);
 
         var budgetResult = Budget.Create(userId, category.Id, 500, false, 3, 2024);
@@ -111,8 +111,8 @@ public class BudgetsControllerTests : BaseIntegrationTest
         AuthenticateAs(userId, BudgetUserPermissions);
 
         var group = new ExpenseCategoryGroup { Name = "Test group" };
-        var category = new ExpenseCategory { Name = "Test category", Group = group };
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Test category");
         await AddAsync(category);
 
         var request = new UpsertBudgetsRequest(
@@ -145,8 +145,8 @@ public class BudgetsControllerTests : BaseIntegrationTest
         AuthenticateAs(userId, BudgetUserPermissions);
 
         var group = new ExpenseCategoryGroup { Name = "Copy group" };
-        var category = new ExpenseCategory { Name = "Copy category", Group = group };
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Copy category");
         await AddAsync(category);
 
         var feb = Budget.Create(userId, category.Id, 750m, isRecurrent: true, month: 2, year: 2024);
@@ -192,8 +192,8 @@ public class BudgetsControllerTests : BaseIntegrationTest
         AuthenticateAs(userId, BudgetUserPermissions);
 
         var group = new ExpenseCategoryGroup { Name = "Details group" };
-        var category = new ExpenseCategory { Name = "Details category", Group = group };
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Details category");
         await AddAsync(category);
 
         var budgetResult = Budget.Create(userId, category.Id, 400m, false, month: 5, year: 2024);
@@ -230,8 +230,8 @@ public class BudgetsControllerTests : BaseIntegrationTest
         var otherId = Guid.NewGuid().ToString();
 
         var group = new ExpenseCategoryGroup { Name = "Iso group" };
-        var category = new ExpenseCategory { Name = "Iso category", Group = group };
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Iso category");
         await AddAsync(category);
 
         var budgetResult = Budget.Create(ownerId, category.Id, 100m, false, 4, 2024);

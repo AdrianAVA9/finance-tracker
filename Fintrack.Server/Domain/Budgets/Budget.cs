@@ -8,7 +8,7 @@ namespace Fintrack.Server.Domain.Budgets;
 public sealed class Budget : BaseAuditableEntityGuid
 {
     public string UserId { get; private set; } = string.Empty;
-    public int CategoryId { get; private set; }
+    public Guid CategoryId { get; private set; }
     public decimal Amount { get; private set; }
     public bool IsRecurrent { get; private set; }
     public int Month { get; private set; }
@@ -24,7 +24,7 @@ public sealed class Budget : BaseAuditableEntityGuid
 
     private Budget(
         string userId,
-        int categoryId,
+        Guid categoryId,
         decimal amount,
         bool isRecurrent,
         int month,
@@ -42,7 +42,7 @@ public sealed class Budget : BaseAuditableEntityGuid
 
     public static Result<Budget> Create(
         string userId,
-        int categoryId,
+        Guid categoryId,
         decimal amount,
         bool isRecurrent,
         int month,

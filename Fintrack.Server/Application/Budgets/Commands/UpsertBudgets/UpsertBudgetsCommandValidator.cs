@@ -25,8 +25,8 @@ internal sealed class UpsertBudgetsCommandValidator : AbstractValidator<UpsertBu
         RuleForEach(x => x.Budgets).ChildRules(budget =>
         {
             budget.RuleFor(x => x.CategoryId)
-                .GreaterThan(0)
-                .WithMessage("Category ID must be greater than zero");
+                .NotEmpty()
+                .WithMessage("Category ID is required");
 
             budget.RuleFor(x => x.Amount)
                 .GreaterThanOrEqualTo(0)

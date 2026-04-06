@@ -14,7 +14,7 @@ internal sealed class ExpenseCategoryRepository : IExpenseCategoryRepository
     }
 
     public async Task<ExpenseCategory?> GetByIdAsync(
-        int id,
+        Guid id,
         CancellationToken cancellationToken = default)
     {
         return await _dbContext
@@ -36,7 +36,7 @@ internal sealed class ExpenseCategoryRepository : IExpenseCategoryRepository
     }
 
     public async Task<bool> ExistsAsync(
-        int id,
+        Guid id,
         CancellationToken cancellationToken = default)
     {
         return await _dbContext

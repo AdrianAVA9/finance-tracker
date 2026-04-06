@@ -33,7 +33,7 @@ public abstract class ApiControllerBase : ControllerBase
         return HandleFailure(result);
     }
 
-    private IActionResult HandleFailure(Result result)
+    protected IActionResult HandleFailure(Result result)
     {
         return result.Error switch
         {

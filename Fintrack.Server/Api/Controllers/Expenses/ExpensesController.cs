@@ -106,4 +106,4 @@ public record UpdateExpenseRequest(
     List<UpdateExpenseItemRequestDto> Items
 );
 
-public record UpdateExpenseItemRequestDto(int? Id, int CategoryId, decimal ItemAmount, string? Description);
+public record UpdateExpenseItemRequestDto(int? Id, Guid CategoryId, decimal ItemAmount, string? Description);

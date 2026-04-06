@@ -5,7 +5,7 @@ using Fintrack.Server.Domain.Budgets;
 
 namespace Fintrack.Server.Application.Budgets.Commands.UpsertBudgets;
 
-public record BudgetEntryDto(int CategoryId, decimal Amount, bool IsRecurrent = false);
+public record BudgetEntryDto(Guid CategoryId, decimal Amount, bool IsRecurrent = false);
 
 public record UpsertBudgetsCommand(
     string UserId,

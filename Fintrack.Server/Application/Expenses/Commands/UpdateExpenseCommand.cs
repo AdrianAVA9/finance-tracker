@@ -17,7 +17,7 @@ using System.Linq;
 
 namespace Fintrack.Server.Application.Expenses.Commands
 {
-    public record UpdateExpenseItemDto(int? Id, int CategoryId, decimal ItemAmount, string? Description);
+    public record UpdateExpenseItemDto(int? Id, Guid CategoryId, decimal ItemAmount, string? Description);
 
     public record UpdateExpenseCommand(
         int Id,

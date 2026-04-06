@@ -59,7 +59,7 @@ public sealed class RecurringBudgetRollForwardServiceTests : BaseUnitTest
     public async Task ProcessAsync_Should_AddBudgetAndSave_When_SlotIsFree()
     {
         var userId = "user-a";
-        var categoryId = 9;
+        var categoryId = Guid.NewGuid();
         var february = Budget.Create(userId, categoryId, 250m, isRecurrent: true, month: 2, year: 2024);
         february.IsSuccess.Should().BeTrue();
 
@@ -90,7 +90,7 @@ public sealed class RecurringBudgetRollForwardServiceTests : BaseUnitTest
     public async Task ProcessAsync_Should_NotSave_When_AllSlotsAlreadyExist()
     {
         var userId = "user-b";
-        var categoryId = 3;
+        var categoryId = Guid.NewGuid();
         var february = Budget.Create(userId, categoryId, 50m, true, 2, 2024);
         february.IsSuccess.Should().BeTrue();
 
@@ -114,8 +114,8 @@ public sealed class RecurringBudgetRollForwardServiceTests : BaseUnitTest
     [Fact]
     public async Task ProcessAsync_Should_SaveOnce_When_OneAdds_And_OneAlreadyExists()
     {
-        var cat1 = 1;
-        var cat2 = 2;
+        var cat1 = Guid.NewGuid();
+        var cat2 = Guid.NewGuid();
         var u1 = "u1";
         var b1 = Budget.Create(u1, cat1, 10m, true, 2, 2024).Value;
         var b2 = Budget.Create(u1, cat2, 20m, true, 2, 2024).Value;

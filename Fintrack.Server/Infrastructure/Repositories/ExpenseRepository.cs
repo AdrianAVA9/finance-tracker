@@ -18,16 +18,16 @@ public class ExpenseRepository : IExpenseRepository
         await _context.Expenses.AddAsync(expense, cancellationToken);
     }
 
-    public async Task<IReadOnlyDictionary<int, decimal>> SumItemAmountsByCategoryAsync(
+    public async Task<IReadOnlyDictionary<Guid, decimal>> SumItemAmountsByCategoryAsync(
         string userId,
         DateTime startInclusive,
         DateTime endExclusive,
-        IReadOnlyCollection<int> categoryIds,
+        IReadOnlyCollection<Guid> categoryIds,
         CancellationToken cancellationToken = default)
     {
         if (categoryIds.Count == 0)
         {
-            return new Dictionary<int, decimal>();
+            return new Dictionary<Guid, decimal>();
         }
 
         var spentItems = await _context.ExpenseItems
@@ -48,7 +48,7 @@ public class ExpenseRepository : IExpenseRepository
 
     public async Task<IReadOnlyList<ExpenseItem>> GetItemsForUserCategoryInDateRangeAsync(
         string userId,
-        int categoryId,
+        Guid categoryId,
         DateTime startInclusive,
         DateTime endExclusive,
         CancellationToken cancellationToken = default)

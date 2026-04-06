@@ -159,20 +159,24 @@ namespace Fintrack.Server.Infrastructure.Data.Seeders
             return group.Id;
         }
 
-        private static async Task TryAddCategory(ApplicationDbContext context, string name, string description, int groupId, string icon, string color)
+        private static Task TryAddCategory(ApplicationDbContext context, string name, string description, int groupId, string icon, string color)
         {
-            var category = new ExpenseCategory
-            {
-                Name = name,
-                Description = description,
-                UserId = null,
-                IsEditable = false,
-                GroupId = groupId,
-                Icon = icon,
-                Color = color
-            };
+            var createResult = ExpenseCategory.Create(
+                name,
+                description,
+                icon,
+                color,
+                groupId,
+                userId: null,
+                isEditable: false);
 
-            context.ExpenseCategories.Add(category);
+            if (createResult.IsFailure)
+            {
+                throw new InvalidOperationException(createResult.Error.Description);
+            }
+
+            context.ExpenseCategories.Add(createResult.Value);
+            return Task.CompletedTask;
         }
 
         private static async Task TryAddIncomeCategory(ApplicationDbContext context, string name, string icon, string color)

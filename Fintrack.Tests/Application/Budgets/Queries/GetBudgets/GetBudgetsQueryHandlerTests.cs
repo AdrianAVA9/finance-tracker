@@ -45,13 +45,13 @@ public sealed class GetBudgetsQueryHandlerTests : BaseUnitTest
                 CancellationToken)
             .Returns(5000m);
 
-        var spentByCategory = new Dictionary<int, decimal> { { category.Id, 800m } };
+        var spentByCategory = new Dictionary<Guid, decimal> { { category.Id, 800m } };
         _expenseRepository
             .SumItemAmountsByCategoryAsync(
                 userId,
                 Arg.Is<DateTime>(d => d == new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc)),
                 Arg.Is<DateTime>(d => d == new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(1)),
-                Arg.Is<IReadOnlyCollection<int>>(ids => ids.SequenceEqual(new[] { category.Id })),
+                Arg.Is<IReadOnlyCollection<Guid>>(ids => ids.SequenceEqual(new[] { category.Id })),
                 CancellationToken)
             .Returns(spentByCategory);
 
@@ -96,9 +96,9 @@ public sealed class GetBudgetsQueryHandlerTests : BaseUnitTest
                 Arg.Any<string>(),
                 Arg.Any<DateTime>(),
                 Arg.Any<DateTime>(),
-                Arg.Is<IReadOnlyCollection<int>>(ids => ids.Count == 0),
+                Arg.Is<IReadOnlyCollection<Guid>>(ids => ids.Count == 0),
                 CancellationToken)
-            .Returns(new Dictionary<int, decimal>());
+            .Returns(new Dictionary<Guid, decimal>());
 
         var query = new GetBudgetsQuery(BudgetTestDoubles.DefaultUserId, 1, 2024);
 
@@ -130,9 +130,9 @@ public sealed class GetBudgetsQueryHandlerTests : BaseUnitTest
                 userId,
                 Arg.Any<DateTime>(),
                 Arg.Any<DateTime>(),
-                Arg.Is<IReadOnlyCollection<int>>(ids => ids.Count == 0),
+                Arg.Is<IReadOnlyCollection<Guid>>(ids => ids.Count == 0),
                 CancellationToken)
-            .Returns(new Dictionary<int, decimal>());
+            .Returns(new Dictionary<Guid, decimal>());
 
         // Act
         var result = await _handler.Handle(new GetBudgetsQuery(userId, 3, 2024), CancellationToken);

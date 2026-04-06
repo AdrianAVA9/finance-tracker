@@ -21,18 +21,19 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
     {
         // Arrange (TOCTOU: empty list then ExistsAsync true)
         var userId = BudgetTestDoubles.DefaultUserId;
+        var categoryId = Guid.NewGuid();
         _budgetRepository
             .GetUserBudgetsByMonthAsync(userId, 3, 2024, CancellationToken)
             .Returns(Array.Empty<Budget>());
         _budgetRepository
-            .ExistsAsync(userId, 5, 3, 2024, CancellationToken)
+            .ExistsAsync(userId, categoryId, 3, 2024, CancellationToken)
             .Returns(true);
 
         var command = new UpsertBudgetsCommand(
             userId,
             3,
             2024,
-            new List<BudgetEntryDto> { new(5, 100m) });
+            new List<BudgetEntryDto> { new(categoryId, 100m) });
 
         // Act
         var result = await CreateHandler().Handle(command, CancellationToken);
@@ -49,11 +50,12 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
     {
         // Arrange
         var userId = BudgetTestDoubles.DefaultUserId;
+        var categoryId = Guid.NewGuid();
         _budgetRepository
             .GetUserBudgetsByMonthAsync(userId, 3, 2024, CancellationToken)
             .Returns(Array.Empty<Budget>());
         _budgetRepository
-            .ExistsAsync(userId, 5, 3, 2024, CancellationToken)
+            .ExistsAsync(userId, categoryId, 3, 2024, CancellationToken)
             .Returns(false);
         _unitOfWork.SaveChangesAsync(CancellationToken).Returns(1);
 
@@ -61,7 +63,7 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
             userId,
             3,
             2024,
-            new List<BudgetEntryDto> { new(5, 100m, IsRecurrent: true) });
+            new List<BudgetEntryDto> { new(categoryId, 100m, IsRecurrent: true) });
 
         // Act
         var result = await CreateHandler().Handle(command, CancellationToken);
@@ -70,7 +72,7 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
         result.IsSuccess.Should().BeTrue();
         _budgetRepository.Received(1).Add(Arg.Is<Budget>(b =>
             b.UserId == userId &&
-            b.CategoryId == 5 &&
+            b.CategoryId == categoryId &&
             b.Amount == 100m &&
             b.IsRecurrent &&
             b.Month == 3 &&
@@ -83,7 +85,8 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
     {
         // Arrange
         var userId = BudgetTestDoubles.DefaultUserId;
-        var existing = BudgetTestDoubles.CreateBudget(userId, categoryId: 5, amount: 50m, month: 3, year: 2024);
+        var categoryId = Guid.NewGuid();
+        var existing = BudgetTestDoubles.CreateBudget(userId, categoryId: categoryId, amount: 50m, month: 3, year: 2024);
         _budgetRepository
             .GetUserBudgetsByMonthAsync(userId, 3, 2024, CancellationToken)
             .Returns(new List<Budget> { existing });
@@ -93,7 +96,7 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
             userId,
             3,
             2024,
-            new List<BudgetEntryDto> { new(5, 250m, IsRecurrent: true) });
+            new List<BudgetEntryDto> { new(categoryId, 250m, IsRecurrent: true) });
 
         // Act
         var result = await CreateHandler().Handle(command, CancellationToken);
@@ -112,10 +115,11 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
     {
         // Arrange
         var userId = BudgetTestDoubles.DefaultUserId;
+        var categoryId = Guid.NewGuid();
         _budgetRepository
             .GetUserBudgetsByMonthAsync(userId, 3, 2024, CancellationToken)
             .Returns(Array.Empty<Budget>());
-        _budgetRepository.ExistsAsync(userId, 5, 3, 2024, CancellationToken).Returns(false);
+        _budgetRepository.ExistsAsync(userId, categoryId, 3, 2024, CancellationToken).Returns(false);
         _unitOfWork.SaveChangesAsync(CancellationToken).Returns(1);
 
         var command = new UpsertBudgetsCommand(
@@ -124,8 +128,8 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
             2024,
             new List<BudgetEntryDto>
             {
-                new(5, 100m),
-                new(5, 200m)
+                new(categoryId, 100m),
+                new(categoryId, 200m)
             });
 
         // Act
@@ -133,7 +137,7 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        _budgetRepository.Received(1).Add(Arg.Is<Budget>(b => b.CategoryId == 5 && b.Amount == 200m));
+        _budgetRepository.Received(1).Add(Arg.Is<Budget>(b => b.CategoryId == categoryId && b.Amount == 200m));
     }
 
     [Fact]
@@ -141,7 +145,8 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
     {
         // Arrange — bypass validator scenario: domain rejects negative updates
         var userId = BudgetTestDoubles.DefaultUserId;
-        var existing = BudgetTestDoubles.CreateBudget(userId, categoryId: 5, amount: 50m, month: 3, year: 2024);
+        var categoryId = Guid.NewGuid();
+        var existing = BudgetTestDoubles.CreateBudget(userId, categoryId: categoryId, amount: 50m, month: 3, year: 2024);
         _budgetRepository
             .GetUserBudgetsByMonthAsync(userId, 3, 2024, CancellationToken)
             .Returns(new List<Budget> { existing });
@@ -150,7 +155,7 @@ public sealed class UpsertBudgetsCommandHandlerTests : BaseUnitTest
             userId,
             3,
             2024,
-            new List<BudgetEntryDto> { new(5, -1m) });
+            new List<BudgetEntryDto> { new(categoryId, -1m) });
 
         // Act
         var result = await CreateHandler().Handle(command, CancellationToken);
