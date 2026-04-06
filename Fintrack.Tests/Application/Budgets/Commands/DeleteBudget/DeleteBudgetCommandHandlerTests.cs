@@ -1,3 +1,4 @@
+using System;
 using Fintrack.Server.Application.Budgets.Commands.DeleteBudget;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
@@ -13,7 +14,7 @@ public class DeleteBudgetCommandHandlerTests
     {
         var userId = "user-1";
         var budget = Budget.Create(userId, 1, 100m, false, 1, 2024).Value;
-        const int budgetId = 1;
+        var budgetId = budget.Id;
 
         var repository = Substitute.For<IBudgetRepository>();
         repository.GetByIdAsync(budgetId, userId, Arg.Any<CancellationToken>())
@@ -37,7 +38,7 @@ public class DeleteBudgetCommandHandlerTests
     {
         var budget = Budget.Create("owner", 1, 100m, false, 1, 2024).Value;
         var attackerId = "attacker";
-        const int budgetId = 1;
+        var budgetId = budget.Id;
 
         var repository = Substitute.For<IBudgetRepository>();
         repository.GetByIdAsync(budgetId, attackerId, Arg.Any<CancellationToken>())
@@ -59,13 +60,13 @@ public class DeleteBudgetCommandHandlerTests
     public async Task Should_Not_Throw_When_Budget_Does_Not_Exist()
     {
         var repository = Substitute.For<IBudgetRepository>();
-        repository.GetByIdAsync(Arg.Any<int>(), "user-1", Arg.Any<CancellationToken>())
+        repository.GetByIdAsync(Arg.Any<Guid>(), "user-1", Arg.Any<CancellationToken>())
             .Returns((Budget?)null);
 
         var unitOfWork = Substitute.For<IUnitOfWork>();
 
         var handler = new DeleteBudgetCommandHandler(repository, unitOfWork);
-        var command = new DeleteBudgetCommand(999, "user-1");
+        var command = new DeleteBudgetCommand(Guid.NewGuid(), "user-1");
 
         var result = await handler.Handle(command, CancellationToken.None);
 

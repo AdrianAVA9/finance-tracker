@@ -4,6 +4,7 @@ using Fintrack.Server.Application.Budgets.Commands.DeleteBudget;
 using Fintrack.Server.Application.Budgets.Commands.UpsertBudgets;
 using Fintrack.Server.Application.Budgets.Queries.GetBudgetDetails;
 using Fintrack.Server.Application.Budgets.Queries.GetBudgets;
+using System;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,8 +55,8 @@ public class BudgetsController : ApiControllerBase
         return HandleResult(result);
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
@@ -65,8 +66,8 @@ public class BudgetsController : ApiControllerBase
         return HandleResult(result);
     }
 
-    [HttpGet("{id:int}/details")]
-    public async Task<IActionResult> GetDetails(int id, [FromQuery] int year, [FromQuery] int month)
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id, [FromQuery] int year, [FromQuery] int month)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();

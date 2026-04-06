@@ -1,3 +1,4 @@
+using System;
 using FluentValidation;
 
 namespace Fintrack.Server.Application.Budgets.Commands.DeleteBudget;
@@ -7,7 +8,7 @@ internal sealed class DeleteBudgetCommandValidator : AbstractValidator<DeleteBud
     public DeleteBudgetCommandValidator()
     {
         RuleFor(x => x.Id)
-            .GreaterThan(0)
+            .NotEqual(Guid.Empty)
             .WithMessage("Budget ID is required");
 
         RuleFor(x => x.UserId)

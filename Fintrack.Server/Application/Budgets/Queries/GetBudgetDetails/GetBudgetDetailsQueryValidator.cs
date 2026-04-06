@@ -1,3 +1,4 @@
+using System;
 using FluentValidation;
 
 namespace Fintrack.Server.Application.Budgets.Queries.GetBudgetDetails;
@@ -7,7 +8,7 @@ internal sealed class GetBudgetDetailsQueryValidator : AbstractValidator<GetBudg
     public GetBudgetDetailsQueryValidator()
     {
         RuleFor(x => x.BudgetId)
-            .GreaterThan(0)
+            .NotEqual(Guid.Empty)
             .WithMessage("Budget ID is required");
 
         RuleFor(x => x.UserId)

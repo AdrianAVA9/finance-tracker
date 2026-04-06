@@ -20,14 +20,14 @@ public record MonthlyExpenseSummaryDto(
 );
 
 public record BudgetDetailsDto(
-    int Id,
+    Guid Id,
     string CategoryName,
     decimal LimitAmount,
     List<MonthlyExpenseSummaryDto> MonthlyHistory
 );
 
 public record GetBudgetDetailsQuery(
-    int BudgetId,
+    Guid BudgetId,
     string UserId,
     int Month,
     int Year

@@ -3,12 +3,12 @@ namespace Fintrack.Server.Domain.Budgets;
 public interface IBudgetRepository
 {
     Task<Budget?> GetByIdAsync(
-        int id,
+        Guid id,
         string userId,
         CancellationToken cancellationToken = default);
 
     Task<Budget?> GetByIdWithCategoryAsync(
-        int id,
+        Guid id,
         string userId,
         CancellationToken cancellationToken = default);
 

@@ -5,9 +5,8 @@ using Fintrack.Server.Domain.Users;
 
 namespace Fintrack.Server.Domain.Budgets;
 
-public sealed class Budget : BaseAuditableEntity
+public sealed class Budget : BaseAuditableEntityGuid
 {
-    // Properties with private setters
     public string UserId { get; private set; } = string.Empty;
     public int CategoryId { get; private set; }
     public decimal Amount { get; private set; }
@@ -15,17 +14,14 @@ public sealed class Budget : BaseAuditableEntity
     public int Month { get; private set; }
     public int Year { get; private set; }
 
-    // Navigation properties
     public ApplicationUser? User { get; private set; }
     public ExpenseCategory? Category { get; private set; }
 
-    // Private constructor for EF Core
     private Budget()
         : base()
     {
     }
 
-    // Private constructor for factory method
     private Budget(
         string userId,
         int categoryId,
@@ -35,6 +31,7 @@ public sealed class Budget : BaseAuditableEntity
         int year)
         : base()
     {
+        Id = Guid.NewGuid();
         UserId = userId;
         CategoryId = categoryId;
         Amount = amount;
@@ -43,9 +40,6 @@ public sealed class Budget : BaseAuditableEntity
         Year = year;
     }
 
-    /// <summary>
-    /// Creates a new Budget with validation
-    /// </summary>
     public static Result<Budget> Create(
         string userId,
         int categoryId,
@@ -54,7 +48,6 @@ public sealed class Budget : BaseAuditableEntity
         int month,
         int year)
     {
-        // Validation
         if (amount < 0)
         {
             return Result.Failure<Budget>(BudgetErrors.NegativeAmount);
@@ -83,9 +76,6 @@ public sealed class Budget : BaseAuditableEntity
         return budget;
     }
 
-    /// <summary>
-    /// Updates the budget amount and recurrence
-    /// </summary>
     public Result Update(decimal amount, bool isRecurrent)
     {
         if (amount < 0)
@@ -99,5 +89,14 @@ public sealed class Budget : BaseAuditableEntity
         RaiseDomainEvent(new BudgetUpdatedDomainEvent(Id));
 
         return Result.Success();
+    }
+
+    /// <summary>
+    /// Registers that this budget will be removed. Raises <see cref="BudgetDeletedDomainEvent"/>.
+    /// Call immediately before <see cref="IBudgetRepository.Remove"/> so the event is dispatched with save.
+    /// </summary>
+    public void RegisterDeletion()
+    {
+        RaiseDomainEvent(new BudgetDeletedDomainEvent(Id));
     }
 }
