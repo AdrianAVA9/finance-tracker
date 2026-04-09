@@ -20,7 +20,7 @@ public sealed class Expense : BaseAuditableEntityGuid
     public string? InvoiceImageUrl { get; private set; }
     public AiExtractionStatus AiExtractionStatus { get; private set; } = AiExtractionStatus.NotApplicable;
     public ExpenseStatus Status { get; private set; } = ExpenseStatus.Draft;
-    public int? InvoiceId { get; private set; }
+    public Guid? InvoiceId { get; private set; }
 
     public ApplicationUser? User { get; private set; }
     public ExpenseCategory? ExpenseCategory { get; private set; }
@@ -130,6 +130,18 @@ public sealed class Expense : BaseAuditableEntityGuid
     public void LinkInvoice(Invoice invoice)
     {
         Invoice = invoice;
+    }
+
+    public void ClearInvoiceLink()
+    {
+        Invoice = null;
+    }
+
+    public Result SetStatus(ExpenseStatus newStatus)
+    {
+        Status = newStatus;
+        RaiseDomainEvent(new ExpenseUpdatedDomainEvent(Id));
+        return Result.Success();
     }
 
     /// <summary>

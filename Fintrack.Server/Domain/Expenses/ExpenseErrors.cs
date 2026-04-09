@@ -23,4 +23,20 @@ public static class ExpenseErrors
     public static readonly Error ItemsRequired = new(
         "Expense.ItemsRequired",
         "An expense must contain at least one item");
+
+    public static readonly Error InvoicePayloadInvalid = new(
+        "Expense.InvoicePayloadInvalid",
+        "The invoice payload is invalid or does not match the expense total");
+
+    public static readonly Error PendingJobInvalidPath = new(
+        "Expense.PendingJobInvalidPath",
+        "Stored file path is required");
+
+    public static readonly Error PendingJobInvalidMimeType = new(
+        "Expense.PendingJobInvalidMimeType",
+        "MIME type is required");
+
+    public static readonly Error PendingJobNotFound = new(
+        "Expense.PendingJobNotFound",
+        "The receipt processing job was not found");
 }

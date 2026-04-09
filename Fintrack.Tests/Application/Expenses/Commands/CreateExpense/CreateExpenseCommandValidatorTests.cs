@@ -19,7 +19,8 @@ public sealed class CreateExpenseCommandValidatorTests
             Items: new List<ExpenseItemDto>
             {
                 new(Guid.NewGuid(), 100m, "Item")
-            });
+            },
+            Invoice: null);
 
     [Fact]
     public void Should_Pass_When_CommandIsValid()

@@ -12,13 +12,34 @@ public record ExpenseItemDetailsDto(
     decimal ItemAmount,
     string? Description);
 
+public record InvoiceLineDetailsDto(
+    Guid Id,
+    string ProductName,
+    int Quantity,
+    decimal UnitPrice,
+    decimal TotalPrice,
+    Guid? AssignedCategoryId,
+    string? AssignedCategoryName);
+
+public record ExpenseInvoiceDetailsDto(
+    Guid Id,
+    string? ImageUrl,
+    string? MerchantName,
+    DateTime? Date,
+    decimal TotalAmount,
+    string Status,
+    List<InvoiceLineDetailsDto> Lines);
+
 public record ExpenseDetailsDto(
     Guid Id,
     string? Merchant,
     decimal TotalAmount,
     DateTime Date,
     string StatusName,
-    List<ExpenseItemDetailsDto> Items);
+    string? InvoiceNumber,
+    string? InvoiceImageUrl,
+    List<ExpenseItemDetailsDto> Items,
+    ExpenseInvoiceDetailsDto? Invoice);
 
 public record GetExpenseByIdQuery(Guid Id, string UserId) : IQuery<ExpenseDetailsDto>;
 
@@ -49,7 +70,7 @@ internal sealed class GetExpenseByIdQueryHandler : IQueryHandler<GetExpenseByIdQ
         GetExpenseByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var expense = await _expenseRepository.GetByIdWithItemsAsync(
+        var expense = await _expenseRepository.GetByIdWithFullDetailsAsync(
             request.Id,
             request.UserId,
             cancellationToken);
@@ -59,18 +80,42 @@ internal sealed class GetExpenseByIdQueryHandler : IQueryHandler<GetExpenseByIdQ
             return Result.Failure<ExpenseDetailsDto>(ExpenseErrors.NotFound);
         }
 
+        ExpenseInvoiceDetailsDto? invoiceDto = null;
+        if (expense.Invoice != null)
+        {
+            var inv = expense.Invoice;
+            invoiceDto = new ExpenseInvoiceDetailsDto(
+                inv.Id,
+                inv.ImageUrl,
+                inv.MerchantName,
+                inv.Date,
+                inv.TotalAmount,
+                inv.Status,
+                inv.Items.Select(li => new InvoiceLineDetailsDto(
+                    li.Id,
+                    li.ProductName,
+                    li.Quantity,
+                    li.UnitPrice,
+                    li.TotalPrice,
+                    li.AssignedCategoryId,
+                    li.AssignedCategory?.Name)).ToList());
+        }
+
         var dto = new ExpenseDetailsDto(
             expense.Id,
             expense.Merchant,
             expense.TotalAmount,
             expense.Date,
             expense.Status.ToString(),
+            expense.InvoiceNumber,
+            expense.InvoiceImageUrl,
             expense.Items.Select(i => new ExpenseItemDetailsDto(
                 i.Id,
                 i.CategoryId,
                 i.Category?.Name ?? "Unknown",
                 i.ItemAmount,
-                i.Description)).ToList());
+                i.Description)).ToList(),
+            invoiceDto);
 
         return dto;
     }

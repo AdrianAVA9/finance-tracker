@@ -2,6 +2,7 @@ using FluentValidation;
 using Fintrack.Server.Application.Abstractions.Messaging;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Expenses;
+using Fintrack.Server.Domain.Invoices;
 
 namespace Fintrack.Server.Application.Expenses.Commands.DeleteExpense;
 
@@ -24,13 +25,16 @@ internal sealed class DeleteExpenseCommandValidator : AbstractValidator<DeleteEx
 internal sealed class DeleteExpenseCommandHandler : ICommandHandler<DeleteExpenseCommand>
 {
     private readonly IExpenseRepository _expenseRepository;
+    private readonly IInvoiceRepository _invoiceRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public DeleteExpenseCommandHandler(
         IExpenseRepository expenseRepository,
+        IInvoiceRepository invoiceRepository,
         IUnitOfWork unitOfWork)
     {
         _expenseRepository = expenseRepository;
+        _invoiceRepository = invoiceRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -38,7 +42,7 @@ internal sealed class DeleteExpenseCommandHandler : ICommandHandler<DeleteExpens
         DeleteExpenseCommand request,
         CancellationToken cancellationToken)
     {
-        var expense = await _expenseRepository.GetByIdWithItemsAsync(
+        var expense = await _expenseRepository.GetByIdWithFullDetailsAsync(
             request.Id,
             request.UserId,
             cancellationToken);
@@ -46,6 +50,13 @@ internal sealed class DeleteExpenseCommandHandler : ICommandHandler<DeleteExpens
         if (expense is null)
         {
             return Result.Failure(ExpenseErrors.NotFound);
+        }
+
+        if (expense.Invoice != null)
+        {
+            var inv = expense.Invoice;
+            expense.ClearInvoiceLink();
+            _invoiceRepository.Remove(inv);
         }
 
         expense.RegisterDeletion();

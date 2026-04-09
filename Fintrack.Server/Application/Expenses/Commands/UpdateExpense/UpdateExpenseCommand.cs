@@ -1,7 +1,10 @@
 using FluentValidation;
 using Fintrack.Server.Application.Abstractions.Messaging;
+using Fintrack.Server.Application.Expenses;
 using Fintrack.Server.Domain.Abstractions;
+using Fintrack.Server.Domain.Enums;
 using Fintrack.Server.Domain.Expenses;
+using Fintrack.Server.Domain.Invoices;
 
 namespace Fintrack.Server.Application.Expenses.Commands.UpdateExpense;
 
@@ -15,7 +18,10 @@ public record UpdateExpenseCommand(
     string? Merchant,
     string? InvoiceNumber,
     string? InvoiceImageUrl,
-    List<UpdateExpenseItemDto> Items
+    List<UpdateExpenseItemDto> Items,
+    bool RemoveInvoice,
+    ExpenseInvoicePayload? Invoice,
+    ExpenseStatus? Status
 ) : ICommand;
 
 internal sealed class UpdateExpenseCommandValidator : AbstractValidator<UpdateExpenseCommand>
@@ -59,19 +65,33 @@ internal sealed class UpdateExpenseCommandValidator : AbstractValidator<UpdateEx
                 .GreaterThan(0)
                 .WithMessage("Item amount must be greater than zero");
         });
+
+        RuleFor(x => x)
+            .Must(cmd => !cmd.RemoveInvoice || cmd.Invoice == null)
+            .WithName("InvoiceRemove")
+            .WithMessage("Do not send invoice payload when removing the invoice.");
+
+        RuleFor(x => x)
+            .Must(cmd => cmd.RemoveInvoice || cmd.Invoice == null
+                         || ExpenseInvoicePayloadRules.Validate(cmd.Invoice, cmd.TotalAmount).IsSuccess)
+            .WithName("InvoicePayload")
+            .WithMessage("Invoice lines and totals must match the expense total.");
     }
 }
 
 internal sealed class UpdateExpenseCommandHandler : ICommandHandler<UpdateExpenseCommand>
 {
     private readonly IExpenseRepository _expenseRepository;
+    private readonly IInvoiceRepository _invoiceRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public UpdateExpenseCommandHandler(
         IExpenseRepository expenseRepository,
+        IInvoiceRepository invoiceRepository,
         IUnitOfWork unitOfWork)
     {
         _expenseRepository = expenseRepository;
+        _invoiceRepository = invoiceRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -79,7 +99,7 @@ internal sealed class UpdateExpenseCommandHandler : ICommandHandler<UpdateExpens
         UpdateExpenseCommand request,
         CancellationToken cancellationToken)
     {
-        var expense = await _expenseRepository.GetByIdWithItemsAsync(
+        var expense = await _expenseRepository.GetByIdWithFullDetailsAsync(
             request.Id,
             request.UserId,
             cancellationToken);
@@ -99,6 +119,42 @@ internal sealed class UpdateExpenseCommandHandler : ICommandHandler<UpdateExpens
         if (updateResult.IsFailure)
         {
             return updateResult;
+        }
+
+        if (request.RemoveInvoice)
+        {
+            if (expense.Invoice != null)
+            {
+                var orphan = expense.Invoice;
+                expense.ClearInvoiceLink();
+                _invoiceRepository.Remove(orphan);
+            }
+        }
+        else if (request.Invoice != null)
+        {
+            var build = ExpenseInvoicePayloadRules.BuildInvoice(request.UserId, request.Invoice);
+            if (build.IsFailure)
+            {
+                return Result.Failure(build.Error);
+            }
+
+            if (expense.Invoice != null)
+            {
+                var old = expense.Invoice;
+                expense.ClearInvoiceLink();
+                _invoiceRepository.Remove(old);
+            }
+
+            expense.LinkInvoice(build.Value);
+        }
+
+        if (request.Status.HasValue)
+        {
+            var st = expense.SetStatus(request.Status.Value);
+            if (st.IsFailure)
+            {
+                return st;
+            }
         }
 
         var newItems = request.Items

@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Fintrack.Server.Application.Expenses;
 using Fintrack.Server.Application.Expenses.Commands.CreateExpense;
 using Fintrack.Server.Application.Expenses.Commands.DeleteExpense;
 using Fintrack.Server.Application.Expenses.Commands.UpdateExpense;
@@ -51,7 +52,8 @@ public class ExpensesController : ApiControllerBase
             request.Merchant,
             request.InvoiceNumber,
             request.InvoiceImageUrl,
-            request.Items.Select(i => new ExpenseItemDto(i.CategoryId, i.ItemAmount, i.Description)).ToList());
+            request.Items.Select(i => new ExpenseItemDto(i.CategoryId, i.ItemAmount, i.Description)).ToList(),
+            MapInvoice(request.Invoice));
 
         var result = await Sender.Send(command, cancellationToken);
 
@@ -81,7 +83,10 @@ public class ExpensesController : ApiControllerBase
             request.Merchant,
             request.InvoiceNumber,
             request.InvoiceImageUrl,
-            request.Items.Select(i => new UpdateExpenseItemDto(i.CategoryId, i.ItemAmount, i.Description)).ToList());
+            request.Items.Select(i => new UpdateExpenseItemDto(i.CategoryId, i.ItemAmount, i.Description)).ToList(),
+            request.RemoveInvoice,
+            MapInvoice(request.Invoice),
+            request.Status);
 
         var result = await Sender.Send(command, cancellationToken);
         return HandleResult(result);
@@ -97,5 +102,28 @@ public class ExpensesController : ApiControllerBase
         var command = new DeleteExpenseCommand(id, userId);
         var result = await Sender.Send(command, cancellationToken);
         return HandleResult(result);
+    }
+
+    private static ExpenseInvoicePayload? MapInvoice(ExpenseInvoiceRequest? request)
+    {
+        if (request is null)
+        {
+            return null;
+        }
+
+        return new ExpenseInvoicePayload(
+            request.ImageUrl,
+            request.MerchantName,
+            request.Date,
+            request.TotalAmount,
+            request.Status,
+            request.Lines
+                .Select(l => new ExpenseInvoiceLinePayload(
+                    l.ProductName,
+                    l.Quantity,
+                    l.UnitPrice,
+                    l.TotalPrice,
+                    l.AssignedCategoryId))
+                .ToList());
     }
 }

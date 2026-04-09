@@ -1,6 +1,7 @@
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.ExpenseCategories;
+using Fintrack.Server.Domain.Enums;
 using Fintrack.Server.Domain.Expenses;
 using Fintrack.Server.Domain.IncomeCategories;
 using Fintrack.Server.Domain.Incomes;
@@ -42,6 +43,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
     public DbSet<InvoiceItem> InvoiceItems { get; set; }
     public DbSet<Budget> Budgets { get; set; }
     public DbSet<SavingsGoal> SavingsGoals { get; set; }
+    public DbSet<PendingReceiptExtractionJob> PendingReceiptExtractionJobs { get; set; }
 
     public override int SaveChanges()
     {
@@ -131,6 +133,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
 
         builder.Entity<Expense>(entity =>
         {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
             entity.HasOne(e => e.ExpenseCategory)
                 .WithMany()
                 .HasForeignKey(e => e.ExpenseCategoryId)
@@ -166,11 +170,28 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
             .HasForeignKey(re => re.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<InvoiceItem>()
-            .HasOne(i => i.AssignedCategory)
-            .WithMany()
-            .HasForeignKey(i => i.AssignedCategoryId)
-            .OnDelete(DeleteBehavior.SetNull);
+        builder.Entity<Invoice>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasMany(i => i.Items)
+                .WithOne(ii => ii.Invoice)
+                .HasForeignKey(ii => ii.InvoiceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Navigation(i => i.Items)
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+        });
+
+        builder.Entity<InvoiceItem>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(i => i.AssignedCategory)
+                .WithMany()
+                .HasForeignKey(i => i.AssignedCategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
 
         builder.Entity<Budget>(entity =>
         {
@@ -202,6 +223,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IUnitOfW
             .WithMany(c => c.RecurringIncomes)
             .HasForeignKey(ri => ri.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<PendingReceiptExtractionJob>(entity =>
+        {
+            entity.ToTable("PendingReceiptExtractionJobs", AppSchema);
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Status).HasConversion<int>();
+        });
     }
 
     /// <summary>

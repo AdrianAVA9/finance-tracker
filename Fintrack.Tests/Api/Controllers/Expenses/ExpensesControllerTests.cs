@@ -67,7 +67,10 @@ public sealed class ExpensesControllerTests : BaseUnitTest
             TotalAmount: 50m,
             Date: DateTime.UtcNow,
             StatusName: "Completed",
-            Items: []);
+            InvoiceNumber: null,
+            InvoiceImageUrl: null,
+            Items: [],
+            Invoice: null);
 
         _sender
             .Send(Arg.Any<GetExpenseByIdQuery>(), CancellationToken)

@@ -23,7 +23,7 @@ public sealed class GetExpenseByIdQueryHandlerTests : BaseUnitTest
         var userId = ExpenseTestDoubles.DefaultUserId;
 
         _expenseRepository
-            .GetByIdWithItemsAsync(expense.Id, userId, CancellationToken)
+            .GetByIdWithFullDetailsAsync(expense.Id, userId, CancellationToken)
             .Returns(expense);
 
         var query = new GetExpenseByIdQuery(expense.Id, userId);
@@ -43,7 +43,7 @@ public sealed class GetExpenseByIdQueryHandlerTests : BaseUnitTest
     {
         // Arrange
         _expenseRepository
-            .GetByIdWithItemsAsync(Arg.Any<Guid>(), Arg.Any<string>(), CancellationToken)
+            .GetByIdWithFullDetailsAsync(Arg.Any<Guid>(), Arg.Any<string>(), CancellationToken)
             .Returns((Expense?)null);
 
         var query = new GetExpenseByIdQuery(Guid.NewGuid(), "user-1");

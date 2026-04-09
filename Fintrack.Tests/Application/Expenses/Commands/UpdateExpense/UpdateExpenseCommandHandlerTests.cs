@@ -1,6 +1,7 @@
 using Fintrack.Server.Application.Expenses.Commands.UpdateExpense;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Expenses;
+using Fintrack.Server.Domain.Invoices;
 using Fintrack.Tests.Abstractions;
 using Fintrack.Tests.TestData.Expenses;
 using FluentAssertions;
@@ -11,10 +12,11 @@ namespace Fintrack.Tests.Application.Expenses.Commands.UpdateExpense;
 public sealed class UpdateExpenseCommandHandlerTests : BaseUnitTest
 {
     private readonly IExpenseRepository _expenseRepository = Mock<IExpenseRepository>();
+    private readonly IInvoiceRepository _invoiceRepository = Mock<IInvoiceRepository>();
     private readonly IUnitOfWork _unitOfWork = Mock<IUnitOfWork>();
 
     private UpdateExpenseCommandHandler CreateHandler() =>
-        new(_expenseRepository, _unitOfWork);
+        new(_expenseRepository, _invoiceRepository, _unitOfWork);
 
     [Fact]
     public async Task Handle_Should_UpdateExpense_When_ExistsForUser()
@@ -25,17 +27,26 @@ public sealed class UpdateExpenseCommandHandlerTests : BaseUnitTest
         var userId = ExpenseTestDoubles.DefaultUserId;
 
         _expenseRepository
-            .GetByIdWithItemsAsync(expenseId, userId, CancellationToken)
+            .GetByIdWithFullDetailsAsync(expenseId, userId, CancellationToken)
             .Returns(expense);
         _unitOfWork.SaveChangesAsync(CancellationToken).Returns(1);
 
         var newCategoryId = Guid.NewGuid();
         var command = new UpdateExpenseCommand(
-            expenseId, userId, 200m, DateTime.UtcNow, "Updated Merchant", "INV-001", null,
+            expenseId,
+            userId,
+            200m,
+            DateTime.UtcNow,
+            "Updated Merchant",
+            "INV-001",
+            null,
             new List<UpdateExpenseItemDto>
             {
                 new(newCategoryId, 200m, "Updated item")
-            });
+            },
+            RemoveInvoice: false,
+            Invoice: null,
+            Status: null);
 
         // Act
         var result = await CreateHandler().Handle(command, CancellationToken);
@@ -53,12 +64,21 @@ public sealed class UpdateExpenseCommandHandlerTests : BaseUnitTest
     {
         // Arrange
         _expenseRepository
-            .GetByIdWithItemsAsync(Arg.Any<Guid>(), Arg.Any<string>(), CancellationToken)
+            .GetByIdWithFullDetailsAsync(Arg.Any<Guid>(), Arg.Any<string>(), CancellationToken)
             .Returns((Expense?)null);
 
         var command = new UpdateExpenseCommand(
-            Guid.NewGuid(), "user-1", 100m, DateTime.UtcNow, "M", null, null,
-            new List<UpdateExpenseItemDto> { new(Guid.NewGuid(), 100m, "Item") });
+            Guid.NewGuid(),
+            "user-1",
+            100m,
+            DateTime.UtcNow,
+            "M",
+            null,
+            null,
+            new List<UpdateExpenseItemDto> { new(Guid.NewGuid(), 100m, "Item") },
+            RemoveInvoice: false,
+            Invoice: null,
+            Status: null);
 
         // Act
         var result = await CreateHandler().Handle(command, CancellationToken);
@@ -76,12 +96,21 @@ public sealed class UpdateExpenseCommandHandlerTests : BaseUnitTest
         var expense = ExpenseTestDoubles.CreateExpenseWithItems();
 
         _expenseRepository
-            .GetByIdWithItemsAsync(expense.Id, ExpenseTestDoubles.DefaultUserId, CancellationToken)
+            .GetByIdWithFullDetailsAsync(expense.Id, ExpenseTestDoubles.DefaultUserId, CancellationToken)
             .Returns(expense);
 
         var command = new UpdateExpenseCommand(
-            expense.Id, ExpenseTestDoubles.DefaultUserId, 0m, DateTime.UtcNow, "M", null, null,
-            new List<UpdateExpenseItemDto> { new(Guid.NewGuid(), 0m, "Item") });
+            expense.Id,
+            ExpenseTestDoubles.DefaultUserId,
+            0m,
+            DateTime.UtcNow,
+            "M",
+            null,
+            null,
+            new List<UpdateExpenseItemDto> { new(Guid.NewGuid(), 0m, "Item") },
+            RemoveInvoice: false,
+            Invoice: null,
+            Status: null);
 
         // Act
         var result = await CreateHandler().Handle(command, CancellationToken);

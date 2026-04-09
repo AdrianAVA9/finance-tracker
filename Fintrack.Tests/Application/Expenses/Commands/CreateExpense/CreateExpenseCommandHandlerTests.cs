@@ -32,7 +32,8 @@ public sealed class CreateExpenseCommandHandlerTests : BaseUnitTest
             {
                 new(Guid.NewGuid(), 60m, "Item 1"),
                 new(Guid.NewGuid(), 40m, "Item 2")
-            });
+            },
+            Invoice: null);
 
         // Act
         var result = await CreateHandler().Handle(command, CancellationToken);
@@ -61,7 +62,8 @@ public sealed class CreateExpenseCommandHandlerTests : BaseUnitTest
             Items: new List<ExpenseItemDto>
             {
                 new(Guid.NewGuid(), 100m, "Item")
-            });
+            },
+            Invoice: null);
 
         // Act
         var result = await CreateHandler().Handle(command, CancellationToken);
@@ -87,7 +89,8 @@ public sealed class CreateExpenseCommandHandlerTests : BaseUnitTest
             Items: new List<ExpenseItemDto>
             {
                 new(Guid.NewGuid(), 0m, "Item")
-            });
+            },
+            Invoice: null);
 
         // Act
         var result = await CreateHandler().Handle(command, CancellationToken);

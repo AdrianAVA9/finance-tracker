@@ -1,5 +1,6 @@
 using FluentValidation;
 using Fintrack.Server.Application.Abstractions.Messaging;
+using Fintrack.Server.Application.Expenses;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Expenses;
 
@@ -14,7 +15,8 @@ public record CreateExpenseCommand(
     string? Merchant,
     string? InvoiceNumber,
     string? InvoiceImageUrl,
-    List<ExpenseItemDto> Items
+    List<ExpenseItemDto> Items,
+    ExpenseInvoicePayload? Invoice
 ) : ICommand<Guid>;
 
 internal sealed class CreateExpenseCommandValidator : AbstractValidator<CreateExpenseCommand>
@@ -54,6 +56,12 @@ internal sealed class CreateExpenseCommandValidator : AbstractValidator<CreateEx
                 .GreaterThan(0)
                 .WithMessage("Item amount must be greater than zero");
         });
+
+        RuleFor(x => x)
+            .Must(cmd => cmd.Invoice == null
+                         || ExpenseInvoicePayloadRules.Validate(cmd.Invoice, cmd.TotalAmount).IsSuccess)
+            .WithName("InvoicePayload")
+            .WithMessage("Invoice lines and totals must match the expense total.");
     }
 }
 
@@ -97,6 +105,17 @@ internal sealed class CreateExpenseCommandHandler : ICommandHandler<CreateExpens
                 itemDto.Description);
 
             expense.AddItem(item);
+        }
+
+        if (request.Invoice != null)
+        {
+            var invoiceBuild = ExpenseInvoicePayloadRules.BuildInvoice(request.UserId, request.Invoice);
+            if (invoiceBuild.IsFailure)
+            {
+                return Result.Failure<Guid>(invoiceBuild.Error);
+            }
+
+            expense.LinkInvoice(invoiceBuild.Value);
         }
 
         _expenseRepository.Add(expense);

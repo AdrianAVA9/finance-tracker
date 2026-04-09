@@ -41,16 +41,24 @@ public class ReceiptProcessingService
             categoryNames,
             cancellationToken);
 
-        var invoice = new Invoice
+        var invoiceTotal = extractedData.Invoice.TotalAmount > 0
+            ? extractedData.Invoice.TotalAmount
+            : extractedData.Expense.TotalAmount;
+
+        var invoiceResult = Invoice.Create(
+            userId,
+            invoiceTotal,
+            imageUrl: null,
+            merchantName: extractedData.Invoice.MerchantName ?? extractedData.Expense.Merchant,
+            date: extractedData.Invoice.Date ?? extractedData.Expense.Date);
+
+        if (invoiceResult.IsFailure)
         {
-            UserId = userId,
-            MerchantName = extractedData.Invoice.MerchantName ?? extractedData.Expense.Merchant,
-            Date = extractedData.Invoice.Date ?? extractedData.Expense.Date,
-            TotalAmount = extractedData.Invoice.TotalAmount > 0
-                ? extractedData.Invoice.TotalAmount
-                : extractedData.Expense.TotalAmount,
-            Status = "Pending"
-        };
+            throw new InvalidOperationException(
+                $"Failed to create invoice from receipt: {invoiceResult.Error.Description}");
+        }
+
+        var invoice = invoiceResult.Value;
 
         var totalAmount = extractedData.Expense.TotalAmount > 0
             ? extractedData.Expense.TotalAmount
@@ -104,15 +112,24 @@ public class ReceiptProcessingService
 
             expense.AddItem(ExpenseItem.Create(categoryId, itemAmount, extractedItem.Description));
 
-            var invoiceItem = new InvoiceItem
+            var quantity = extractedItem.Quantity > 0 ? extractedItem.Quantity : 1;
+            var lineDescription = string.IsNullOrWhiteSpace(extractedItem.Description)
+                ? "Item"
+                : extractedItem.Description;
+            var invoiceItemResult = InvoiceItem.Create(
+                lineDescription,
+                quantity,
+                extractedItem.UnitPrice,
+                extractedItem.TotalPrice,
+                categoryId == Guid.Empty ? null : categoryId);
+
+            if (invoiceItemResult.IsFailure)
             {
-                ProductName = extractedItem.Description,
-                Quantity = extractedItem.Quantity > 0 ? extractedItem.Quantity : 1,
-                UnitPrice = extractedItem.UnitPrice,
-                TotalPrice = extractedItem.TotalPrice,
-                AssignedCategoryId = categoryId
-            };
-            invoice.Items.Add(invoiceItem);
+                throw new InvalidOperationException(
+                    $"Failed to create invoice line item: {invoiceItemResult.Error.Description}");
+            }
+
+            invoice.AddItem(invoiceItemResult.Value);
         }
 
         _expenseRepository.Add(expense);

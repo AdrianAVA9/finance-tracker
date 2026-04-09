@@ -12,6 +12,14 @@ public interface IExpenseRepository
         string userId,
         CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Expense with expense items (and categories) plus optional linked invoice and invoice lines.
+    /// </summary>
+    Task<Expense?> GetByIdWithFullDetailsAsync(
+        Guid id,
+        string userId,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyDictionary<Guid, decimal>> SumItemAmountsByCategoryAsync(
         string userId,
         DateTime startInclusive,

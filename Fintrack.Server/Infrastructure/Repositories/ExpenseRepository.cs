@@ -33,6 +33,20 @@ internal sealed class ExpenseRepository : IExpenseRepository
             .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId, cancellationToken);
     }
 
+    public async Task<Expense?> GetByIdWithFullDetailsAsync(
+        Guid id,
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Expenses
+            .Include(e => e.Items)
+            .ThenInclude(i => i.Category)
+            .Include(e => e.Invoice)
+            .ThenInclude(i => i!.Items)
+            .ThenInclude(li => li.AssignedCategory)
+            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId, cancellationToken);
+    }
+
     public async Task<IReadOnlyDictionary<Guid, decimal>> SumItemAmountsByCategoryAsync(
         string userId,
         DateTime startInclusive,

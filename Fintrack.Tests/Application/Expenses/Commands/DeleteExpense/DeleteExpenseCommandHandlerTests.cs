@@ -1,6 +1,7 @@
 using Fintrack.Server.Application.Expenses.Commands.DeleteExpense;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Expenses;
+using Fintrack.Server.Domain.Invoices;
 using Fintrack.Tests.Abstractions;
 using Fintrack.Tests.TestData.Expenses;
 using FluentAssertions;
@@ -11,10 +12,11 @@ namespace Fintrack.Tests.Application.Expenses.Commands.DeleteExpense;
 public sealed class DeleteExpenseCommandHandlerTests : BaseUnitTest
 {
     private readonly IExpenseRepository _expenseRepository = Mock<IExpenseRepository>();
+    private readonly IInvoiceRepository _invoiceRepository = Mock<IInvoiceRepository>();
     private readonly IUnitOfWork _unitOfWork = Mock<IUnitOfWork>();
 
     private DeleteExpenseCommandHandler CreateHandler() =>
-        new(_expenseRepository, _unitOfWork);
+        new(_expenseRepository, _invoiceRepository, _unitOfWork);
 
     [Fact]
     public async Task Handle_Should_RemoveExpense_When_ExistsForUser()
@@ -25,7 +27,7 @@ public sealed class DeleteExpenseCommandHandlerTests : BaseUnitTest
         var userId = ExpenseTestDoubles.DefaultUserId;
 
         _expenseRepository
-            .GetByIdWithItemsAsync(expenseId, userId, CancellationToken)
+            .GetByIdWithFullDetailsAsync(expenseId, userId, CancellationToken)
             .Returns(expense);
         _unitOfWork.SaveChangesAsync(CancellationToken).Returns(1);
 
@@ -43,7 +45,7 @@ public sealed class DeleteExpenseCommandHandlerTests : BaseUnitTest
     {
         // Arrange
         _expenseRepository
-            .GetByIdWithItemsAsync(Arg.Any<Guid>(), Arg.Any<string>(), CancellationToken)
+            .GetByIdWithFullDetailsAsync(Arg.Any<Guid>(), Arg.Any<string>(), CancellationToken)
             .Returns((Expense?)null);
 
         // Act
@@ -66,7 +68,7 @@ public sealed class DeleteExpenseCommandHandlerTests : BaseUnitTest
         var attackerId = "attacker";
 
         _expenseRepository
-            .GetByIdWithItemsAsync(expense.Id, attackerId, CancellationToken)
+            .GetByIdWithFullDetailsAsync(expense.Id, attackerId, CancellationToken)
             .Returns((Expense?)null);
 
         // Act
