@@ -1,7 +1,21 @@
 import type { RouteRecordRaw } from 'vue-router';
 import AppLayout from '@/app/layouts/AppLayout.vue';
+import FocusedLayout from '@/app/layouts/FocusedLayout.vue';
 
 export const routes: RouteRecordRaw[] = [
+  {
+    path: '/app/focused',
+    component: AppLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'BudgetSimulationDesignPreview',
+        component: () => import('@/app/views/budget/BudgetSimulationDesignView.vue'),
+        meta: { title: 'Simulador de Presupuesto' }
+      }
+    ]
+  },
   {
     path: '/app',
     component: AppLayout,

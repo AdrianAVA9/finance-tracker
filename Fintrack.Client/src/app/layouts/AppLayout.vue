@@ -9,11 +9,14 @@ const route = useRoute();
 </script>
 
 <template>
-  <div :class="['bg-background-light dark:bg-background-dark min-h-screen h-full relative font-body text-slate-900 dark:text-white', { 'pb-32': route.meta.showMenu }]">
+  <div :class="[
+    'bg-background text-on-background font-body min-h-screen relative overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container',
+    route.meta.showMenu ? 'pb-[100px]' : 'pb-safe'
+  ]">
     <Header />
     <OfflineAlert />
 
-    <main class="pt-24 px-6 max-w-md mx-auto space-y-8 h-full relative">
+    <main class="pt-20 px-4 max-w-2xl mx-auto h-full relative">
       <router-view />
     </main>
 
