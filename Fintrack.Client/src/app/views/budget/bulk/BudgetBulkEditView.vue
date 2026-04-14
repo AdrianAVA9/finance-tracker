@@ -83,7 +83,7 @@ const commitSimulation = async () => {
             budgets: budgetEntries
         })
         
-        router.push({ name: 'BudgetRegistration' })
+        router.push({ name: 'BudgetList' })
     } catch (error) {
         console.error('Failed to save simulation', error)
     } finally {
@@ -102,17 +102,13 @@ onMounted(loadBudgets)
 </script>
 
 <template>
-  <div class="space-y-6">
-    <!-- Page Title -->
-    <section class="space-y-1 px-1">
-      <div class="flex items-center gap-3">
-        <button @click="router.back()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors -ml-2">
-            <span class="material-symbols-outlined text-[#9CA3AF]">arrow_back</span>
-        </button>
-        <h1 class="font-headline text-3xl font-extrabold tracking-tighter text-white">Ajuste Rápido</h1>
-      </div>
-      <p class="text-[10px] font-bold text-[#849589] uppercase tracking-[0.2em] px-1">Edición Múltiple • {{ budgets.length }} categorías</p>
-    </section>
+  <div class="space-y-6 pt-6 px-4">
+    <!-- Subtitle / Meta Info -->
+    <div v-if="!isLoading" class="px-1">
+      <p class="text-[10px] font-bold text-[#849589] uppercase tracking-[0.2em]">
+        Edición Múltiple • {{ budgets.length }} categorías
+      </p>
+    </div>
 
     <!-- Simulation Table -->
     <div class="bg-[#0c0e12] border border-white/5 rounded-lg overflow-hidden shadow-2xl">
@@ -170,26 +166,10 @@ onMounted(loadBudgets)
         </div>
     </div>
 
-    <!-- Actions (inline, below table) -->
-    <div class="grid grid-cols-2 gap-3">
-        <button 
-            @click="discardChanges"
-            class="py-4 rounded-lg bg-[#333539] text-[#F3F4F6] font-manrope font-bold text-sm hover:bg-[#2A2F37] transition-all active:scale-[0.98]">
-            Descartar
-        </button>
-        <button 
-            @click="commitSimulation"
-            :disabled="isSaving"
-            class="py-4 rounded-lg bg-[#05E699] text-[#003822] font-manrope font-bold text-sm shadow-lg shadow-[#05E699]/20 hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
-            <span v-if="isSaving" class="flex items-center justify-center gap-2">
-                <div class="w-4 h-4 border-2 border-[#003822] border-t-transparent rounded-full animate-spin"></div>
-            </span>
-            <span v-else>Aplicar</span>
-        </button>
-    </div>
+
 
     <!-- Spacer for fixed footer -->
-    <div class="h-40"></div>
+    <div class="h-64"></div>
 
     <!-- Fixed Impact Footer -->
     <footer class="fixed bottom-0 left-0 w-full z-40 bg-[#1E2228] border-t border-white/10 shadow-[0_-8px_40px_-12px_rgba(0,0,0,0.5)]">
@@ -225,6 +205,24 @@ onMounted(loadBudgets)
             ]">
                 {{ theGap > 0 ? '+' : '' }}{{ formatCurrency(theGap) }}
             </div>
+        </div>
+
+        <!-- Action Buttons inside Footer -->
+        <div class="px-5 pb-8 pt-2 grid grid-cols-2 gap-3 bg-[#1E2228]">
+            <button 
+                @click="discardChanges"
+                class="py-4 rounded-lg bg-[#333539] text-[#F3F4F6] font-manrope font-bold text-sm hover:bg-[#2A2F37] transition-all active:scale-[0.98]">
+                Descartar
+            </button>
+            <button 
+                @click="commitSimulation"
+                :disabled="isSaving"
+                class="py-4 rounded-lg bg-[#05E699] text-[#003822] font-manrope font-bold text-sm shadow-lg shadow-[#05E699]/20 hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                <span v-if="isSaving" class="flex items-center justify-center gap-2 px-4">
+                    <div class="w-4 h-4 border-2 border-[#003822] border-t-transparent rounded-full animate-spin"></div>
+                </span>
+                <span v-else>Aplicar</span>
+            </button>
         </div>
     </footer>
   </div>

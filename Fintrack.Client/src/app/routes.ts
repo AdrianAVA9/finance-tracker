@@ -1,18 +1,19 @@
 import type { RouteRecordRaw } from 'vue-router';
 import AppLayout from '@/app/layouts/AppLayout.vue';
 import FocusedLayout from '@/app/layouts/FocusedLayout.vue';
+import { RouterView } from 'vue-router';
 
 export const routes: RouteRecordRaw[] = [
   {
-    path: '/app/focused',
-    component: AppLayout,
+    path: '/app/budgets/bulk',
+    component: FocusedLayout,
     meta: { requiresAuth: true },
     children: [
       {
         path: '',
-        name: 'BudgetSimulationDesignPreview',
-        component: () => import('@/app/views/budget/BudgetSimulationDesignView.vue'),
-        meta: { title: 'Simulador de Presupuesto' }
+        name: 'BudgetBulkEdit',
+        component: () => import('@/app/views/budget/bulk/BudgetBulkEditView.vue'),
+        meta: { title: 'Distribución de Gastos', subtitle: 'Ajusta y visualiza el impacto en tiempo real.' }
       }
     ]
   },
@@ -63,33 +64,33 @@ export const routes: RouteRecordRaw[] = [
       },
       {
         path: 'budgets',
-        name: 'BudgetRegistration',
-        component: () => import('@/app/views/budget/BudgetRegistrationView.vue'),
-        meta: { title: 'Plan Presupuestario', subtitle: 'Define tus límites mensuales y mantén el control.', showMenu: true }
-      },
-      {
-        path: 'budgets/new',
-        name: 'BudgetCreate',
-        component: () => import('@/app/views/budget/BudgetFormView.vue'),
-        meta: { title: 'Configurar Presupuesto', subtitle: 'Define tus límites de gasto.' }
-      },
-      {
-        path: 'budgets/:id/edit',
-        name: 'BudgetEdit',
-        component: () => import('@/app/views/budget/BudgetFormView.vue'),
-        meta: { title: 'Ajustar Presupuesto', subtitle: 'Refina tus metas financieras.' }
-      },
-      {
-        path: 'budgets/:id',
-        name: 'BudgetDetails',
-        component: () => import('@/app/views/budget/BudgetDetailsView.vue'),
-        meta: { title: 'Detalles del Presupuesto', subtitle: 'Revisa tu balance e historial.', showMenu: true }
-      },
-      {
-        path: 'budgets/simulate',
-        name: 'BudgetSimulation',
-        component: () => import('@/app/views/budget/BudgetSimulationView.vue'),
-        meta: { title: 'Simulador de Presupuesto', subtitle: 'Ajusta y visualiza el impacto en tiempo real.' }
+        component: RouterView,
+        children: [
+          {
+            path: '',
+            name: 'BudgetList',
+            component: () => import('@/app/views/budget/list/BudgetListView.vue'),
+            meta: { title: 'Plan Presupuestario', subtitle: 'Define tus límites mensuales y mantén el control.', showMenu: true }
+          },
+          {
+            path: 'new',
+            name: 'BudgetCreate',
+            component: () => import('@/app/views/budget/form/BudgetFormView.vue'),
+            meta: { title: 'Configurar Presupuesto', subtitle: 'Define tus límites de gasto.' }
+          },
+          {
+            path: ':id/edit',
+            name: 'BudgetEdit',
+            component: () => import('@/app/views/budget/form/BudgetFormView.vue'),
+            meta: { title: 'Ajustar Presupuesto', subtitle: 'Refina tus metas financieras.' }
+          },
+          {
+            path: ':id',
+            name: 'BudgetDetails',
+            component: () => import('@/app/views/budget/details/BudgetDetailsView.vue'),
+            meta: { title: 'Detalles del Presupuesto', subtitle: 'Revisa tu balance e historial.', showMenu: true }
+          },
+        ]
       }
     ]
   }

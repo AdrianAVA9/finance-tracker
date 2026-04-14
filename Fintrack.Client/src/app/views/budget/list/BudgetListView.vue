@@ -246,7 +246,7 @@ watch([selectedMonth, selectedYear], loadBudgets)
         </div>
         
         <button 
-          @click="router.push({ name: 'BudgetSimulation' })"
+          @click="router.push({ name: 'BudgetBulkEdit' })"
           class="group flex items-center gap-1 text-[#05E699] hover:opacity-80 transition-opacity mb-[2px]"
         >
           <span class="text-[10px] font-black uppercase tracking-widest group-hover:underline underline-offset-4">Ajuste Rápido</span>
