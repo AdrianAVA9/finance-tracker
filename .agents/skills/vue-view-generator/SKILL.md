@@ -31,6 +31,23 @@ Fintrack has established shared UI components that must be utilized to maintain 
   <LoadingIndicator :is-loading="isLoading" message="Cargando Datos" />
   ```
 - **Destructive Actions**: Use `<ConfirmationModal>` to wrap delete, discard, or irreversible actions instead of generic alerts.
+  ```vue
+  <ConfirmationModal
+    :show="showDeleteConfirm"
+    title="¿Eliminar Registro?"
+    description="Esta acción eliminará el registro de forma permanente."
+    confirm-text="Eliminar"
+    cancel-text="Cancelar"
+    :is-loading="isDeleting"
+    variant="danger"
+    @confirm="handleDelete"
+    @cancel="showDeleteConfirm = false"
+  >
+    <template #item-preview v-if="selectedItem">
+      <!-- Optional layout for showing what you are confirming against -->
+    </template>
+  </ConfirmationModal>
+  ```
 - **Category Selection**: When a form requires expense category selection, use `<CategorySelector>` which handles nested groups, styling, and search internally.
 
 *(Note: Provide imports relative to `@/app/components/common/...`)*
