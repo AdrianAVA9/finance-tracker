@@ -6,7 +6,7 @@ import CategorySelector from '@/app/components/common/CategorySelector.vue'
 import ConfirmationModal from '@/app/components/common/ConfirmationModal.vue'
 
 interface Category {
-  id: number
+  id: string
   name: string
   icon?: string
   color?: string
@@ -16,10 +16,10 @@ const route = useRoute()
 const router = useRouter()
 
 const isEditMode = computed(() => !!route.params.id)
-const budgetId = computed(() => route.params.id ? parseInt(route.params.id as string, 10) : null)
+const budgetId = computed(() => route.params.id as string || null)
 
 const categories = ref<Category[]>([])
-const selectedCategoryId = ref<number | null>(null)
+const selectedCategoryId = ref<string | null>(null)
 const limitAmount = ref<number | null>(null)
 const isLoading = ref(true)
 const isSubmitting = ref(false)
@@ -50,7 +50,7 @@ const fetchBudgetDetails = async () => {
       params: { month: month.value, year: year.value }
     })
     
-    const budget = data.budgets.find((b: { id: number }) => b.id === budgetId.value)
+    const budget = data.budgets.find((b: { id: string }) => b.id === budgetId.value)
     if (budget) {
       selectedCategoryId.value = budget.categoryId
       limitAmount.value = budget.limitAmount
@@ -242,17 +242,17 @@ const monthsLabels = [
       </div>
 
       <!-- Delete Action (Edit Mode Only) -->
-      <div v-if="isEditMode" class="pt-12 border-t border-white/[0.03] space-y-6">
+      <div v-if="isEditMode" class="pt-6 border-t border-white/[0.03] space-y-6">
         <button 
           @click="showDeleteConfirm = true"
           type="button"
           :disabled="isSubmitting"
-          class="w-full group flex items-center justify-center gap-3 py-4 text-red-500 font-headline font-bold hover:bg-red-500/5 rounded-xl transition-all active:scale-[0.98] disabled:opacity-50"
+          class="w-full group flex items-center justify-center gap-3 pb-0 text-red-500 font-headline font-bold hover:bg-red-500/5 rounded-xl transition-all active:scale-[0.98] disabled:opacity-50"
         >
           <span class="material-symbols-outlined">delete_sweep</span>
           Eliminar Presupuesto
         </button>
-        <p class="text-center text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-[0.2em]">Esta acción es definitiva</p>
+        <p class="text-center text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-[0.2em] mt-1">Esta acción es definitiva</p>
       </div>
     </form>
   </div>
