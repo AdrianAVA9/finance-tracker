@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
 import CategorySelector from '@/app/components/common/CategorySelector.vue'
 import ConfirmationModal from '@/app/components/common/ConfirmationModal.vue'
+import LoadingIndicator from '@/app/components/common/LoadingIndicator.vue'
 
 interface Category {
   id: string
@@ -162,14 +163,9 @@ const monthsLabels = [
       </template>
     </ConfirmationModal>
 
-    <div v-if="isLoading" class="flex flex-col items-center justify-center py-20 gap-4">
-      <div class="w-10 h-1 bg-surface-container-highest rounded-full overflow-hidden relative">
-        <div class="absolute inset-0 bg-primary-container w-1/3 animate-[loading_1.5s_infinite]"></div>
-      </div>
-      <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[.2em]">Cargando Datos</p>
-    </div>
+    <LoadingIndicator :is-loading="isLoading" />
 
-    <form v-else @submit.prevent="handleSave" class="space-y-8 animate-fade-in-up">
+    <form v-if="!isLoading" @submit.prevent="handleSave" class="space-y-8 animate-fade-in-up">
       <!-- Hero Amount Input -->
       <section class="relative group">
         <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1">Límite para {{ monthsLabels[month - 1] }}</label>
@@ -259,11 +255,6 @@ const monthsLabels = [
 </template>
 
 <style scoped>
-@keyframes loading {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(300%); }
-}
-
 .luminous-shadow-sm {
   box-shadow: 0 20px 40px -20px rgba(5, 230, 153, 0.05);
 }
