@@ -5,7 +5,7 @@ const store = useActionSheetStore();
 </script>
 
 <template>
-    <nav class="fixed bottom-0 w-full rounded-t-3xl z-50 bg-[#1E2228]/90 backdrop-blur-md no-border border-t border-white/5 shadow-[0_-4px_40px_rgba(5,230,153,0.05)] flex justify-around items-center px-4 pb-8 pt-3">
+    <nav class="fixed bottom-0 w-full rounded-t-3xl z-50 bg-[#1E2228]/90 backdrop-blur-md no-border border-t border-white/5 shadow-[0_-4px_40px_rgba(5,230,153,0.05)] flex justify-around items-center px-4 pt-3 pb-safe">
         <!-- Dashboard -->
         <router-link to="/app/dashboard" class="sidebar-link">
             <span class="material-symbols-outlined">dashboard</span>
