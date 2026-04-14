@@ -162,27 +162,6 @@ const monthsLabels = [
       </template>
     </ConfirmationModal>
 
-    <!-- Header Section -->
-    <header class="flex items-center justify-between px-1">
-      <div class="flex items-center gap-4">
-        <button 
-          @click="goBack"
-          class="p-2 rounded-lg hover:bg-surface-container-high transition-colors text-on-surface-variant hover:text-primary-container"
-          aria-label="Volver"
-        >
-          <span class="material-symbols-outlined">arrow_back</span>
-        </button>
-        <div class="space-y-1">
-          <h1 class="font-headline text-2xl font-black tracking-tighter text-on-surface">
-            {{ isEditMode ? 'Editar Presupuesto' : 'Configurar Presupuesto' }}
-          </h1>
-          <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
-            {{ monthsLabels[month - 1] }} {{ year }} • Planificación de Precisión
-          </p>
-        </div>
-      </div>
-    </header>
-
     <div v-if="isLoading" class="flex flex-col items-center justify-center py-20 gap-4">
       <div class="w-10 h-1 bg-surface-container-highest rounded-full overflow-hidden relative">
         <div class="absolute inset-0 bg-primary-container w-1/3 animate-[loading_1.5s_infinite]"></div>
@@ -193,7 +172,7 @@ const monthsLabels = [
     <form v-else @submit.prevent="handleSave" class="space-y-8 animate-fade-in-up">
       <!-- Hero Amount Input -->
       <section class="relative group">
-        <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1">Límite Mensual</label>
+        <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1">Límite para {{ monthsLabels[month - 1] }}</label>
         <div class="bg-surface-container-low p-10 rounded-xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-primary-container/[0.02] focus-within:border-primary-container/20">
           <div class="flex items-baseline gap-2">
             <span class="font-headline text-4xl font-black text-primary-container">₡</span>

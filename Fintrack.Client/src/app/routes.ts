@@ -18,6 +18,32 @@ export const routes: RouteRecordRaw[] = [
     ]
   },
   {
+    path: '/app/budgets/new',
+    component: FocusedLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'BudgetCreate',
+        component: () => import('@/app/views/budget/form/BudgetFormView.vue'),
+        meta: { title: 'Configurar Presupuesto', subtitle: 'Planificación de Precisión' }
+      }
+    ]
+  },
+  {
+    path: '/app/budgets/:id/edit',
+    component: FocusedLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'BudgetEdit',
+        component: () => import('@/app/views/budget/form/BudgetFormView.vue'),
+        meta: { title: 'Ajustar Presupuesto', subtitle: 'Refina tus metas financieras.' }
+      }
+    ]
+  },
+  {
     path: '/app',
     component: AppLayout,
     meta: { requiresAuth: true },
@@ -72,18 +98,7 @@ export const routes: RouteRecordRaw[] = [
             component: () => import('@/app/views/budget/list/BudgetListView.vue'),
             meta: { title: 'Plan Presupuestario', subtitle: 'Define tus límites mensuales y mantén el control.', showMenu: true }
           },
-          {
-            path: 'new',
-            name: 'BudgetCreate',
-            component: () => import('@/app/views/budget/form/BudgetFormView.vue'),
-            meta: { title: 'Configurar Presupuesto', subtitle: 'Define tus límites de gasto.' }
-          },
-          {
-            path: ':id/edit',
-            name: 'BudgetEdit',
-            component: () => import('@/app/views/budget/form/BudgetFormView.vue'),
-            meta: { title: 'Ajustar Presupuesto', subtitle: 'Refina tus metas financieras.' }
-          },
+
           {
             path: ':id',
             name: 'BudgetDetails',
