@@ -102,7 +102,7 @@ onMounted(loadBudgets)
 </script>
 
 <template>
-  <div class="space-y-6 pt-6 px-4">
+  <div class="space-y-6">
     <!-- Subtitle / Meta Info -->
     <div v-if="!isLoading" class="px-1">
       <p class="text-[10px] font-bold text-[#849589] uppercase tracking-[0.2em]">

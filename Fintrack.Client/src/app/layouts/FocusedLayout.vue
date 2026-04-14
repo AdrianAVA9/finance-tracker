@@ -40,7 +40,7 @@ function goBack() {
       </h1>
     </header>
 
-    <div class="h-full relative w-full pt-16">
+    <div class="h-full relative w-full pt-20 px-4 max-w-2xl mx-auto">
       <router-view />
     </div>
   </div>
