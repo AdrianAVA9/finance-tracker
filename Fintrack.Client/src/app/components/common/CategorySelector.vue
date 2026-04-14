@@ -2,7 +2,7 @@
 import { ref, computed, watch, Transition } from 'vue'
 
 interface Category {
-  id: number
+  id: string | number
   name: string
   icon?: string
   color?: string
@@ -12,7 +12,7 @@ interface Category {
 }
 
 const props = defineProps<{
-  modelValue: number | null
+  modelValue: number | string | null
   categories: Category[]
   label?: string
   placeholder?: string
@@ -61,7 +61,7 @@ const hasGroups = computed(() =>
   props.categories.some(c => !!c.group?.name)
 )
 
-const selectCategory = (id: number) => {
+const selectCategory = (id: number | string) => {
   emit('update:modelValue', id)
   close()
 }
