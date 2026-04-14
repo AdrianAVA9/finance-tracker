@@ -54,4 +54,8 @@
   .bar-animate {
     animation: growUp 1s ease-out forwards;
   }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
