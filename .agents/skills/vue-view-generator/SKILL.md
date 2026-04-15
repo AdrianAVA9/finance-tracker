@@ -57,6 +57,14 @@ Fintrack has established shared UI components that must be utilized to maintain 
     </div>
   </SurfaceCard>
   ```
+- **Large amount entry (hero number field)**: Use `<AmountInputCard>` for registering currency amounts (budget limits, income, etc.). It wraps `<SurfaceCard>` with the shared hero styling (larger padding via utility overrides, subtle border, focus-within accent, luminous shadow), a currency symbol, and a centered number input. Bind with `v-model` (`number | null`). Optional props: `currency-symbol`, `placeholder`, `step`, `required`, `input-id` (pair with a `<label for="…">`).
+  ```vue
+  <label for="amount-field" class="…">Monto</label>
+  <AmountInputCard v-model="amount" input-id="amount-field" currency-symbol="₡" />
+  ```
+
+  Use `input-id` so `<label for>` matches the inner `<input>`, not the `SurfaceCard` root.
+
 - **Actions (buttons)**: Use `<AppButton>` for primary CTAs, secondary/neutral actions, and destructive row actions. It applies theme tokens (`primary-container`, `surface-container-high`, danger text) plus shared motion and disabled styles. Use `variant` (`primary` | `secondary` | `danger`), `type` (`button` | `submit` | `reset`), `loading` (spinner + disabled), optional `icon` (Material Symbols name), optional `#icon` slot, and default slot for the label.
   ```vue
   <AppButton type="submit" variant="primary" :loading="saving" icon="check_circle">
