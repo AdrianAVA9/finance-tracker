@@ -21,7 +21,7 @@ const loadBudgets = async () => {
         const data = await budgetService.getBudgets(selectedMonth.value, selectedYear.value)
         budgets.value = data.budgets
         expectedIncome.value = data.monthlyIncome
-        
+
         // Initialize draft values
         const drafts: Record<string, number> = {}
         data.budgets.forEach(b => {
@@ -76,13 +76,13 @@ const commitSimulation = async () => {
                 isRecurrent: existingBudget?.isRecurrent ?? false
             }
         })
-        
+
         await budgetService.upsertBatch({
             month: selectedMonth.value,
             year: selectedYear.value,
             budgets: budgetEntries
         })
-        
+
         router.push({ name: 'BudgetList' })
     } catch (error) {
         console.error('Failed to save simulation', error)
@@ -124,7 +124,7 @@ onMounted(loadBudgets)
 
         <!-- Simulation List -->
         <div v-else class="divide-y divide-white/5">
-            <div v-for="budget in budgets" :key="budget.id" 
+            <div v-for="budget in budgets" :key="budget.id"
                 class="flex items-center px-4 py-4 hover:bg-[#1a1c20]/50 transition-colors group">
                 <div class="w-1/2 flex items-center gap-3">
                     <span class="material-symbols-outlined text-xl text-[#9CA3AF] opacity-60 shrink-0">
@@ -135,7 +135,7 @@ onMounted(loadBudgets)
                         <div class="text-[10px] font-mono text-[#9CA3AF]">{{ formatCurrency(budget.limitAmount) }}</div>
                     </div>
                 </div>
-                
+
                 <!-- Delta Indicator -->
                 <div class="w-1/4 text-right">
                     <span v-if="getDelta(budget.categoryId) === 0" class="text-[11px] font-mono text-[#9CA3AF]">---</span>
@@ -151,9 +151,9 @@ onMounted(loadBudgets)
                 <div class="w-1/4 text-right">
                     <div class="flex items-center justify-end">
                         <span class="text-[#9CA3AF]/40 font-mono text-sm mr-0.5">₡</span>
-                        <input 
-                            class="bg-transparent border-none p-0 text-right font-mono text-lg font-bold text-[#e2e2e8] w-full focus:ring-0 focus:text-[#05E699] transition-colors" 
-                            type="text" 
+                        <input
+                            class="bg-transparent border-none p-0 text-right font-mono text-lg font-bold text-[#e2e2e8] w-full focus:ring-0 focus:text-[#05E699] transition-colors"
+                            type="text"
                             :value="draftBudgets[budget.categoryId]?.toLocaleString('es-CR')"
                             @input="handleInput(budget.categoryId, $event)"
                         />
@@ -206,19 +206,19 @@ onMounted(loadBudgets)
 
         <!-- Action Buttons inside Footer -->
         <div class="px-5 pb-8 pt-2 grid grid-cols-2 gap-3 bg-[#1E2228]">
-            <button 
+            <button
                 @click="discardChanges"
                 class="py-4 rounded-lg bg-[#333539] text-[#F3F4F6] font-manrope font-bold text-sm hover:bg-[#2A2F37] transition-all active:scale-[0.98]">
-                Descartar
+                Deshacer
             </button>
-            <button 
+            <button
                 @click="commitSimulation"
                 :disabled="isSaving"
                 class="py-4 rounded-lg bg-[#05E699] text-[#003822] font-manrope font-bold text-sm shadow-lg shadow-[#05E699]/20 hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
                 <span v-if="isSaving" class="flex items-center justify-center gap-2 px-4">
                     <div class="w-4 h-4 border-2 border-[#003822] border-t-transparent rounded-full animate-spin"></div>
                 </span>
-                <span v-else>Aplicar</span>
+                <span v-else>Guardar</span>
             </button>
         </div>
     </footer>
