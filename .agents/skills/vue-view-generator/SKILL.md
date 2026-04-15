@@ -57,6 +57,14 @@ Fintrack has established shared UI components that must be utilized to maintain 
     </div>
   </SurfaceCard>
   ```
+- **Actions (buttons)**: Use `<AppButton>` for primary CTAs, secondary/neutral actions, and destructive row actions. It applies theme tokens (`primary-container`, `surface-container-high`, danger text) plus shared motion and disabled styles. Use `variant` (`primary` | `secondary` | `danger`), `type` (`button` | `submit` | `reset`), `loading` (spinner + disabled), optional `icon` (Material Symbols name), optional `#icon` slot, and default slot for the label.
+  ```vue
+  <AppButton type="submit" variant="primary" :loading="saving" icon="check_circle">
+    Guardar
+  </AppButton>
+  <AppButton type="button" variant="secondary" @click="cancel">Cancelar</AppButton>
+  <AppButton type="button" variant="danger" icon="delete" @click="askDelete">Eliminar</AppButton>
+  ```
 
 *(Note: Provide imports relative to `@/app/components/common/...`)*
 
