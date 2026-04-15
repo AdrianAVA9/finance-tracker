@@ -1,0 +1,23 @@
+{
+  "skill_name": "vue-view-refactor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We have Fintrack.Client/src/app/views/budget/list/BudgetListView.vue and it's grown to almost 400 lines. I want to pull the month/year header and the empty state into separate components under src/app/components/budgets/, keep API calls in the view or a composable, and switch any raw primary buttons to AppButton. Don't change routes or API contracts. Outline the file moves and the order you'd apply patches.",
+      "expected_output": "A concrete plan: inventory of sections, proposed component names and props/emits, composable vs inline API, vue-view-generator alignment, route import updates if any, and test file paths to touch. No unrelated backend changes.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Refactor ExpenseRegistrationView so the amount field uses AmountInputCard and the submit row uses AppButton full width. The view currently duplicates the same card border classes as BudgetFormView. After refactor, run through the verification checklist from the vue-view-refactor skill.",
+      "expected_output": "Patches that only touch the expense registration flow, replace duplicate markup with shared components per vue-view-generator, preserve behavior, and mention typecheck + tests.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I'm not asking for a refactor—just add a second button on the login page for 'Continue with Google'. Wire the OAuth stub later.",
+      "expected_output": "Should NOT apply vue-view-refactor as the main workflow; this is a small feature add (may use vue-best-practices / auth domain patterns). Optionally note if login file is already too large and suggest a follow-up refactor.",
+      "files": []
+    }
+  ]
+}

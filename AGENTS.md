@@ -34,6 +34,7 @@ Skills live in `.agents/skills/` and provide specialized instructions for specif
 | `vue-testing-best-practices` | Testing with Vitest and Vue Test Utils | [SKILL.md](.agents/skills/vue-testing-best-practices/SKILL.md) |
 | `vue-debug-guides` | Handling runtime errors, hydration issues, etc. | [SKILL.md](.agents/skills/vue-debug-guides/SKILL.md) |
 | `vue-view-generator` | Enforces Fintrack specific layouts, ID formats, and shared components | [SKILL.md](.agents/skills/vue-view-generator/SKILL.md) |
+| `vue-view-refactor` | Workflow for refactoring or splitting existing Vue views; includes removing unused code | [SKILL.md](.agents/skills/vue-view-refactor/SKILL.md) |
 | `create-adaptable-composable` | Standards for writing robust composables | [SKILL.md](.agents/skills/create-adaptable-composable/SKILL.md) |
 | `pwa-development` | Progressive Web Apps guidelines | [SKILL.md](.agents/skills/pwa-development/SKILL.md) |
 
@@ -99,6 +100,7 @@ When performing these actions, ALWAYS invoke the corresponding skill FIRST:
 | Testing repository implementations | `unit-testing` |
 | Creating or modifying Vue components | `vue-best-practices` |
 | Generating or restructuring a view/page UI | `vue-view-generator` |
+| Refactoring, splitting, or restructuring an existing Vue view/page | `vue-view-refactor` |
 | Adding views, routes, or layouts to the client | `vue-client-architecture` |
 | Creating a composable | `create-adaptable-composable` |
 | Creating a Pinia store | `vue-pinia-best-practices` |

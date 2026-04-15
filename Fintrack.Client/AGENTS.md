@@ -31,6 +31,7 @@ When working in this directory, leverage the following skills (located in `../.a
 - [`vue-testing-best-practices`](../.agents/skills/vue-testing-best-practices/SKILL.md): Testing with Vitest and Vue Test Utils.
 - [`vue-debug-guides`](../.agents/skills/vue-debug-guides/SKILL.md): Handling runtime errors, hydration issues, etc.
 - [`vue-view-generator`](../.agents/skills/vue-view-generator/SKILL.md): Enforces Fintrack specific layouts, ID formats, and shared components.
+- [`vue-view-refactor`](../.agents/skills/vue-view-refactor/SKILL.md): Workflow for refactoring or splitting existing views, removing unused code, and aligning them with shared UI.
 - [`create-adaptable-composable`](../.agents/skills/create-adaptable-composable/SKILL.md): Standards for writing robust composables.
 - [`pwa-development`](../.agents/skills/pwa-development/SKILL.md): Progressive Web Apps guidelines.
 
