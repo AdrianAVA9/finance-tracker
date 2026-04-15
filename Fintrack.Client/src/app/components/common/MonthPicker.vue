@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, Transition } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps<{
   month: number
@@ -62,7 +62,7 @@ const close = () => {
     <!-- Trigger Button -->
     <button 
       @click="isOpen = true"
-      class="flex items-center gap-3 bg-surface-container-high px-5 py-3 rounded-xl hover:bg-surface-variant active:scale-95 transition-all border border-white/[0.03] shadow-lg group"
+      class="flex items-center gap-3 bg-surface-container-low px-5 py-3 rounded-xl hover:bg-surface-container active:scale-95 transition-all border border-white/[0.02] shadow-lg group"
     >
       <span class="material-symbols-outlined text-[18px] text-[#05E699] group-hover:scale-110 transition-transform">calendar_today</span>
       <span class="text-sm font-black font-headline text-on-surface tracking-tight">{{ currentSelectionLabel }}</span>
@@ -94,7 +94,7 @@ const close = () => {
             appear
           >
             <div 
-              class="relative w-full max-w-md bg-surface-container-high rounded-t-2xl sm:rounded-2xl p-8 pointer-events-auto shadow-2xl border-t border-white/[0.05]"
+              class="relative w-full max-w-md bg-surface-container-low rounded-t-2xl sm:rounded-2xl p-8 pointer-events-auto shadow-2xl border border-white/[0.02]"
               @click.stop
             >
               <div class="w-12 h-1.5 bg-on-surface-variant/10 rounded-full mx-auto mb-8"></div>
