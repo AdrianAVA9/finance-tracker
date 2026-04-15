@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import budgetService, { type Budget, type BudgetEntryDto } from '@/services/budgetService'
+import LoadingIndicator from '@/app/components/common/LoadingIndicator.vue'
 
 const router = useRouter()
 const isLoading = ref(true)
@@ -119,10 +120,7 @@ onMounted(loadBudgets)
         </div>
 
         <!-- List Loader -->
-        <div v-if="isLoading" class="p-12 flex flex-col items-center justify-center gap-4 text-center">
-            <div class="w-8 h-8 border-2 border-[#05E699] border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-xs font-mono text-[#9CA3AF] uppercase tracking-widest">Sincronizando base...</p>
-        </div>
+        <LoadingIndicator v-if="isLoading" :is-loading="isLoading" message="Sincronizando base..." />
 
         <!-- Simulation List -->
         <div v-else class="divide-y divide-white/5">
