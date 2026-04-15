@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
 import CategorySelector from '@/app/components/common/CategorySelector.vue'
 import ConfirmationModal from '@/app/components/common/ConfirmationModal.vue'
 import LoadingIndicator from '@/app/components/common/LoadingIndicator.vue'
+import AmountInputCard from '@/app/components/common/AmountInputCard.vue'
 import SurfaceCard from '@/app/components/common/SurfaceCard.vue'
+import AppButton from '@/app/components/common/AppButton.vue'
 
 interface Category {
   id: string
@@ -115,8 +117,6 @@ onMounted(async () => {
   }
 })
 
-const goBack = () => router.back()
-
 const monthsLabels = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
@@ -161,20 +161,8 @@ const monthsLabels = [
     <form v-if="!isLoading" @submit.prevent="handleSave" class="space-y-8 animate-fade-in-up">
       <!-- Hero Amount Input -->
       <section class="relative group">
-        <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1">Límite para {{ monthsLabels[month - 1] }}</label>
-        <div class="bg-surface-container-low p-10 rounded-xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-primary-container/[0.02] focus-within:border-primary-container/20">
-          <div class="flex items-baseline gap-2">
-            <span class="font-headline text-4xl font-black text-primary-container">₡</span>
-            <input
-              v-model="limitAmount"
-              class="bg-transparent border-none text-center font-headline text-6xl font-black tracking-tighter focus:ring-0 text-on-surface w-full max-w-[280px] placeholder:text-on-surface-variant/20"
-              placeholder="0"
-              type="number"
-              step="0.01"
-              required
-            />
-          </div>
-        </div>
+        <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4 px-1" for="budget-limit-amount">Límite para {{ monthsLabels[month - 1] }}</label>
+        <AmountInputCard v-model="limitAmount" input-id="budget-limit-amount" />
       </section>
 
       <!-- Recurring Active Toggle -->
@@ -210,37 +198,29 @@ const monthsLabels = [
       <!-- Threshold Alert (UI Only) - Removed per user request -->
 
       <!-- Action Buttons -->
-      <div class="pt-6 space-y-4">
-        <button
+      <div class="pt-6">
+        <AppButton
           type="submit"
+          variant="primary"
           :disabled="isSubmitting || !selectedCategoryId || limitAmount === null"
-          class="w-full bg-primary-container text-on-primary-container font-headline font-black py-5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all shadow-xl shadow-primary-container/20 disabled:opacity-50 flex items-center justify-center gap-3"
+          :loading="isSubmitting"
+          :icon="isEditMode ? 'check_circle' : 'add_circle'"
         >
-          <span v-if="isSubmitting" class="material-symbols-outlined animate-spin">sync</span>
-          <span v-else class="material-symbols-outlined">{{ isEditMode ? 'check_circle' : 'add_circle' }}</span>
           {{ isSubmitting ? 'Guardando...' : (isEditMode ? 'Actualizar Presupuesto' : 'Crear Presupuesto') }}
-        </button>
-
-        <button
-          @click="goBack"
-          type="button"
-          class="w-full bg-surface-container-high text-on-surface font-headline font-bold py-5 rounded-xl hover:bg-surface-variant active:scale-[0.98] transition-all"
-        >
-          Cancelar
-        </button>
+        </AppButton>
       </div>
 
       <!-- Delete Action (Edit Mode Only) -->
       <div v-if="isEditMode" class="pt-6 border-t border-white/[0.03] space-y-6">
-        <button
-          @click="showDeleteConfirm = true"
+        <AppButton
           type="button"
+          variant="danger"
+          icon="delete_sweep"
           :disabled="isSubmitting"
-          class="w-full group flex items-center justify-center gap-3 pb-0 text-red-500 font-headline font-bold hover:bg-red-500/5 rounded-xl transition-all active:scale-[0.98] disabled:opacity-50"
+          @click="showDeleteConfirm = true"
         >
-          <span class="material-symbols-outlined">delete_sweep</span>
           Eliminar Presupuesto
-        </button>
+        </AppButton>
         <p class="text-center text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-[0.2em] mt-1">Esta acción es definitiva</p>
       </div>
     </form>
@@ -248,10 +228,6 @@ const monthsLabels = [
 </template>
 
 <style scoped>
-.luminous-shadow-sm {
-  box-shadow: 0 20px 40px -20px rgba(5, 230, 153, 0.05);
-}
-
 .animate-fade-in-up {
   animation: fadeInUp 0.5s ease-out forwards;
 }
@@ -265,16 +241,5 @@ const monthsLabels = [
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Hide spin arrows in number input */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type=number] {
-  -moz-appearance: textfield;
-  appearance: textfield;
 }
 </style>
