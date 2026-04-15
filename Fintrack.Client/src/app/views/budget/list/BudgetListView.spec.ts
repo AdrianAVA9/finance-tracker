@@ -12,16 +12,21 @@ vi.mock('@/services/api', () => ({
 
 describe('BudgetRegistrationView.vue', () => {
   const mockBudgets = [
-    { id: 1, categoryId: 1, categoryName: 'Rent', limitAmount: 1000, spentAmount: 800, categoryColor: '#F00', categoryIcon: 'home' },
-    { id: 2, categoryId: 2, categoryName: 'Food', limitAmount: 500, spentAmount: 100, categoryColor: '#0F0', categoryIcon: 'restaurant' }
+    { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', categoryId: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', categoryName: 'Rent', limitAmount: 1000, spentAmount: 800, categoryColor: '#F00', categoryIcon: 'home' },
+    { id: 'cccccccc-cccc-cccc-cccc-cccccccccccc', categoryId: 'dddddddd-dddd-dddd-dddd-dddddddddddd', categoryName: 'Food', limitAmount: 500, spentAmount: 100, categoryColor: '#0F0', categoryIcon: 'restaurant' }
   ]
+
+  const mockApiResponse = {
+    budgets: mockBudgets,
+    monthlyIncome: 5000
+  }
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('renders stats correctly based on loaded budgets', async () => {
-    vi.mocked(api.get).mockResolvedValue({ data: mockBudgets })
+    vi.mocked(api.get).mockResolvedValue({ data: mockApiResponse })
     
     const wrapper = mount(BudgetRegistrationView)
     await flushPromises()
@@ -50,7 +55,7 @@ describe('BudgetRegistrationView.vue', () => {
   it('calculates "Remaining to Allocate" correctly', async () => {
     // Assuming expected income is static or from another source for now.
     // In my implementation, I used a static 5000 for income if not provided.
-    vi.mocked(api.get).mockResolvedValue({ data: mockBudgets })
+    vi.mocked(api.get).mockResolvedValue({ data: mockApiResponse })
     const wrapper = mount(BudgetRegistrationView)
     await flushPromises()
 
@@ -59,7 +64,7 @@ describe('BudgetRegistrationView.vue', () => {
   })
 
   it('filters budgets by search term', async () => {
-    vi.mocked(api.get).mockResolvedValue({ data: mockBudgets })
+    vi.mocked(api.get).mockResolvedValue({ data: mockApiResponse })
     const wrapper = mount(BudgetRegistrationView)
     await flushPromises()
 

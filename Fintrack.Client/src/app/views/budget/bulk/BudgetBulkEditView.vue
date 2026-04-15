@@ -7,7 +7,7 @@ const router = useRouter()
 const isLoading = ref(true)
 const isSaving = ref(false)
 const budgets = ref<Budget[]>([])
-const draftBudgets = ref<Record<number, number>>({}) // categoryId -> draftAmount
+const draftBudgets = ref<Record<string, number>>({}) // categoryId (Guid) -> draftAmount
 
 const currentDate = new Date()
 const selectedMonth = ref(currentDate.getMonth() + 1)
@@ -22,7 +22,7 @@ const loadBudgets = async () => {
         expectedIncome.value = data.monthlyIncome
         
         // Initialize draft values
-        const drafts: Record<number, number> = {}
+        const drafts: Record<string, number> = {}
         data.budgets.forEach(b => {
             drafts[b.categoryId] = b.limitAmount
         })
@@ -40,7 +40,7 @@ const simulatedTotal = computed(() => {
 })
 const theGap = computed(() => simulatedTotal.value - baselineTotal.value)
 
-const getDelta = (categoryId: number) => {
+const getDelta = (categoryId: string) => {
     const budget = budgets.value.find(b => b.categoryId === categoryId)
     if (!budget) return 0
     const draftValue = draftBudgets.value[categoryId] ?? budget.limitAmount
@@ -57,7 +57,7 @@ const formatCurrency = (amount: number) => {
 }
 
 const discardChanges = () => {
-    const drafts: Record<number, number> = {}
+    const drafts: Record<string, number> = {}
     budgets.value.forEach(b => {
         drafts[b.categoryId] = b.limitAmount
     })
@@ -68,13 +68,12 @@ const commitSimulation = async () => {
     isSaving.value = true
     try {
         const budgetEntries: BudgetEntryDto[] = Object.entries(draftBudgets.value).map(([categoryId, amount]) => {
-            const id = Number(categoryId);
-            const existingBudget = budgets.value.find(b => b.categoryId === id);
+            const existingBudget = budgets.value.find(b => b.categoryId === categoryId)
             return {
-                categoryId: id,
+                categoryId,
                 amount,
-                isRecurrent: existingBudget?.isRecurrent || false
-            };
+                isRecurrent: existingBudget?.isRecurrent ?? false
+            }
         })
         
         await budgetService.upsertBatch({
@@ -91,7 +90,7 @@ const commitSimulation = async () => {
     }
 }
 
-const handleInput = (categoryId: number, event: Event) => {
+const handleInput = (categoryId: string, event: Event) => {
     const target = event.target as HTMLInputElement
     const value = target.value.replace(/[^0-9]/g, '')
     draftBudgets.value[categoryId] = value ? parseInt(value) : 0

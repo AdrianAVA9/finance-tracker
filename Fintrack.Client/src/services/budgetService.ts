@@ -22,7 +22,7 @@ export interface BudgetDetailsDto {
 }
 
 export interface BudgetEntryDto {
-    categoryId: number;
+    categoryId: string;
     amount: number;
     isRecurrent?: boolean;
 }
@@ -34,8 +34,8 @@ export interface UpsertBudgetsRequest {
 }
 
 export interface Budget {
-    id: number;
-    categoryId: number;
+    id: string;
+    categoryId: string;
     categoryName: string;
     categoryIcon?: string;
     categoryColor?: string;
@@ -58,7 +58,7 @@ const budgetService = {
         return response.data;
     },
 
-    async getBudgetDetails(id: number, month: number, year: number): Promise<BudgetDetailsDto> {
+    async getBudgetDetails(id: string, month: number, year: number): Promise<BudgetDetailsDto> {
         const response = await api.get<BudgetDetailsDto>(`/api/v1/budgets/${id}/details`, {
             params: { month, year }
         });

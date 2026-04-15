@@ -8,8 +8,8 @@ import MonthPicker from '@/app/components/common/MonthPicker.vue'
 import SurfaceCard from '@/app/components/common/SurfaceCard.vue'
 
 interface Budget {
-  id: number
-  categoryId: number
+  id: string
+  categoryId: string
   categoryName: string
   categoryIcon?: string
   categoryColor?: string
@@ -100,7 +100,7 @@ const openEditModal = (budget: Budget) => {
   })
 }
 
-const deleteBudget = (id: number) => {
+const deleteBudget = (id: string) => {
   const budget = budgets.value.find(b => b.id === id)
   if (budget) {
     budgetToDelete.value = budget
