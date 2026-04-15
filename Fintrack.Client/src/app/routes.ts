@@ -44,6 +44,32 @@ export const routes: RouteRecordRaw[] = [
     ]
   },
   {
+    path: '/app/expenses/new',
+    component: FocusedLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'ExpenseRegistration',
+        component: () => import('@/app/views/expense/ExpenseRegistrationView.vue'),
+        meta: { title: 'Registrar Gasto', subtitle: 'Registra un nuevo gasto o sube un recibo desglosado.' }
+      }
+    ]
+  },
+  {
+    path: '/app/expenses/:id/edit',
+    component: FocusedLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'ExpenseEdit',
+        component: () => import('@/app/views/expense/ExpenseRegistrationView.vue'),
+        meta: { title: 'Editar Gasto', subtitle: 'Modifica los detalles de tu gasto.' }
+      }
+    ]
+  },
+  {
     path: '/app',
     component: AppLayout,
     meta: { requiresAuth: true },
@@ -63,18 +89,6 @@ export const routes: RouteRecordRaw[] = [
         name: 'Activity',
         component: () => import('@/app/views/transaction/TransactionsView.vue'),
         meta: { title: 'Actividad', subtitle: 'Revisa tu historial de movimientos.', showMenu: true }
-      },
-      {
-        path: 'expenses/new',
-        name: 'ExpenseRegistration',
-        component: () => import('@/app/views/expense/ExpenseRegistrationView.vue'),
-        meta: { title: 'Registrar Gasto', subtitle: 'Registra un nuevo gasto o sube un recibo desglosado.' }
-      },
-      {
-        path: 'expenses/:id/edit',
-        name: 'ExpenseEdit',
-        component: () => import('@/app/views/expense/ExpenseRegistrationView.vue'),
-        meta: { title: 'Editar Gasto', subtitle: 'Modifica los detalles de tu gasto.' }
       },
       {
         path: 'incomes/new',
