@@ -5,6 +5,7 @@ import api from '@/services/api'
 import CategorySelector from '@/app/components/common/CategorySelector.vue'
 import ConfirmationModal from '@/app/components/common/ConfirmationModal.vue'
 import LoadingIndicator from '@/app/components/common/LoadingIndicator.vue'
+import SurfaceCard from '@/app/components/common/SurfaceCard.vue'
 
 interface Category {
   id: string
@@ -43,14 +44,14 @@ const fetchCategories = async () => {
 
 const fetchBudgetDetails = async () => {
   if (!budgetId.value) return
-  
+
   try {
     isLoading.value = true
     // Fetch budget list for the specific month/year and find the one with the ID
     const { data } = await api.get('/api/v1/budgets', {
       params: { month: month.value, year: year.value }
     })
-    
+
     const budget = data.budgets.find((b: { id: string }) => b.id === budgetId.value)
     if (budget) {
       selectedCategoryId.value = budget.categoryId
@@ -114,14 +115,6 @@ onMounted(async () => {
   }
 })
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('es-CR', {
-    style: 'currency',
-    currency: 'CRC',
-    minimumFractionDigits: 0,
-  }).format(value)
-}
-
 const goBack = () => router.back()
 
 const monthsLabels = [
@@ -146,7 +139,7 @@ const monthsLabels = [
     >
       <template #item-preview v-if="selectedCategory">
         <div class="flex items-center gap-4 bg-surface-container-lowest/50 p-4 rounded-xl">
-          <div 
+          <div
             class="w-10 h-10 rounded-full flex items-center justify-center opacity-80"
             :style="selectedCategory.color ? { backgroundColor: selectedCategory.color + '20', color: selectedCategory.color } : { backgroundColor: '#ffffff10' }"
           >
@@ -172,11 +165,11 @@ const monthsLabels = [
         <div class="bg-surface-container-low p-10 rounded-xl border border-white/[0.03] luminous-shadow-sm flex flex-col items-center justify-center transition-all duration-500 focus-within:bg-primary-container/[0.02] focus-within:border-primary-container/20">
           <div class="flex items-baseline gap-2">
             <span class="font-headline text-4xl font-black text-primary-container">₡</span>
-            <input 
+            <input
               v-model="limitAmount"
-              class="bg-transparent border-none text-center font-headline text-6xl font-black tracking-tighter focus:ring-0 text-on-surface w-full max-w-[280px] placeholder:text-on-surface-variant/20" 
-              placeholder="0" 
-              type="number" 
+              class="bg-transparent border-none text-center font-headline text-6xl font-black tracking-tighter focus:ring-0 text-on-surface w-full max-w-[280px] placeholder:text-on-surface-variant/20"
+              placeholder="0"
+              type="number"
               step="0.01"
               required
             />
@@ -185,7 +178,7 @@ const monthsLabels = [
       </section>
 
       <!-- Recurring Active Toggle -->
-      <section class="bg-surface-container-low p-6 rounded-xl border border-white/[0.02]">
+      <SurfaceCard>
         <div class="flex items-center justify-between">
           <div class="flex gap-4 items-center">
             <div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary-container">
@@ -201,14 +194,14 @@ const monthsLabels = [
             <div class="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container shadow-lg group-active:scale-95"></div>
           </label>
         </div>
-      </section>
+      </SurfaceCard>
 
       <!-- Category Selector -->
       <section class="space-y-4">
         <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant px-1">Categoría del Gasto</label>
-        <CategorySelector 
-          v-model="selectedCategoryId" 
-          :categories="categories" 
+        <CategorySelector
+          v-model="selectedCategoryId"
+          :categories="categories"
           :disabled="isEditMode"
           placeholder="Selecciona Categoría"
         />
@@ -218,7 +211,7 @@ const monthsLabels = [
 
       <!-- Action Buttons -->
       <div class="pt-6 space-y-4">
-        <button 
+        <button
           type="submit"
           :disabled="isSubmitting || !selectedCategoryId || limitAmount === null"
           class="w-full bg-primary-container text-on-primary-container font-headline font-black py-5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all shadow-xl shadow-primary-container/20 disabled:opacity-50 flex items-center justify-center gap-3"
@@ -227,8 +220,8 @@ const monthsLabels = [
           <span v-else class="material-symbols-outlined">{{ isEditMode ? 'check_circle' : 'add_circle' }}</span>
           {{ isSubmitting ? 'Guardando...' : (isEditMode ? 'Actualizar Presupuesto' : 'Crear Presupuesto') }}
         </button>
-        
-        <button 
+
+        <button
           @click="goBack"
           type="button"
           class="w-full bg-surface-container-high text-on-surface font-headline font-bold py-5 rounded-xl hover:bg-surface-variant active:scale-[0.98] transition-all"
@@ -239,7 +232,7 @@ const monthsLabels = [
 
       <!-- Delete Action (Edit Mode Only) -->
       <div v-if="isEditMode" class="pt-6 border-t border-white/[0.03] space-y-6">
-        <button 
+        <button
           @click="showDeleteConfirm = true"
           type="button"
           :disabled="isSubmitting"

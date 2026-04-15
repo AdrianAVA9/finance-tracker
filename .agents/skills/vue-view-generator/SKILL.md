@@ -49,6 +49,14 @@ Fintrack has established shared UI components that must be utilized to maintain 
   </ConfirmationModal>
   ```
 - **Category Selection**: When a form requires expense category selection, use `<CategorySelector>` which handles nested groups, styling, and search internally.
+- **Surface cards (grouped content blocks)**: Use `<SurfaceCard>` whenever you need a bordered, padded block on the surface color (settings rows, toggles, summaries, etc.). It only provides the shared shell; put your markup in the default slot.
+  ```vue
+  <SurfaceCard>
+    <div class="flex items-center justify-between">
+      <!-- any structure -->
+    </div>
+  </SurfaceCard>
+  ```
 
 *(Note: Provide imports relative to `@/app/components/common/...`)*
 
