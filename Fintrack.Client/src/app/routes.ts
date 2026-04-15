@@ -44,6 +44,19 @@ export const routes: RouteRecordRaw[] = [
     ]
   },
   {
+    path: '/app/budgets/:id',
+    component: FocusedLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'BudgetDetails',
+        component: () => import('@/app/views/budget/details/BudgetDetailsView.vue'),
+        meta: { title: 'Detalles del Presupuesto', subtitle: 'Revisa tu balance e historial.' }
+      }
+    ]
+  },
+  {
     path: '/app/expenses/new',
     component: FocusedLayout,
     meta: { requiresAuth: true },
@@ -125,13 +138,6 @@ export const routes: RouteRecordRaw[] = [
             name: 'BudgetList',
             component: () => import('@/app/views/budget/list/BudgetListView.vue'),
             meta: { title: 'Plan Presupuestario', subtitle: 'Define tus límites mensuales y mantén el control.', showMenu: true }
-          },
-
-          {
-            path: ':id',
-            name: 'BudgetDetails',
-            component: () => import('@/app/views/budget/details/BudgetDetailsView.vue'),
-            meta: { title: 'Detalles del Presupuesto', subtitle: 'Revisa tu balance e historial.', showMenu: true }
           },
         ]
       }

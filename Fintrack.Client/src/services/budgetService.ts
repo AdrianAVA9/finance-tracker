@@ -59,7 +59,7 @@ const budgetService = {
     },
 
     async getBudgetDetails(id: string, month: number, year: number): Promise<BudgetDetailsDto> {
-        const response = await api.get<BudgetDetailsDto>(`/api/v1/budgets/${id}/details`, {
+        const response = await api.get<BudgetDetailsDto>(`/api/v1/budgets/${id}`, {
             params: { month, year }
         });
         return response.data;
