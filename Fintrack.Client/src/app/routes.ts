@@ -26,7 +26,7 @@ export const routes: RouteRecordRaw[] = [
         path: '',
         name: 'BudgetCreate',
         component: () => import('@/app/views/budget/form/BudgetFormView.vue'),
-        meta: { title: 'Configurar Presupuesto', subtitle: 'Planificación de Precisión' }
+        meta: { title: 'Registrar Presupuesto', subtitle: 'Planificación de Precisión' }
       }
     ]
   },
