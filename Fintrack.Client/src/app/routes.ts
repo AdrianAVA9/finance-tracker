@@ -70,6 +70,32 @@ export const routes: RouteRecordRaw[] = [
     ]
   },
   {
+    path: '/app/incomes/new',
+    component: FocusedLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'IncomeRegistration',
+        component: () => import('@/app/views/income/IncomeRegistrationView.vue'),
+        meta: { title: 'Registro de Ingresos', subtitle: 'Complete los detalles para su nueva entrada de capital.' }
+      }
+    ]
+  },
+  {
+    path: '/app/incomes/:id/edit',
+    component: FocusedLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'IncomeEdit',
+        component: () => import('@/app/views/income/IncomeRegistrationView.vue'),
+        meta: { title: 'Editar Ingreso', subtitle: 'Ajusta los detalles de tu entrada de capital.' }
+      }
+    ]
+  },
+  {
     path: '/app',
     component: AppLayout,
     meta: { requiresAuth: true },
@@ -89,18 +115,6 @@ export const routes: RouteRecordRaw[] = [
         name: 'Activity',
         component: () => import('@/app/views/transaction/TransactionsView.vue'),
         meta: { title: 'Actividad', subtitle: 'Revisa tu historial de movimientos.', showMenu: true }
-      },
-      {
-        path: 'incomes/new',
-        name: 'IncomeRegistration',
-        component: () => import('@/app/views/income/IncomeRegistrationView.vue'),
-        meta: { title: 'Registro de Ingresos', subtitle: 'Complete los detalles para su nueva entrada de capital.' }
-      },
-      {
-        path: 'incomes/:id/edit',
-        name: 'IncomeEdit',
-        component: () => import('@/app/views/income/IncomeRegistrationView.vue'),
-        meta: { title: 'Editar Ingreso', subtitle: 'Ajusta los detalles de tu entrada de capital.' }
       },
       {
         path: 'budgets',
