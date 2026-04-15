@@ -1,36 +1,15 @@
 <script setup lang="ts">
 import SurfaceCard from '@/app/components/common/SurfaceCard.vue'
 import type { TransactionDto } from '@/services/dashboardService'
+import {
+  formatDashboardCurrency,
+  formatDashboardDate,
+} from '@/app/views/dashboard/utils/dashboardFormatters'
 
 defineProps<{
   transactions: TransactionDto[]
 }>()
 
-const formatCurrency = (value: number): string =>
-  new Intl.NumberFormat('es-CR', {
-    style: 'currency',
-    currency: 'CRC',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value)
-
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString)
-  const now = new Date()
-  const isToday = date.toDateString() === now.toDateString()
-
-  if (isToday) {
-    return `Hoy, ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`
-  }
-
-  return (
-    date.toLocaleDateString('es-ES', {
-      month: 'short',
-      day: '2-digit',
-      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
-    }) + `, ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`
-  )
-}
 </script>
 
 <template>
@@ -56,7 +35,9 @@ const formatDate = (dateString: string): string => {
 
             <div class="truncate">
               <p class="font-bold text-sm truncate">{{ transaction.description }}</p>
-              <p class="text-xs text-[#bacbbe]">{{ transaction.categoryName }} • {{ formatDate(transaction.date) }}</p>
+              <p class="text-xs text-[#bacbbe]">
+                {{ transaction.categoryName }} • {{ formatDashboardDate(transaction.date) }}
+              </p>
             </div>
           </div>
 
@@ -66,7 +47,7 @@ const formatDate = (dateString: string): string => {
               transaction.amount >= 0 ? 'text-[#05E699]' : 'text-[#FF4D4D]',
             ]"
           >
-            {{ transaction.amount >= 0 ? '+' : '' }}{{ formatCurrency(transaction.amount) }}
+            {{ transaction.amount >= 0 ? '+' : '' }}{{ formatDashboardCurrency(transaction.amount) }}
           </span>
         </div>
       </SurfaceCard>

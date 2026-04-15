@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import SurfaceCard from '@/app/components/common/SurfaceCard.vue'
 import type { BudgetSummaryDto } from '@/services/dashboardService'
+import { formatDashboardCurrency } from '@/app/views/dashboard/utils/dashboardFormatters'
 
 defineProps<{
   budgets: BudgetSummaryDto[]
 }>()
 
-const formatCurrency = (value: number): string =>
-  new Intl.NumberFormat('es-CR', {
-    style: 'currency',
-    currency: 'CRC',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value)
 </script>
 
 <template>
@@ -46,7 +40,9 @@ const formatCurrency = (value: number): string =>
                 <h4 class="font-bold text-sm text-[#e2e2e8] group-hover:text-white transition-colors">
                   {{ budget.categoryName }}
                 </h4>
-                <p class="text-xs text-[#bacbbe] mt-0.5">{{ formatCurrency(budget.remainingAmount) }} restantes</p>
+                <p class="text-xs text-[#bacbbe] mt-0.5">
+                  {{ formatDashboardCurrency(budget.remainingAmount) }} restantes
+                </p>
               </div>
             </div>
             <div class="flex items-center gap-2">
