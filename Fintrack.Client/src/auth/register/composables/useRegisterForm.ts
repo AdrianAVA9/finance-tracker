@@ -39,11 +39,16 @@ export function useRegisterForm() {
     loading.value = true;
     errorMsg.value = '';
 
-    const success = await register(email.value, password.value);
+    const result = await register(email.value, password.value);
     loading.value = false;
 
-    if (success) {
+    if (result.success) {
       await router.push('/app');
+      return;
+    }
+
+    if (result.code === 'DuplicateUserName' && result.message) {
+      errorMsg.value = result.message;
       return;
     }
 

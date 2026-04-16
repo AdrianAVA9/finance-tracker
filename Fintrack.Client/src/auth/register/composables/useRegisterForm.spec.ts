@@ -36,7 +36,7 @@ describe('useRegisterForm', () => {
   });
 
   it('redirects to /app after successful registration', async () => {
-    registerMock.mockResolvedValue(true);
+    registerMock.mockResolvedValue({ success: true });
     pushMock.mockResolvedValue(undefined);
 
     const registerForm = useRegisterForm();
@@ -53,7 +53,7 @@ describe('useRegisterForm', () => {
   });
 
   it('sets error message and avoids redirect when register fails', async () => {
-    registerMock.mockResolvedValue(false);
+    registerMock.mockResolvedValue({ success: false });
 
     const registerForm = useRegisterForm();
     registerForm.email.value = 'user@example.com';
@@ -64,6 +64,25 @@ describe('useRegisterForm', () => {
 
     expect(pushMock).not.toHaveBeenCalled();
     expect(registerForm.errorMsg.value).toBe('Error en el registro. Por favor verifica tus datos.');
+    expect(registerForm.loading.value).toBe(false);
+  });
+
+  it('shows backend duplicate username message when available', async () => {
+    registerMock.mockResolvedValue({
+      success: false,
+      code: 'DuplicateUserName',
+      message: "Username 'adrian.vegaa@outlook.com' is already taken.",
+    });
+
+    const registerForm = useRegisterForm();
+    registerForm.email.value = 'adrian.vegaa@outlook.com';
+    registerForm.password.value = 'Password1';
+    registerForm.terms.value = true;
+
+    await registerForm.handleRegister();
+
+    expect(pushMock).not.toHaveBeenCalled();
+    expect(registerForm.errorMsg.value).toBe("Username 'adrian.vegaa@outlook.com' is already taken.");
     expect(registerForm.loading.value).toBe(false);
   });
 });
