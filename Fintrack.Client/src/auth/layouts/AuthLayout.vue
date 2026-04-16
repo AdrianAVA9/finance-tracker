@@ -1,7 +1,12 @@
-<template>
-  <router-view />
-</template>
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
+import SessionBootstrapOverlay from '@/shared/ui/SessionBootstrapOverlay.vue'
+import { useSessionBootstrap } from '@/composables/useSessionBootstrap'
 
-<style scoped>
-/* Removed restrictive auth gradient and card layout */
-</style>
+const { isInitialized } = useSessionBootstrap()
+</script>
+
+<template>
+  <SessionBootstrapOverlay v-if="!isInitialized" message="Cargando pagina..." />
+  <RouterView v-else />
+</template>
