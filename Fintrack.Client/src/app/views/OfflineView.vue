@@ -1,9 +1,7 @@
 <script setup lang="ts">
 /**
- * OfflineView
- * Full-page component shown when user navigates while offline.
+ * Full-page offline state for the authenticated application domain.
  * Implementation based on "Precision Luminescence" design.
- * Buttons are omitted as per user request.
  */
 </script>
 
@@ -20,13 +18,13 @@
         <!-- Animated-like background glows -->
         <div class="absolute inset-0 bg-[#05E699]/5 rounded-full blur-[80px]"></div>
         <div class="absolute w-48 h-48 bg-[#05E699]/10 rounded-full blur-[40px]"></div>
-        
+
         <!-- Icon Composition -->
         <div class="relative z-10 flex flex-col items-center">
           <div class="mb-4 bg-[#1a1c20] p-8 rounded-full border border-white/5 shadow-2xl">
             <span class="material-symbols-outlined text-[80px] text-[#77ffbb]" style="font-variation-settings: 'FILL' 0;">cloud_off</span>
           </div>
-          
+
           <!-- Status Indicators -->
           <div class="flex gap-3 mt-6">
             <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#282a2e] border border-white/10">
