@@ -62,13 +62,14 @@ import ConfirmationModal from '@/app/components/common/ConfirmationModal.vue'
 import LoadingIndicator from '@/app/components/common/LoadingIndicator.vue'
 import AppButton from '@/app/components/common/AppButton.vue'
 import api from '@/services/api'
+import type { ExpenseSubmitPayload } from '@/app/components/expenses/useExpenseRegistrationForm'
 
 interface ExpenseDto {
   id: string
   merchant: string
   totalAmount: number
   date: string
-  items: unknown[]
+  items: { categoryId: string; itemAmount: number; description: string }[]
 }
 
 const router = useRouter()
@@ -103,7 +104,7 @@ const loadExpenseData = async () => {
   }
 }
 
-const handleExpenseSubmit = async (expenseData: Record<string, unknown>) => {
+const handleExpenseSubmit = async (expenseData: ExpenseSubmitPayload) => {
   isSubmitting.value = true
   errorMessage.value = undefined
 

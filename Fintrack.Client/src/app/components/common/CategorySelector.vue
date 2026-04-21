@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, watch, Transition } from 'vue'
+import type { CSSProperties } from 'vue'
 
 interface Category {
   id: string | number
   name: string
-  icon?: string
-  color?: string
+  icon?: string | null
+  color?: string | null
   group?: {
     name: string
   }
@@ -61,6 +62,9 @@ const hasGroups = computed(() =>
   props.categories.some(c => !!c.group?.name)
 )
 
+const toColorStyle = (color?: string | null): CSSProperties | undefined =>
+  color ? { color } : undefined
+
 const selectCategory = (id: number | string) => {
   emit('update:modelValue', id)
   close()
@@ -96,7 +100,7 @@ const close = () => {
         <div 
           v-if="selectedCategory"
           class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary-container"
-          :style="{ color: selectedCategory.color }"
+          :style="toColorStyle(selectedCategory?.color)"
         >
           <span class="material-symbols-outlined text-2xl">{{ selectedCategory.icon || 'category' }}</span>
         </div>
@@ -187,7 +191,7 @@ const close = () => {
                   >
                     <div 
                       class="w-11 h-11 rounded-xl bg-surface-container-high flex items-center justify-center text-primary-container group-hover/item:scale-110 group-hover/item:bg-primary-container/10 transition-all duration-300"
-                      :style="{ color: cat.color }"
+                      :style="toColorStyle(cat.color)"
                     >
                       <span class="material-symbols-outlined text-2xl">{{ cat.icon || 'category' }}</span>
                     </div>

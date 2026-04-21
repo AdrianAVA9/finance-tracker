@@ -3,13 +3,13 @@ import api from '@/services/api'
 
 export interface ExpenseFormItem {
   id: string
-  categoryId: number | null
+  categoryId: string | null
   itemAmount: number | null
   description: string
 }
 
 export interface ExpenseCategoryDto {
-  id: number
+  id: string
   name: string
   group?: { name: string }
 }
@@ -18,14 +18,14 @@ export interface ExpenseInitialPayload {
   merchant: string
   totalAmount: number
   date: string
-  items?: Array<{ categoryId: number; itemAmount: number; description: string }>
+  items?: Array<{ categoryId: string; itemAmount: number; description: string }>
 }
 
 export interface ExpenseSubmitPayload {
   merchant: string
   totalAmount: number
   date: string
-  items: Array<{ categoryId: number | null; itemAmount: number; description: string }>
+  items: Array<{ categoryId: string | null; itemAmount: number; description: string }>
 }
 
 function createEmptySplitRows(): ExpenseFormItem[] {
@@ -40,7 +40,7 @@ export function useExpenseRegistrationForm(getInitialData: () => ExpenseInitialP
   const totalAmount = ref<number | null>(null)
   const date = ref(new Date().toLocaleDateString('en-CA'))
 
-  const singleCategoryId = ref<number | null>(null)
+  const singleCategoryId = ref<string | null>(null)
 
   const isSplitInvoice = ref(false)
   const items = ref<ExpenseFormItem[]>(createEmptySplitRows())
@@ -115,7 +115,7 @@ export function useExpenseRegistrationForm(getInitialData: () => ExpenseInitialP
   function hydrateFromInitial(data: ExpenseInitialPayload) {
     merchant.value = data.merchant
     totalAmount.value = data.totalAmount
-    date.value = data.date.split('T')[0]
+    date.value = data.date.split('T')[0] || ''
 
     if (data.items && data.items.length > 0) {
       if (data.items.length > 1) {
