@@ -66,12 +66,12 @@ export function useIncomeRegistrationForm(getInitialData: () => IncomeDetailsDto
   function hydrateFromDto(data: IncomeDetailsDto) {
     amount.value = Number(data.amount)
     source.value = data.source
-    date.value = typeof data.date === 'string' ? data.date.split('T')[0] : ''
+    date.value = typeof data.date === 'string' ? (data.date.split('T')[0] || '') : ''
     categoryId.value = data.categoryId
     notes.value = data.notes ?? ''
     isRecurring.value = data.isRecurring
     frequency.value = data.frequency || 'Monthly'
-    nextDate.value = data.nextDate ? data.nextDate.split('T')[0] : ''
+    nextDate.value = data.nextDate ? (data.nextDate.split('T')[0] || '') : ''
   }
 
   function resetForNewEntry() {
@@ -111,6 +111,8 @@ export function useIncomeRegistrationForm(getInitialData: () => IncomeDetailsDto
     return false
   })
 
+  const selectedCategory = computed(() => categories.value.find(c => c.id === categoryId.value))
+
   onMounted(async () => {
     await loadCategories()
     const initial = getInitialData()
@@ -127,6 +129,7 @@ export function useIncomeRegistrationForm(getInitialData: () => IncomeDetailsDto
     frequency,
     nextDate,
     categories,
+    selectedCategory,
     isSubmitDisabled,
     buildPayload,
     resetForNewEntry

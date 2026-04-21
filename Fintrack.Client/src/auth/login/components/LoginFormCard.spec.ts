@@ -24,8 +24,8 @@ describe('LoginFormCard.vue', () => {
     const wrapper = createWrapper();
     const inputs = wrapper.findAll('input');
 
-    await inputs[0].setValue('new@example.com');
-    await inputs[1].setValue('new-password');
+    await inputs[0]?.setValue('new@example.com');
+    await inputs[1]?.setValue('new-password');
 
     expect(wrapper.emitted('update:email')?.[0]).toEqual(['new@example.com']);
     expect(wrapper.emitted('update:password')?.[0]).toEqual(['new-password']);
