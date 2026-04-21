@@ -137,11 +137,11 @@ namespace Fintrack.Server.Application.Dashboard.Queries
             var categorySpendingItems = await _dbContext.ExpenseItems
                 .Include(ei => ei.Expense)
                 .Include(ei => ei.Category)
-                .Where(ei => ei.Expense.UserId == request.UserId && ei.Expense.Date >= currentMonthStart)
+                .Where(ei => ei.Expense!.UserId == request.UserId && ei.Expense.Date >= currentMonthStart)
                 .ToListAsync(cancellationToken);
 
             var categorySpending = categorySpendingItems
-                .GroupBy(ei => new { ei.CategoryId, CategoryName = ei.Category.Name, CategoryColor = ei.Category.Color })
+                .GroupBy(ei => new { ei.CategoryId, CategoryName = ei.Category!.Name, CategoryColor = ei.Category.Color })
                 .Select(g => new
                 {
                     CategoryName = g.Key.CategoryName,
@@ -168,7 +168,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
                 .Select(i => new TransactionDto(
                     "inc_" + i.Id,
                     i.Source,
-                    i.Category.Name,
+                    i.Category!.Name,
                     i.Category.Icon,
                     i.Category.Color,
                     i.Date,
