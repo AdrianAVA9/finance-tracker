@@ -33,15 +33,18 @@ internal sealed class GetBudgetsQueryHandler : IQueryHandler<GetBudgetsQuery, Bu
 {
     private readonly IBudgetRepository _budgetRepository;
     private readonly IRecurringIncomeRepository _recurringIncomeRepository;
+    private readonly IIncomeRepository _incomeRepository;
     private readonly IExpenseRepository _expenseRepository;
 
     public GetBudgetsQueryHandler(
         IBudgetRepository budgetRepository,
         IRecurringIncomeRepository recurringIncomeRepository,
+        IIncomeRepository incomeRepository,
         IExpenseRepository expenseRepository)
     {
         _budgetRepository = budgetRepository;
         _recurringIncomeRepository = recurringIncomeRepository;
+        _incomeRepository = incomeRepository;
         _expenseRepository = expenseRepository;
     }
 
@@ -50,10 +53,18 @@ internal sealed class GetBudgetsQueryHandler : IQueryHandler<GetBudgetsQuery, Bu
         var startDate = new DateTime(request.Year, request.Month, 1, 0, 0, 0, DateTimeKind.Utc);
         var endDate = startDate.AddMonths(1);
 
-        var monthlyIncome = await _recurringIncomeRepository.SumActiveAmountForUserBeforeAsync(
+        var recurringIncome = await _recurringIncomeRepository.SumActiveAmountForUserBeforeAsync(
             request.UserId,
             endDate,
             cancellationToken);
+
+        var manualIncome = await _incomeRepository.SumAmountForUserInPeriodAsync(
+            request.UserId,
+            startDate,
+            endDate,
+            cancellationToken);
+
+        var monthlyIncome = recurringIncome + manualIncome;
 
         var userBudgets = (await _budgetRepository.GetUserBudgetsByMonthWithCategoryAsync(
             request.UserId,

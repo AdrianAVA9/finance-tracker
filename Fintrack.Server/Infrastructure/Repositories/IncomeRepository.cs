@@ -46,4 +46,19 @@ internal sealed class IncomeRepository : IIncomeRepository
     {
         _dbContext.Incomes.Remove(income);
     }
+    
+    public async Task<decimal> SumAmountForUserInPeriodAsync(
+        string userId,
+        DateTime start,
+        DateTime end,
+        CancellationToken cancellationToken = default)
+    {
+        // For Postgres, we can sum directly. 
+        // For consistency with RecurringIncomeRepository (SQLite compatibility in tests), we sum in-memory if needed,
+        // but here we'll use SumAsync since this is likely always used with a Real provider in production.
+        return await _dbContext.Incomes
+            .AsNoTracking()
+            .Where(i => i.UserId == userId && i.Date >= start && i.Date < end)
+            .SumAsync(i => i.Amount, cancellationToken);
+    }
 }

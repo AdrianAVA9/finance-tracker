@@ -17,4 +17,10 @@ public interface IIncomeRepository
     void Update(Income income);
 
     void Remove(Income income);
+
+    Task<decimal> SumAmountForUserInPeriodAsync(
+        string userId,
+        DateTime start,
+        DateTime end,
+        CancellationToken cancellationToken = default);
 }
