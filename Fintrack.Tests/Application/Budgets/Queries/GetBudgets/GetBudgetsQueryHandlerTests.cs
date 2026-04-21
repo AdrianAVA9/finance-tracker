@@ -13,6 +13,7 @@ public sealed class GetBudgetsQueryHandlerTests : BaseUnitTest
 {
     private readonly IBudgetRepository _budgetRepository = Mock<IBudgetRepository>();
     private readonly IRecurringIncomeRepository _recurringIncomeRepository = Mock<IRecurringIncomeRepository>();
+    private readonly IIncomeRepository _incomeRepository = Mock<IIncomeRepository>();
     private readonly IExpenseRepository _expenseRepository = Mock<IExpenseRepository>();
     private readonly GetBudgetsQueryHandler _handler;
 
@@ -21,6 +22,7 @@ public sealed class GetBudgetsQueryHandlerTests : BaseUnitTest
         _handler = new GetBudgetsQueryHandler(
             _budgetRepository,
             _recurringIncomeRepository,
+            _incomeRepository,
             _expenseRepository);
     }
 
@@ -44,6 +46,14 @@ public sealed class GetBudgetsQueryHandlerTests : BaseUnitTest
                 Arg.Is<DateTime>(d => d == new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(1)),
                 CancellationToken)
             .Returns(5000m);
+
+        _incomeRepository
+            .SumAmountForUserInPeriodAsync(
+                userId,
+                Arg.Any<DateTime>(),
+                Arg.Any<DateTime>(),
+                CancellationToken)
+            .Returns(0m);
 
         var spentByCategory = new Dictionary<Guid, decimal> { { category.Id, 800m } };
         _expenseRepository

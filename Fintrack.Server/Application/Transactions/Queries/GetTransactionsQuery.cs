@@ -63,7 +63,7 @@ namespace Fintrack.Server.Application.Transactions.Queries
                     .Select(i => new TransactionDto(
                         "inc_" + i.Id,
                         i.Source,
-                        i.Category.Name,
+                        i.Category!.Name,
                         i.Category.Icon,
                         i.Category.Color,
                         i.Date,
