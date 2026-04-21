@@ -13,34 +13,43 @@ graph TD
 
   CeroBase -- "serves" --> Users
 
-  subgraph Reality_Area["Reality Area"]
-    Transactions[Transactions]
-    Accounts[Accounts]
-    Categories[Categories]
+  subgraph reality["Reality Area"]
+    Expenses[Expenses]
+    Incomes[Incomes]
+    ExpenseCategories[Expense Categories]
+    IncomeCategories[Income Categories]
+    RecurringExpenses[Recurring Expenses]
+    RecurringIncomes[Recurring Incomes]
   end
 
-  subgraph Planning_Area["Planning Area"]
+  subgraph planning["Planning Area"]
     Budgets[Budgets]
     SavingsGoals[Savings Goals]
   end
 
-  subgraph Simulation_Area["Simulation Area (Sandbox)"]
+  subgraph simulation["Simulation Workspace (What-If Analysis)"]
     Scenarios(Scenarios)
-    ProjectedAdjustments(Projected Adjustments)
+    ProjectedAdjustments["Projected Adjustments"]
   end
 
-  Users -- "records" --> Transactions
-  Users -- "manages" --> Accounts
-  Users -- "defines" --> Categories
+  Users -- "records" --> Expenses
+  Users -- "records" --> Incomes
+  Users -- "defines" --> ExpenseCategories
+  Users -- "defines" --> IncomeCategories
+  Users -- "schedules" --> RecurringExpenses
+  Users -- "schedules" --> RecurringIncomes
   Users -- "plans with" --> Budgets
   Users -- "sets" --> SavingsGoals
   Users -- "creates" --> Scenarios
 
-  Transactions -- "is recorded in" --> Accounts
-  Transactions -- "is grouped by" --> Categories
-  Transactions -- "affects" --> Budgets
+  Expenses -- "is grouped by" --> ExpenseCategories
+  Incomes -- "is grouped by" --> IncomeCategories
+  Expenses -- "affects" --> Budgets
+  RecurringExpenses -- "generates" --> Expenses
+  RecurringIncomes -- "generates" --> Incomes
   Budgets -- "supports" --> SavingsGoals
   Scenarios -- "simulates impact on" --> Budgets
   ProjectedAdjustments -- "is applied to" --> Scenarios
-  ProjectedAdjustments -- "reclassifies" --> Categories
+  ProjectedAdjustments -- "reclassifies" --> ExpenseCategories
+  ProjectedAdjustments -- "reclassifies" --> IncomeCategories
 ```
