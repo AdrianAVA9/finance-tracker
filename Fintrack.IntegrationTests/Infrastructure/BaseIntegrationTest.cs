@@ -26,9 +26,17 @@ namespace Fintrack.IntegrationTests.Infrastructure
 
         protected void AuthenticateAs(
             string userId,
-            string[]? permissions = null)
+            string[]? permissions = null,
+            string[]? roles = null)
         {
             Client.DefaultRequestHeaders.Add(TestAuthHandler.TestUserIdHeader, userId);
+
+            if (roles?.Length > 0)
+            {
+                Client.DefaultRequestHeaders.Add(
+                    TestAuthHandler.TestUserRolesHeader,
+                    string.Join(",", roles));
+            }
 
             if (permissions?.Length > 0)
             {
@@ -42,11 +50,20 @@ namespace Fintrack.IntegrationTests.Infrastructure
         {
             Client.DefaultRequestHeaders.Remove(TestAuthHandler.TestUserIdHeader);
             Client.DefaultRequestHeaders.Remove(TestAuthHandler.TestUserPermissionsHeader);
+            Client.DefaultRequestHeaders.Remove(TestAuthHandler.TestUserRolesHeader);
         }
 
         protected async Task<HttpResponseMessage> PostAsync<T>(string url, T content)
         {
             return await Client.PostAsJsonAsync(url, content);
+        }
+
+        /// <summary>
+        /// Use for multipart and other non-JSON bodies. Do not use <see cref="PostAsync{T}"/> with <see cref="HttpContent"/> (that sends JSON).
+        /// </summary>
+        protected async Task<HttpResponseMessage> PostHttpContentAsync(string url, HttpContent content)
+        {
+            return await Client.PostAsync(url, content);
         }
 
         protected async Task<HttpResponseMessage> PutAsync<T>(string url, T content)
@@ -71,6 +88,11 @@ namespace Fintrack.IntegrationTests.Infrastructure
         }
 
         protected async Task<TEntity?> FindAsync<TEntity>(int id) where TEntity : class
+        {
+            return await DbContext.Set<TEntity>().FindAsync(id);
+        }
+
+        protected async Task<TEntity?> FindAsync<TEntity>(Guid id) where TEntity : class
         {
             return await DbContext.Set<TEntity>().FindAsync(id);
         }

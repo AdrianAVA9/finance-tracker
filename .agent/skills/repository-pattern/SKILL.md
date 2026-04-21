@@ -36,11 +36,18 @@ This skill generates Repositories that provide an abstraction over data access:
 
 ```
 /Domain/{Aggregate}/
-└── I{Entity}Repository.cs          # Interface (Domain layer)
+└── I{Entity}Repository.cs          # Interface when it only uses domain types
+
+/Application/Abstractions/{Aggregate}/
+└── I{Entity}Repository.cs          # Alternative: when methods return application query DTOs
 
 /Infrastructure/Repositories/
-└── {Entity}Repository.cs           # Implementation (Infrastructure layer)
+└── {Entity}Repository.cs           # Implementation (Infrastructure layer, EF Core)
 ```
+
+**Single repository:** Prefer **one** `I{Entity}Repository` per aggregate with entity queries, optional **read projections** that return DTOs (`Result<TResponse>`), and command methods (`Add`/`Update`/`Remove`). Avoid splitting into separate “read” and “write” repositories unless you have a strong reason.
+
+**Where to put the interface:** If any method returns **application query DTOs**, define the interface under **Application.Abstractions** so **Domain** does not reference Application. Pure entity + persistence methods can stay in **Domain** per your solution’s convention.
 
 ---
 

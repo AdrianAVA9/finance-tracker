@@ -1,3 +1,4 @@
+using System;
 using Fintrack.Server.Infrastructure.Data;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
@@ -5,8 +6,7 @@ using Fintrack.Server.Domain.Enums;
 using Fintrack.Server.Domain.Exceptions;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;
-using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
+using Fintrack.Server.Domain.IncomeCategories;
 using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -144,48 +144,57 @@ namespace Fintrack.Server.Infrastructure.Data.Seeders
             await context.SaveChangesAsync();
         }
 
-        private static async Task<int> TryAddGroup(ApplicationDbContext context, string name, string description)
+        private static async Task<Guid> TryAddGroup(ApplicationDbContext context, string name, string description)
         {
-            var group = new ExpenseCategoryGroup
+            var createResult = ExpenseCategoryGroup.CreateForSystem(name, description);
+            if (createResult.IsFailure)
             {
-                Name = name,
-                Description = description,
-                UserId = null,
-                IsEditable = false
-            };
+                throw new InvalidOperationException(createResult.Error.Description);
+            }
+
+            var group = createResult.Value;
 
             context.ExpenseCategoryGroups.Add(group);
             await context.SaveChangesAsync(); // save immediately to get ID for linking to categories
             return group.Id;
         }
 
-        private static async Task TryAddCategory(ApplicationDbContext context, string name, string description, int groupId, string icon, string color)
+        private static Task TryAddCategory(ApplicationDbContext context, string name, string description, Guid groupId, string icon, string color)
         {
-            var category = new ExpenseCategory
-            {
-                Name = name,
-                Description = description,
-                UserId = null,
-                IsEditable = false,
-                GroupId = groupId,
-                Icon = icon,
-                Color = color
-            };
+            var createResult = ExpenseCategory.Create(
+                name,
+                description,
+                icon,
+                color,
+                groupId,
+                userId: null,
+                isEditable: false);
 
-            context.ExpenseCategories.Add(category);
+            if (createResult.IsFailure)
+            {
+                throw new InvalidOperationException(createResult.Error.Description);
+            }
+
+            context.ExpenseCategories.Add(createResult.Value);
+            return Task.CompletedTask;
         }
 
-        private static async Task TryAddIncomeCategory(ApplicationDbContext context, string name, string icon, string color)
+        private static Task TryAddIncomeCategory(ApplicationDbContext context, string name, string icon, string color)
         {
-            var category = new IncomeCategory
-            {
-                Name = name,
-                UserId = null,
-                Icon = icon,
-                Color = color
-            };
+            var createResult = IncomeCategory.Create(
+                name,
+                icon,
+                color,
+                userId: null,
+                isEditable: false);
 
-            context.IncomeCategories.Add(category);
+            if (createResult.IsFailure)
+            {
+                throw new InvalidOperationException(createResult.Error.Description);
+            }
+
+            context.IncomeCategories.Add(createResult.Value);
+            return Task.CompletedTask;
         }
     }
 }

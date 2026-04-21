@@ -28,5 +28,12 @@ namespace Fintrack.Server.Infrastructure.Authorization
         // ═══════════════════════════════════════════════════════════════
         public const string BudgetsRead = "budgets:read";
         public const string BudgetsWrite = "budgets:write";
+
+        // ═══════════════════════════════════════════════════════════════
+        // INCOME PERMISSIONS
+        // ═══════════════════════════════════════════════════════════════
+        public const string IncomesRead = "incomes:read";
+        public const string IncomesWrite = "incomes:write";
+        public const string IncomesDelete = "incomes:delete";
     }
 }

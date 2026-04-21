@@ -13,6 +13,7 @@ namespace Fintrack.IntegrationTests.Infrastructure
         public const string SchemeName = "TestScheme";
         public const string TestUserIdHeader = "X-Test-User-Id";
         public const string TestUserPermissionsHeader = "X-Test-User-Permissions";
+        public const string TestUserRolesHeader = "X-Test-User-Roles";
 
         public TestAuthHandler(
             IOptionsMonitor<TestAuthSchemeOptions> options,
@@ -33,6 +34,14 @@ namespace Fintrack.IntegrationTests.Infrastructure
             {
                 new(ClaimTypes.NameIdentifier, userIdHeader.ToString())
             };
+
+            if (Request.Headers.TryGetValue(TestUserRolesHeader, out var rolesHeader))
+            {
+                foreach (var role in rolesHeader.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+            }
 
             if (Request.Headers.TryGetValue(TestUserPermissionsHeader, out var permissionsHeader))
             {

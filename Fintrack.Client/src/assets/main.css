@@ -19,7 +19,7 @@
   body {
     @apply bg-surface-dim text-on-surface font-body;
   }
-  
+
   /* Custom scrollbar for webkit */
   ::-webkit-scrollbar {
     width: 6px;
@@ -53,5 +53,9 @@
   }
   .bar-animate {
     animation: growUp 1s ease-out forwards;
+  }
+
+  .pb-safe {
+    padding-bottom: 1.5rem;
   }
 }

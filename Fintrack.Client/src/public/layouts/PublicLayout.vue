@@ -1,5 +1,21 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import logo from '@/assets/logo.png';
+import { useAuth } from '@/composables/useAuth';
+
+const router = useRouter();
+const { isInitialized, isAuthenticated, checkSession } = useAuth();
+
+onMounted(async () => {
+  if (!isInitialized.value) {
+    await checkSession();
+  }
+
+  if (isAuthenticated.value) {
+    await router.replace('/app');
+  }
+});
 </script>
 
 <template>

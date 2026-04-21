@@ -2,7 +2,7 @@
 import { ref, computed, watch, Transition } from 'vue'
 
 interface Category {
-  id: number
+  id: string | number
   name: string
   icon?: string
   color?: string
@@ -12,7 +12,7 @@ interface Category {
 }
 
 const props = defineProps<{
-  modelValue: number | null
+  modelValue: number | string | null
   categories: Category[]
   label?: string
   placeholder?: string
@@ -61,7 +61,7 @@ const hasGroups = computed(() =>
   props.categories.some(c => !!c.group?.name)
 )
 
-const selectCategory = (id: number) => {
+const selectCategory = (id: number | string) => {
   emit('update:modelValue', id)
   close()
 }
@@ -140,7 +140,7 @@ const close = () => {
           <header class="flex items-center justify-between px-6 pt-16 pb-6">
             <div class="space-y-1">
               <h2 class="font-headline text-2xl font-black tracking-tighter text-on-surface">Seleccionar Categoría</h2>
-              <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">CEROBASE • Precision Index</p>
+              <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]"></p>
             </div>
             <button 
               @click="close"

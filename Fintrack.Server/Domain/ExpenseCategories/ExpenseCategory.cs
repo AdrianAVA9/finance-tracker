@@ -1,30 +1,134 @@
 using Fintrack.Server.Domain.Abstractions;
+using Fintrack.Server.Domain.ExpenseCategories.Events;
 using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Domain.Enums;
-using Fintrack.Server.Domain.Exceptions;
-using Fintrack.Server.Domain.ExpenseCategories;
-using Fintrack.Server.Domain.Expenses;
-using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
-using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
 
-using Fintrack.Server.Domain.Abstractions;
+namespace Fintrack.Server.Domain.ExpenseCategories;
 
-namespace Fintrack.Server.Domain.ExpenseCategories
+public sealed class ExpenseCategory : BaseAuditableEntityGuid
 {
-    public class ExpenseCategory : IAuditableEntity
-    {        public int Id { get; set; }
+    private const int MaxNameLength = 200;
 
-        public string? UserId { get; set; }        public string Name { get; set; } = string.Empty;        public string? Color { get; set; }        public string? Icon { get; set; }        public virtual ApplicationUser? User { get; set; }        public string? Description { get; set; }
+    public string? UserId { get; private set; }
+    public string Name { get; private set; } = string.Empty;
+    public string? Color { get; private set; }
+    public string? Icon { get; private set; }
+    public string? Description { get; private set; }
+    public Guid? GroupId { get; private set; }
+    public bool IsEditable { get; private set; }
 
-        // Added foreign key for ExpenseCategoryGroup
-        public int? GroupId { get; set; }        public virtual ExpenseCategoryGroup? Group { get; set; }
+    public ApplicationUser? User { get; private set; }
+    public ExpenseCategoryGroup? Group { get; private set; }
+    public ICollection<Budget> Budgets { get; private set; } = new List<Budget>();
 
-        public bool IsEditable { get; set; }
+    private ExpenseCategory()
+        : base()
+    {
+    }
 
-        // Audit Columns
-        public DateTimeOffset CreatedAt { get; set; }
-        public DateTimeOffset? UpdatedAt { get; set; }        public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();        public virtual ICollection<Budget> Budgets { get; set; } = new List<Budget>();
+    private ExpenseCategory(
+        string name,
+        string? description,
+        string? icon,
+        string? color,
+        Guid? groupId,
+        string? userId,
+        bool isEditable)
+        : base()
+    {
+        Id = Guid.NewGuid();
+        Name = name;
+        Description = description;
+        Icon = icon;
+        Color = color;
+        GroupId = groupId;
+        UserId = userId;
+        IsEditable = isEditable;
+    }
+
+    /// <summary>
+    /// Creates a user-defined or system-seeded expense category.
+    /// </summary>
+    public static Result<ExpenseCategory> Create(
+        string name,
+        string? description,
+        string? icon,
+        string? color,
+        Guid? groupId,
+        string? userId,
+        bool isEditable)
+    {
+        var validation = ValidateName(name);
+        if (validation.IsFailure)
+        {
+            return Result.Failure<ExpenseCategory>(validation.Error);
+        }
+
+        var category = new ExpenseCategory(
+            name.Trim(),
+            description,
+            icon,
+            color,
+            groupId,
+            userId,
+            isEditable);
+
+        category.RaiseDomainEvent(new ExpenseCategoryCreatedDomainEvent(category.Id));
+
+        return category;
+    }
+
+    public Result Update(string name, string? description, string? icon, string? color, Guid? groupId)
+    {
+        if (!IsEditable)
+        {
+            return Result.Failure(ExpenseCategoryErrors.NotEditable);
+        }
+
+        var validation = ValidateName(name);
+        if (validation.IsFailure)
+        {
+            return validation;
+        }
+
+        Name = name.Trim();
+        Description = description;
+        Icon = icon;
+        Color = color;
+        GroupId = groupId;
+
+        RaiseDomainEvent(new ExpenseCategoryUpdatedDomainEvent(Id));
+
+        return Result.Success();
+    }
+
+    /// <summary>
+    /// Registers deletion before <see cref="IExpenseCategoryRepository.Remove"/>.
+    /// </summary>
+    public Result RegisterDeletion()
+    {
+        if (!IsEditable)
+        {
+            return Result.Failure(ExpenseCategoryErrors.NotDeletable);
+        }
+
+        RaiseDomainEvent(new ExpenseCategoryDeletedDomainEvent(Id));
+
+        return Result.Success();
+    }
+
+    private static Result ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return Result.Failure(ExpenseCategoryErrors.NameRequired);
+        }
+
+        if (name.Trim().Length > MaxNameLength)
+        {
+            return Result.Failure(ExpenseCategoryErrors.NameTooLong);
+        }
+
+        return Result.Success();
     }
 }

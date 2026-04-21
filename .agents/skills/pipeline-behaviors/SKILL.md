@@ -1,7 +1,7 @@
 ---
 name: pipeline-behaviors
 description: "Generates MediatR Pipeline Behaviors for cross-cutting concerns like logging, validation, exception handling, caching, and performance monitoring. Implements the decorator pattern around handlers."
-version: 1.0.0
+version: 1.1.0
 language: C#
 framework: .NET 8+
 dependencies: MediatR, FluentValidation
@@ -20,6 +20,7 @@ Pipeline Behaviors implement cross-cutting concerns that execute before/after ev
 - **Transaction** - Wrap handlers in database transactions
 - **Caching** - Cache query results
 - **Performance** - Monitor slow operations
+- **Sample paths** — Code templates use `Application/{Feature}/{UseCaseFolder}/` (one folder per command/query; see [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md)). Behaviors themselves are layer-agnostic.
 
 ## Quick Reference
 

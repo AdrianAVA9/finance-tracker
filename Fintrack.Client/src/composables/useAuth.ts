@@ -1,6 +1,14 @@
 import { ref, computed } from 'vue';
 import api from '@/services/api';
 
+type RegisterResult =
+  | { success: true }
+  | {
+      success: false;
+      code?: string;
+      message?: string;
+    };
+
 const user = ref<string | null>(null);
 const isLoading = ref(true);
 const isInitialized = ref(false);
@@ -14,7 +22,7 @@ export function useAuth() {
       // Use the new AuthController endpoint
       const response = await api.get('/api/v1/auth/session');
       user.value = response.data.user || 'User';
-    } catch (e) {
+    } catch {
       user.value = null; // 401 Unauthorized means no valid cookie
     } finally {
       isLoading.value = false;
@@ -35,15 +43,30 @@ export function useAuth() {
     }
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (email: string, password: string): Promise<RegisterResult> => {
     try {
       // Endpoint provided by MapIdentityApi
       await api.post('/register', { email, password });
       // Registration successful, now log them in to get the cookie
-      return await login(email, password);
+      const loginSuccess = await login(email, password);
+      return loginSuccess ? { success: true } : { success: false };
     } catch (error) {
       console.error('Registration failed', error);
-      return false;
+      const responseData = (error as { response?: { data?: { errors?: Record<string, string[]> } } })?.response?.data;
+      const errors = responseData?.errors;
+
+      if (errors && typeof errors === 'object') {
+        const [firstCode, firstMessages] = Object.entries(errors)[0] ?? [];
+        if (firstCode) {
+          return {
+            success: false,
+            code: firstCode,
+            message: Array.isArray(firstMessages) ? firstMessages[0] : undefined,
+          };
+        }
+      }
+
+      return { success: false };
     }
   };
 

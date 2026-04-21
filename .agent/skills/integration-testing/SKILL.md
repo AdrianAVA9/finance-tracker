@@ -1,7 +1,7 @@
 ---
 name: integration-testing
 description: "Configures integration tests with WebApplicationFactory and Testcontainers. Provides test database setup, authentication helpers, and utilities for testing API endpoints with real dependencies."
-version: 1.0.0
+version: 1.1.0
 language: C#
 framework: .NET 8+
 dependencies: Testcontainers.PostgreSql, Microsoft.AspNetCore.Mvc.Testing, Respawn
@@ -28,9 +28,50 @@ Integration tests verify the full request pipeline:
 | `Respawner` | Database cleanup utility |
 | `TestAuthHandler` | Fake authentication handler |
 
+### Auth and permissions in API tests
+
+- **`X-Test-User-Id`** — required to authenticate; omit for `401 Unauthorized`.
+- **`X-Test-User-Permissions`** — comma-separated permission strings (e.g. `budgets:read`). Optional.
+- **`X-Test-User-Roles`** — comma-separated role names. When **no** role is sent, `IClaimsTransformation` may add **`Roles.User`**, which grants a broad default permission set (including budgets). To assert **`403 Forbidden`** for a specific policy, authenticate with a **dedicated integration-test role** (e.g. `Roles.IntegrationTestNoBudgets`) that maps in `RolePermissions` to only the permissions you need for that scenario.
+
+Use `BaseIntegrationTest.AuthenticateAs(userId, permissions, roles)` to set headers. Add new integration-only roles in `Roles` / `RolePermissions` when you need permission matrices that production roles do not provide.
+
+---
+
+### CeroBase monorepo (`Fintrack.IntegrationTests`) — completion checklist
+
+A feature's integration tests are **not complete** until both test classes below exist and pass. If an endpoint does not apply (e.g., the feature is read-only), skip the irrelevant rows explicitly.
+
+#### Functional CRUD tests
+`Fintrack.IntegrationTests/{Feature}/{Entity}sControllerTests.cs`
+- Create — valid request → `201 Created`, entity persisted in DB.
+- Create — multiple child items persisted correctly (if applicable).
+- GetById — exists → `200 OK` with correct DTO fields.
+- GetById — not found → `404 Not Found`.
+- GetById — belongs to another user → `404 Not Found` (user isolation).
+- Update — valid request → `200 OK`, changes persisted.
+- Update — not found → `404 Not Found`.
+- Update — belongs to another user → `404 Not Found` (user isolation).
+- Delete — exists → `200 OK`, entity removed from DB.
+- Delete — not found → `404 Not Found`.
+- Delete — belongs to another user → `404 Not Found`, entity still exists (user isolation).
+
+#### Authorization tests
+`Fintrack.IntegrationTests/{Feature}/{Entity}sControllerAuthorizationTests.cs`
+- Unauthenticated → `401 Unauthorized` for **every** endpoint (omit `X-Test-User-Id`).
+- Authenticated with zero feature permissions → `403 Forbidden` for **every** endpoint.
+  Use a dedicated integration-test role (e.g., `Roles.IntegrationTestNo{Feature}`) in `Infrastructure/Authorization/Roles.cs` and `RolePermissions.cs`.
+- Read-only role → GET succeeds (`200` or `404`), POST/PUT/DELETE → `403 Forbidden`.
+  Use a dedicated role (e.g., `Roles.IntegrationTest{Feature}ReadOnly`).
+- Verify that write operations under a read-only role do **not** mutate the database.
+
+When creating integration-test roles, add them to both `Roles.cs` (constant) and `RolePermissions.cs` (permission mapping).
+
 ---
 
 ## Test Project Structure
+
+Group tests under **`{Feature}/{UseCaseFolder}/`** to match `Application/{Feature}/{UseCaseFolder}/` (see [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md)).
 
 ```
 tests/
@@ -41,8 +82,10 @@ tests/
     │   ├── TestAuthHandler.cs
     │   └── FakeUserContext.cs
     ├── {Feature}/
-    │   ├── Create{Entity}Tests.cs
-    │   └── Get{Entity}Tests.cs
+    │   ├── Create{Entity}/
+    │   │   └── Create{Entity}Tests.cs
+    │   └── Get{Entity}ById/
+    │       └── Get{Entity}ByIdTests.cs
     └── {name}.Api.IntegrationTests.csproj
 ```
 

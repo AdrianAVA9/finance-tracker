@@ -4,13 +4,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Asp.Versioning;
 using Fintrack.Server.Domain.Abstractions;
-using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.Enums;
 using Fintrack.Server.Domain.Exceptions;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;
 using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
 using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
 using Fintrack.Server.Infrastructure.Data;
@@ -90,15 +88,18 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-// Seed Database if needed
+// Seed database (integration tests use environment "Testing", SQLite, and per-test EnsureCreated + seed — skip migrations here)
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        await context.Database.MigrateAsync();
-        await DefaultCategorySeeder.SeedAsync(context);
+        if (!app.Environment.IsEnvironment("Testing"))
+        {
+            await context.Database.MigrateAsync();
+            await DefaultCategorySeeder.SeedAsync(context);
+        }
     }
     catch (Exception ex)
     {

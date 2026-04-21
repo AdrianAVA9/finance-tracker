@@ -1,22 +1,23 @@
 ---
 name: cqrs-query-generator
-description: "Generates CQRS Queries with Handlers and Response DTOs for read operations. Uses Dapper for optimized read queries, bypassing the domain model for better performance."
-version: 1.0.0
+description: "Generates CQRS Queries with MediatR handlers and response DTOs for read operations. Default data access is Entity Framework Core via abstractions implemented in Infrastructure; Dapper is optional when raw SQL is justified."
+version: 1.2.0
 language: C#
 framework: .NET 8+
-dependencies: MediatR, Dapper, FluentValidation
+dependencies: MediatR, FluentValidation, Entity Framework Core (optional: Dapper)
 ---
 
 # CQRS Query Generator
 
 ## Overview
 
-This skill generates Queries following the CQRS pattern. Queries are read-only operations that return data without modifying state. Key principles:
+This skill generates Queries following the CQRS pattern. Queries are read-side operations that return data without modifying state (except where a product decision explicitly performs a side effect—prefer separate commands for writes). Key principles:
 
-- **Queries never modify state** - Read-only operations
-- **Use Dapper for reads** - Bypass EF Core for performance
-- **Return DTOs, not entities** - Projection to response models
-- **Direct SQL queries** - Optimized for the specific use case
+- **Queries return DTOs, not domain entities** — Projection to response models at the application boundary
+- **Prefer Entity Framework Core** — Implement reads in Infrastructure using EF (`DbContext`, `Include`/`Select`, `AsNoTracking` when appropriate) behind an interface the Application layer consumes
+- **Keep `DbContext` out of query handlers** — Handlers depend on repository or read-service abstractions; Infrastructure registers EF implementations
+- **Dapper is optional** — Use hand-written SQL/Dapper when profiling or complexity warrants it, not by default
+- **One folder per query** — Each query lives in its **own** folder (e.g. `Budgets/Queries/GetBudgets/` in CeroBase, or `Budgets/GetBudgets/` flat). Do **not** mix multiple queries in one leaf folder. See [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md).
 
 ## Quick Reference
 
@@ -28,12 +29,21 @@ This skill generates Queries following the CQRS pattern. Queries are read-only o
 | Search | Filtered/searched results | `Result<IReadOnlyList<EntityResponse>>` |
 | Exists | Check if entity exists | `Result<bool>` |
 
----
+## Read-side data access (default: EF Core)
+
+1. Define an abstraction in **Application** (e.g. `Application/Abstractions/{Feature}/I{Entity}Repository.cs` or `I{Feature}ReadService`) that returns **DTOs** or `Result<T>` of DTOs.
+2. Implement it in **Infrastructure** with **EF Core** — project with `.Select()`, use `.AsNoTracking()` for pure reads, avoid loading full aggregates when only a flat DTO is needed.
+3. Query **handlers** inject only that abstraction — no `ApplicationDbContext` in Application.
+4. **Dapper** (or ADO.NET): add only when EF is awkward or too slow for a specific hot path; keep SQL parameterized and inside Infrastructure.
+
+**Interface placement:** If methods return application query DTOs, the interface belongs in **Application.Abstractions** so **Domain** does not reference Application types. Classic `I{Aggregate}Repository` with only entity + `Add`/`Update`/`Remove` may still live in Domain per project convention.
 
 ## Query Structure
 
+**Mandatory:** one folder per query — e.g. `Application/{Feature}/Queries/{QueryFolder}/` (CeroBase) or `Application/{Feature}/{QueryFolder}/` (flat).
+
 ```
-/Application/{Feature}/
+/Application/{Feature}/Queries/
 ├── Get{Entity}ById/
 │   ├── Get{Entity}ByIdQuery.cs       # Query + Validator + Handler
 │   └── {Entity}Response.cs            # Response DTO
@@ -47,78 +57,98 @@ This skill generates Queries following the CQRS pattern. Queries are read-only o
 
 ---
 
-## Template: Get By ID Query
+## Template: Get By ID Query (EF Core via abstraction)
 
 ```csharp
+// src/{name}.application/Abstractions/{Feature}/I{Entity}Repository.cs
+using {name}.application.{feature}.Get{Entity}ById;
+using {name}.domain.abstractions;
+
+namespace {name}.application.abstractions.{feature};
+
+public interface I{Entity}Repository
+{
+    Task<Result<{Entity}Response?>> Get{Entity}ResponseByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+}
+
 // src/{name}.application/{Feature}/Get{Entity}ById/Get{Entity}ByIdQuery.cs
-using System.Data;
-using Dapper;
 using FluentValidation;
-using {name}.application.abstractions.data;
+using {name}.application.abstractions.{feature};
 using {name}.application.abstractions.messaging;
 using {name}.domain.abstractions;
-using {name}.domain.{entities};
 
 namespace {name}.application.{feature}.Get{Entity}ById;
 
-// ═══════════════════════════════════════════════════════════════
-// QUERY RECORD
-// ═══════════════════════════════════════════════════════════════
 public sealed record Get{Entity}ByIdQuery(Guid Id) : IQuery<{Entity}Response>;
 
-// ═══════════════════════════════════════════════════════════════
-// VALIDATOR
-// ═══════════════════════════════════════════════════════════════
 internal sealed class Get{Entity}ByIdQueryValidator : AbstractValidator<Get{Entity}ByIdQuery>
 {
     public Get{Entity}ByIdQueryValidator()
     {
-        RuleFor(x => x.Id)
-            .NotEmpty()
-            .WithMessage("{Entity} ID is required");
+        RuleFor(x => x.Id).NotEmpty();
     }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// HANDLER
-// ═══════════════════════════════════════════════════════════════
-internal sealed class Get{Entity}ByIdQueryHandler 
+internal sealed class Get{Entity}ByIdQueryHandler
     : IQueryHandler<Get{Entity}ByIdQuery, {Entity}Response>
 {
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
+    private readonly I{Entity}Repository _repository;
 
-    public Get{Entity}ByIdQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
+    public Get{Entity}ByIdQueryHandler(I{Entity}Repository repository)
     {
-        _sqlConnectionFactory = sqlConnectionFactory;
+        _repository = repository;
     }
 
     public async Task<Result<{Entity}Response>> Handle(
         Get{Entity}ByIdQuery request,
         CancellationToken cancellationToken)
     {
-        using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
-
-        const string sql = """
-            SELECT 
-                e.id AS Id,
-                e.name AS Name,
-                e.description AS Description,
-                e.created_at AS CreatedAt,
-                e.updated_at AS UpdatedAt
-            FROM {table_name} e
-            WHERE e.id = @Id
-            """;
-
-        var {entity} = await connection.QueryFirstOrDefaultAsync<{Entity}Response>(
-            sql,
-            new { request.Id });
-
-        if ({entity} is null)
-        {
+        var result = await _repository.Get{Entity}ResponseByIdAsync(request.Id, cancellationToken);
+        if (result.IsFailure)
+            return Result.Failure<{Entity}Response>(result.Error);
+        if (result.Value is null)
             return Result.Failure<{Entity}Response>({Entity}Errors.NotFound);
-        }
+        return result.Value;
+    }
+}
+```
 
-        return {entity};
+```csharp
+// src/{name}.infrastructure/Repositories/{Entity}Repository.cs (excerpt)
+using Microsoft.EntityFrameworkCore;
+using {name}.application.abstractions.{feature};
+using {name}.application.{feature}.Get{Entity}ById;
+using {name}.domain.abstractions;
+using {name}.infrastructure.data;
+
+namespace {name}.infrastructure.repositories;
+
+internal sealed class {Entity}Repository : I{Entity}Repository
+{
+    private readonly ApplicationDbContext _dbContext;
+
+    public {Entity}Repository(ApplicationDbContext dbContext) => _dbContext = dbContext;
+
+    public async Task<Result<{Entity}Response?>> Get{Entity}ResponseByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var row = await _dbContext.{Entities}
+            .AsNoTracking()
+            .Where(e => e.Id == id)
+            .Select(e => new {Entity}Response
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                CreatedAt = e.CreatedAt,
+                UpdatedAt = e.UpdatedAt
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return row;
     }
 }
 ```
@@ -139,430 +169,42 @@ public sealed class {Entity}Response
 }
 ```
 
----
-
-## Template: Get All Query
-
-```csharp
-// src/{name}.application/{Feature}/GetAll{Entities}/GetAll{Entities}Query.cs
-using System.Data;
-using Dapper;
-using {name}.application.abstractions.data;
-using {name}.application.abstractions.messaging;
-using {name}.domain.abstractions;
-
-namespace {name}.application.{feature}.GetAll{Entities};
-
-public sealed record GetAll{Entities}Query : IQuery<IReadOnlyList<{Entity}ListResponse>>;
-
-internal sealed class GetAll{Entities}QueryHandler 
-    : IQueryHandler<GetAll{Entities}Query, IReadOnlyList<{Entity}ListResponse>>
-{
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
-
-    public GetAll{Entities}QueryHandler(ISqlConnectionFactory sqlConnectionFactory)
-    {
-        _sqlConnectionFactory = sqlConnectionFactory;
-    }
-
-    public async Task<Result<IReadOnlyList<{Entity}ListResponse>>> Handle(
-        GetAll{Entities}Query request,
-        CancellationToken cancellationToken)
-    {
-        using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
-
-        const string sql = """
-            SELECT 
-                e.id AS Id,
-                e.name AS Name,
-                e.description AS Description
-            FROM {table_name} e
-            ORDER BY e.name ASC
-            """;
-
-        var {entities} = await connection.QueryAsync<{Entity}ListResponse>(sql);
-
-        return {entities}.ToList();
-    }
-}
-```
+List, paged, and report queries follow the same pattern: add methods to the same repository (or a dedicated read interface), implement with EF projections/`Include` as needed, keep handlers thin.
 
 ---
 
-## Template: Get By Parent ID Query
+## Optional: Dapper for specific reads
+
+When you choose Dapper (complex reporting, bulk exports, or measured performance need):
+
+- Keep **SQL in Infrastructure** and use **parameterized** commands only.
+- Handlers still depend on an abstraction (e.g. `I{Report}SqlQuery`) implemented with `IDbConnection`.
+- Register a small `ISqlConnectionFactory` if the project does not already have one.
+
+Example handler shape:
 
 ```csharp
-// src/{name}.application/{Feature}/Get{Entities}ByOrganizationId/Get{Entities}ByOrganizationIdQuery.cs
-using System.Data;
-using Dapper;
-using FluentValidation;
-using {name}.application.abstractions.data;
-using {name}.application.abstractions.messaging;
-using {name}.domain.abstractions;
-
-namespace {name}.application.{feature}.Get{Entities}ByOrganizationId;
-
-public sealed record Get{Entities}ByOrganizationIdQuery(
-    Guid OrganizationId) : IQuery<IReadOnlyList<{Entity}Response>>;
-
-internal sealed class Get{Entities}ByOrganizationIdQueryValidator 
-    : AbstractValidator<Get{Entities}ByOrganizationIdQuery>
-{
-    public Get{Entities}ByOrganizationIdQueryValidator()
-    {
-        RuleFor(x => x.OrganizationId).NotEmpty();
-    }
-}
-
-internal sealed class Get{Entities}ByOrganizationIdQueryHandler 
-    : IQueryHandler<Get{Entities}ByOrganizationIdQuery, IReadOnlyList<{Entity}Response>>
-{
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
-
-    public Get{Entities}ByOrganizationIdQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
-    {
-        _sqlConnectionFactory = sqlConnectionFactory;
-    }
-
-    public async Task<Result<IReadOnlyList<{Entity}Response>>> Handle(
-        Get{Entities}ByOrganizationIdQuery request,
-        CancellationToken cancellationToken)
-    {
-        using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
-
-        const string sql = """
-            SELECT 
-                e.id AS Id,
-                e.name AS Name,
-                e.description AS Description,
-                e.organization_id AS OrganizationId,
-                o.name AS OrganizationName
-            FROM {table_name} e
-            INNER JOIN organization o ON e.organization_id = o.id
-            WHERE e.organization_id = @OrganizationId
-            ORDER BY e.name ASC
-            """;
-
-        var {entities} = await connection.QueryAsync<{Entity}Response>(
-            sql,
-            new { request.OrganizationId });
-
-        return {entities}.ToList();
-    }
-}
-```
-
----
-
-## Template: Paginated Query
-
-```csharp
-// src/{name}.application/{Feature}/Get{Entities}Paged/Get{Entities}PagedQuery.cs
-using System.Data;
-using Dapper;
-using FluentValidation;
-using {name}.application.abstractions.data;
-using {name}.application.abstractions.messaging;
-using {name}.domain.abstractions;
-
-namespace {name}.application.{feature}.Get{Entities}Paged;
-
-public sealed record Get{Entities}PagedQuery(
-    int PageNumber,
-    int PageSize,
-    string? SearchTerm = null) : IQuery<PagedList<{Entity}Response>>;
-
-internal sealed class Get{Entities}PagedQueryValidator 
-    : AbstractValidator<Get{Entities}PagedQuery>
-{
-    public Get{Entities}PagedQueryValidator()
-    {
-        RuleFor(x => x.PageNumber).GreaterThan(0);
-        RuleFor(x => x.PageSize).InclusiveBetween(1, 100);
-    }
-}
-
-internal sealed class Get{Entities}PagedQueryHandler 
-    : IQueryHandler<Get{Entities}PagedQuery, PagedList<{Entity}Response>>
-{
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
-
-    public Get{Entities}PagedQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
-    {
-        _sqlConnectionFactory = sqlConnectionFactory;
-    }
-
-    public async Task<Result<PagedList<{Entity}Response>>> Handle(
-        Get{Entities}PagedQuery request,
-        CancellationToken cancellationToken)
-    {
-        using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
-
-        var offset = (request.PageNumber - 1) * request.PageSize;
-        var searchPattern = request.SearchTerm is not null 
-            ? $"%{request.SearchTerm}%" 
-            : null;
-
-        const string countSql = """
-            SELECT COUNT(*)
-            FROM {table_name} e
-            WHERE (@SearchTerm IS NULL OR e.name ILIKE @SearchTerm)
-            """;
-
-        const string dataSql = """
-            SELECT 
-                e.id AS Id,
-                e.name AS Name,
-                e.description AS Description,
-                e.created_at AS CreatedAt
-            FROM {table_name} e
-            WHERE (@SearchTerm IS NULL OR e.name ILIKE @SearchTerm)
-            ORDER BY e.created_at DESC
-            OFFSET @Offset ROWS
-            FETCH NEXT @PageSize ROWS ONLY
-            """;
-
-        var totalCount = await connection.ExecuteScalarAsync<int>(
-            countSql,
-            new { SearchTerm = searchPattern });
-
-        var items = await connection.QueryAsync<{Entity}Response>(
-            dataSql,
-            new 
-            { 
-                SearchTerm = searchPattern,
-                Offset = offset,
-                request.PageSize 
-            });
-
-        return new PagedList<{Entity}Response>(
-            items.ToList(),
-            request.PageNumber,
-            request.PageSize,
-            totalCount);
-    }
-}
-
-// Shared paged list model
-public sealed class PagedList<T>
-{
-    public IReadOnlyList<T> Items { get; }
-    public int PageNumber { get; }
-    public int PageSize { get; }
-    public int TotalCount { get; }
-    public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
-    public bool HasPreviousPage => PageNumber > 1;
-    public bool HasNextPage => PageNumber < TotalPages;
-
-    public PagedList(IReadOnlyList<T> items, int pageNumber, int pageSize, int totalCount)
-    {
-        Items = items;
-        PageNumber = pageNumber;
-        PageSize = pageSize;
-        TotalCount = totalCount;
-    }
-}
-```
-
----
-
-## Template: Query with Multi-Mapping (Joins)
-
-```csharp
-// src/{name}.application/{Feature}/Get{Entity}WithDetails/Get{Entity}WithDetailsQuery.cs
-using System.Data;
-using Dapper;
-using FluentValidation;
-using {name}.application.abstractions.data;
-using {name}.application.abstractions.messaging;
-using {name}.domain.abstractions;
-
-namespace {name}.application.{feature}.Get{Entity}WithDetails;
-
-public sealed record Get{Entity}WithDetailsQuery(
-    Guid Id) : IQuery<{Entity}DetailResponse>;
-
-internal sealed class Get{Entity}WithDetailsQueryHandler 
-    : IQueryHandler<Get{Entity}WithDetailsQuery, {Entity}DetailResponse>
-{
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
-
-    public Get{Entity}WithDetailsQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
-    {
-        _sqlConnectionFactory = sqlConnectionFactory;
-    }
-
-    public async Task<Result<{Entity}DetailResponse>> Handle(
-        Get{Entity}WithDetailsQuery request,
-        CancellationToken cancellationToken)
-    {
-        using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
-
-        const string sql = """
-            SELECT 
-                e.id AS Id,
-                e.name AS Name,
-                e.description AS Description,
-                c.id AS ChildId,
-                c.name AS ChildName,
-                c.sort_order AS ChildSortOrder
-            FROM {table_name} e
-            LEFT JOIN {child_table} c ON c.{entity}_id = e.id
-            WHERE e.id = @Id
-            ORDER BY c.sort_order ASC
-            """;
-
-        // Dictionary to track parent entity for multi-mapping
-        Dictionary<Guid, {Entity}DetailResponse> entityDictionary = new();
-
-        var result = await connection.QueryAsync<{Entity}DetailResponse, {Child}Response, {Entity}DetailResponse>(
-            sql,
-            (entity, child) =>
-            {
-                if (!entityDictionary.TryGetValue(entity.Id, out var existingEntity))
-                {
-                    existingEntity = entity;
-                    entityDictionary.Add(entity.Id, existingEntity);
-                }
-
-                if (child is not null)
-                {
-                    existingEntity.Children.Add(child);
-                }
-
-                return existingEntity;
-            },
-            new { request.Id },
-            splitOn: "ChildId");
-
-        var {entity} = entityDictionary.Values.FirstOrDefault();
-
-        if ({entity} is null)
-        {
-            return Result.Failure<{Entity}DetailResponse>({Entity}Errors.NotFound);
-        }
-
-        return {entity};
-    }
-}
-
-// Response with nested children
-public sealed class {Entity}DetailResponse
-{
-    public Guid Id { get; init; }
-    public required string Name { get; init; }
-    public string? Description { get; init; }
-    public List<{Child}Response> Children { get; init; } = new();
-}
-
-public sealed class {Child}Response
-{
-    public Guid ChildId { get; init; }
-    public required string ChildName { get; init; }
-    public int ChildSortOrder { get; init; }
-}
-```
-
----
-
-## Template: Aggregate Report Query
-
-```csharp
-// src/{name}.application/Reports/{ReportName}/{ReportName}Query.cs
-using System.Data;
-using Dapper;
-using FluentValidation;
-using {name}.application.abstractions.data;
-using {name}.application.abstractions.messaging;
-using {name}.domain.abstractions;
-
-namespace {name}.application.reports.{ReportName};
-
-public sealed record {ReportName}Query(
-    Guid OrganizationId,
-    DateTime? StartDate = null,
-    DateTime? EndDate = null) : IQuery<IReadOnlyList<{ReportName}Response>>;
-
-internal sealed class {ReportName}QueryValidator : AbstractValidator<{ReportName}Query>
-{
-    public {ReportName}QueryValidator()
-    {
-        RuleFor(x => x.OrganizationId).NotEmpty();
-        
-        RuleFor(x => x.EndDate)
-            .GreaterThan(x => x.StartDate)
-            .When(x => x.StartDate.HasValue && x.EndDate.HasValue)
-            .WithMessage("End date must be after start date");
-    }
-}
-
-internal sealed class {ReportName}QueryHandler 
+internal sealed class {ReportName}QueryHandler
     : IQueryHandler<{ReportName}Query, IReadOnlyList<{ReportName}Response>>
 {
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
-
-    public {ReportName}QueryHandler(ISqlConnectionFactory sqlConnectionFactory)
-    {
-        _sqlConnectionFactory = sqlConnectionFactory;
-    }
+    private readonly ISqlConnectionFactory _connectionFactory;
 
     public async Task<Result<IReadOnlyList<{ReportName}Response>>> Handle(
         {ReportName}Query request,
         CancellationToken cancellationToken)
     {
-        using IDbConnection connection = _sqlConnectionFactory.CreateConnection();
-
-        const string sql = """
-            WITH AggregatedData AS (
-                SELECT 
-                    d.id AS DepartmentId,
-                    d.name AS DepartmentName,
-                    COUNT(DISTINCT u.id) AS TotalUsers,
-                    ROUND(AVG(a.score), 2) AS AverageScore
-                FROM department d
-                INNER JOIN user_department ud ON d.id = ud.department_id
-                INNER JOIN app_user u ON ud.user_id = u.id
-                LEFT JOIN assessment a ON a.user_id = u.id
-                WHERE 
-                    d.organization_id = @OrganizationId
-                    AND (@StartDate IS NULL OR a.created_at >= @StartDate)
-                    AND (@EndDate IS NULL OR a.created_at <= @EndDate)
-                GROUP BY d.id, d.name
-            )
-            SELECT 
-                DepartmentId,
-                DepartmentName,
-                TotalUsers,
-                AverageScore
-            FROM AggregatedData
-            ORDER BY AverageScore DESC NULLS LAST
-            """;
-
-        var results = await connection.QueryAsync<{ReportName}Response>(
-            sql,
-            new 
-            { 
-                request.OrganizationId,
-                request.StartDate,
-                request.EndDate
-            });
-
-        return results.ToList();
+        using var connection = _connectionFactory.CreateConnection();
+        var rows = await connection.QueryAsync<{ReportName}Response>(
+            /* parameterized SQL */,
+            new { request.OrganizationId });
+        return rows.ToList();
     }
-}
-
-public sealed class {ReportName}Response
-{
-    public Guid DepartmentId { get; init; }
-    public required string DepartmentName { get; init; }
-    public int TotalUsers { get; init; }
-    public decimal? AverageScore { get; init; }
 }
 ```
 
 ---
 
-## SQL Connection Factory
+## Optional: SQL connection factory (Dapper)
 
 ```csharp
 // src/{name}.application/Abstractions/Data/ISqlConnectionFactory.cs
@@ -586,10 +228,7 @@ internal sealed class SqlConnectionFactory : ISqlConnectionFactory
 {
     private readonly string _connectionString;
 
-    public SqlConnectionFactory(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
+    public SqlConnectionFactory(string connectionString) => _connectionString = connectionString;
 
     public IDbConnection CreateConnection()
     {
@@ -602,99 +241,66 @@ internal sealed class SqlConnectionFactory : ISqlConnectionFactory
 
 ---
 
-## SQL Best Practices
+## SQL best practices (raw SQL / Dapper only)
 
-### Column Naming (Snake Case to PascalCase)
+### Column naming (snake case to PascalCase)
 
 ```sql
--- PostgreSQL with snake_case columns
 SELECT 
-    e.id AS Id,                          -- Maps to Id property
-    e.first_name AS FirstName,           -- Maps to FirstName property
-    e.created_at AS CreatedAt,           -- Maps to CreatedAt property
-    e.organization_id AS OrganizationId  -- Maps to OrganizationId property
+    e.id AS Id,
+    e.first_name AS FirstName,
+    e.created_at AS CreatedAt
 FROM entity e
 ```
 
-### Avoiding N+1 Queries
+### Avoiding N+1
 
-```sql
--- ❌ BAD: Separate queries for children
-SELECT * FROM parent WHERE id = @Id;
--- Then for each parent:
-SELECT * FROM child WHERE parent_id = @ParentId;
+Prefer one query with JOINs or CTEs over many round-trips.
 
--- ✅ GOOD: Single query with JOIN
-SELECT 
-    p.id AS Id, p.name AS Name,
-    c.id AS ChildId, c.name AS ChildName
-FROM parent p
-LEFT JOIN child c ON c.parent_id = p.id
-WHERE p.id = @Id
-```
+### Using CTEs for complex queries
 
-### Using CTEs for Complex Queries
-
-```sql
-WITH RankedItems AS (
-    SELECT 
-        *,
-        ROW_NUMBER() OVER (PARTITION BY category_id ORDER BY score DESC) as rank
-    FROM items
-),
-TopItems AS (
-    SELECT * FROM RankedItems WHERE rank <= 3
-)
-SELECT * FROM TopItems ORDER BY category_id, rank;
-```
+Use readable `WITH` clauses for ranking, windows, and multi-step filters.
 
 ---
 
 ## Critical Rules
 
-1. **Queries never modify state** - Read-only operations
-2. **Use Dapper for queries** - Better performance than EF Core for reads
-3. **Return DTOs, not entities** - Don't expose domain models
-4. **Use parameterized queries** - Prevent SQL injection
-5. **Alias columns to match DTOs** - Use `AS PropertyName`
-6. **Always close connections** - Use `using` statement
-7. **Use multi-mapping for joins** - Avoid N+1 queries
-8. **Validate query parameters** - Especially for pagination
-9. **Use CTEs for complex logic** - More readable than nested queries
-10. **Handle null results** - Return `Result.Failure` for not found
+1. **Queries should not modify state** — Use commands for writes; if a read path must persist, document it and consider refactoring to a command.
+2. **Prefer EF Core for reads** in this codebase — Via Infrastructure implementations behind Application abstractions; use `AsNoTracking()` for read-only projections.
+3. **Return DTOs, not entities** — Do not expose domain models from query handlers.
+4. **No `DbContext` in Application** — Only abstractions + handlers + validators + DTOs.
+5. **Dapper when justified** — Not the default; use for heavy SQL or proven bottlenecks.
+6. **Parameterized SQL** — Whenever using Dapper/raw SQL, never concatenate user input into SQL strings.
+7. **Validate query inputs** — FluentValidation on filters, pagination, date ranges.
+8. **Handle not found** — Return `Result.Failure` with a typed domain/application error.
 
 ---
 
-## Anti-Patterns to Avoid
+## Anti-patterns to avoid
 
 ```csharp
-// ❌ WRONG: Using EF Core for read queries
-public async Task<Result<EntityResponse>> Handle(...)
+// ❌ WRONG: DbContext inside the Application query handler
+internal sealed class GetEntityQueryHandler : IQueryHandler<...>
 {
-    var entity = await _dbContext.Entities
-        .Include(e => e.Children)
-        .FirstOrDefaultAsync(e => e.Id == request.Id);
-    // Heavy, tracks changes unnecessarily
+    private readonly ApplicationDbContext _dbContext; // leaks Infrastructure into Application
 }
 
-// ✅ CORRECT: Use Dapper
-public async Task<Result<EntityResponse>> Handle(...)
+// ✅ CORRECT: Inject a repository/read abstraction implemented with EF in Infrastructure
+internal sealed class GetEntityQueryHandler : IQueryHandler<...>
 {
-    using var connection = _sqlConnectionFactory.CreateConnection();
-    // Direct SQL, no tracking overhead
+    private readonly IEntityRepository _repository;
 }
 
-// ❌ WRONG: Returning domain entities
-public sealed record GetEntityQuery(Guid Id) : IQuery<Entity>; // Exposes domain
+// ❌ WRONG: Returning domain entities from queries
+public sealed record GetEntityQuery(Guid Id) : IQuery<Entity>;
 
-// ✅ CORRECT: Return DTOs
+// ✅ CORRECT: Return DTOs / response records
 public sealed record GetEntityQuery(Guid Id) : IQuery<EntityResponse>;
 
-// ❌ WRONG: String concatenation in SQL
-var sql = $"SELECT * FROM entity WHERE name = '{request.Name}'"; // SQL injection!
+// ❌ WRONG: String concatenation in SQL (Dapper/raw SQL)
+var sql = $"SELECT * FROM entity WHERE name = '{request.Name}'";
 
-// ✅ CORRECT: Parameterized queries
-var sql = "SELECT * FROM entity WHERE name = @Name";
+// ✅ CORRECT: Parameters
 await connection.QueryAsync(sql, new { request.Name });
 ```
 
@@ -704,5 +310,6 @@ await connection.QueryAsync(sql, new { request.Name });
 
 - `cqrs-command-generator` - Generate write-side commands
 - `domain-entity-generator` - Generate domain entities
-- `ef-core-configuration` - EF Core for write operations
+- `ef-core-configuration` - EF Core mappings and DbContext
+- `repository-pattern` - Repository interfaces and EF implementations
 - `result-pattern` - Error handling pattern

@@ -7,7 +7,6 @@ using Fintrack.Server.Domain.Exceptions;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;
 using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
 using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +35,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
 
     public record CategorySummaryDto(string CategoryName, decimal Amount, double Percentage, string? Color);
 
-    public record BudgetSummaryDto(int Id, string CategoryName, decimal TotalBudget, decimal SpentAmount, decimal RemainingAmount, double Percentage, string? Icon, string? Color);
+    public record BudgetSummaryDto(Guid Id, string CategoryName, decimal TotalBudget, decimal SpentAmount, decimal RemainingAmount, double Percentage, string? Icon, string? Color);
 
     public record TransactionDto(
         string Id,

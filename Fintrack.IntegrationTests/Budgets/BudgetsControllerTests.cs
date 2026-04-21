@@ -1,7 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Fintrack.IntegrationTests.Infrastructure;
-using Fintrack.Server.Application.Budgets.Commands;
+using Fintrack.Server.Application.Budgets.Commands.UpsertBudgets;
+using Fintrack.Server.Application.Budgets.Queries.GetBudgetDetails;
 using Fintrack.Server.Api.Controllers.Budgets;
 using Fintrack.Server.Domain.Abstractions;
 using Fintrack.Server.Domain.Budgets;
@@ -13,6 +16,7 @@ using Fintrack.Server.Domain.Incomes;
 using Fintrack.Server.Domain.Invoices;
 using Fintrack.Server.Domain.SavingsGoals;
 using Fintrack.Server.Domain.Users;
+using Fintrack.Server.Infrastructure.Authorization;
 using Microsoft.EntityFrameworkCore;
 using FluentAssertions;
 using Xunit;
@@ -21,6 +25,12 @@ namespace Fintrack.IntegrationTests.Budgets;
 
 public class BudgetsControllerTests : BaseIntegrationTest
 {
+    private static readonly string[] BudgetUserPermissions =
+    {
+        Permissions.BudgetsRead,
+        Permissions.BudgetsWrite
+    };
+
     public BudgetsControllerTests(IntegrationTestWebAppFactory factory) 
         : base(factory)
     {
@@ -31,31 +41,25 @@ public class BudgetsControllerTests : BaseIntegrationTest
     {
         // Arrange
         var userId = Guid.NewGuid().ToString();
-        AuthenticateAs(userId);
+        AuthenticateAs(userId, BudgetUserPermissions);
 
-        var group = new ExpenseCategoryGroup { Name = "Test group" };
-        var category = new ExpenseCategory { Name = "Test category", Group = group };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Test group");
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Test category");
         await AddAsync(category);
 
-        var budget = new Budget
-        {
-            UserId = userId,
-            CategoryId = category.Id,
-            Amount = 500,
-            Month = 3,
-            Year = 2024
-        };
-        await AddAsync(budget);
+        var budgetResult = Budget.Create(userId, category.Id, 500, false, 3, 2024);
+        budgetResult.IsSuccess.Should().BeTrue();
+        await AddAsync(budgetResult.Value);
 
         // Act
         var response = await GetAsync($"/api/v1/budgets?month=3&year=2024");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var budgets = await response.Content.ReadFromJsonAsync<List<object>>();
-        budgets.Should().NotBeNull();
-        budgets.Should().HaveCount(1);
+        var payload = await response.Content.ReadFromJsonAsync<BudgetListResponse>();
+        payload.Should().NotBeNull();
+        payload!.Budgets.Should().HaveCount(1);
     }
 
     [Fact]
@@ -63,32 +67,40 @@ public class BudgetsControllerTests : BaseIntegrationTest
     {
         // Arrange
         var userId = Guid.NewGuid().ToString();
-        AuthenticateAs(userId);
+        AuthenticateAs(userId, BudgetUserPermissions);
 
-        var group = new ExpenseCategoryGroup { Name = "Test group" };
-        var category = new ExpenseCategory { Name = "Test category", Group = group };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Test group");
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Test category");
         await AddAsync(category);
 
-        var budget = new Budget
-        {
-            UserId = userId,
-            CategoryId = category.Id,
-            Amount = 500,
-            Month = 3,
-            Year = 2024
-        };
+        var budgetResult = Budget.Create(userId, category.Id, 500, false, 3, 2024);
+        budgetResult.IsSuccess.Should().BeTrue();
+        var budget = budgetResult.Value;
         await AddAsync(budget);
 
         // Act
         var response = await DeleteAsync($"/api/v1/budgets/{budget.Id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
         DbContext.ChangeTracker.Clear();
         var deletedBudget = await FindAsync<Budget>(budget.Id);
         deletedBudget.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Delete_Should_ReturnNotFound_When_Budget_Does_Not_Exist()
+    {
+        var userId = Guid.NewGuid().ToString();
+        AuthenticateAs(userId, BudgetUserPermissions);
+
+        var missingId = Guid.NewGuid();
+
+        var response = await DeleteAsync($"/api/v1/budgets/{missingId}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -96,11 +108,11 @@ public class BudgetsControllerTests : BaseIntegrationTest
     {
         // Arrange
         var userId = Guid.NewGuid().ToString();
-        AuthenticateAs(userId);
+        AuthenticateAs(userId, BudgetUserPermissions);
 
-        var group = new ExpenseCategoryGroup { Name = "Test group" };
-        var category = new ExpenseCategory { Name = "Test category", Group = group };
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Test group");
         await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Test category");
         await AddAsync(category);
 
         var request = new UpsertBudgetsRequest(
@@ -124,5 +136,122 @@ public class BudgetsControllerTests : BaseIntegrationTest
         
         budgets.Should().HaveCount(1);
         budgets[0].Amount.Should().Be(1200.50m);
+    }
+
+    [Fact]
+    public async Task CopyPrevious_Should_CreateMarchBudgets_FromFebruary()
+    {
+        var userId = Guid.NewGuid().ToString();
+        AuthenticateAs(userId, BudgetUserPermissions);
+
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Copy group");
+        await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Copy category");
+        await AddAsync(category);
+
+        var feb = Budget.Create(userId, category.Id, 750m, isRecurrent: true, month: 2, year: 2024);
+        feb.IsSuccess.Should().BeTrue();
+        await AddAsync(feb.Value);
+
+        var response = await PostAsync(
+            "/api/v1/budgets/copy-previous",
+            new CopyPreviousRequest(Month: 3, Year: 2024));
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        DbContext.ChangeTracker.Clear();
+        var march = await DbContext.Budgets
+            .Where(b => b.UserId == userId && b.Month == 3 && b.Year == 2024)
+            .SingleAsync();
+        march.CategoryId.Should().Be(category.Id);
+        march.Amount.Should().Be(750m);
+        march.IsRecurrent.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task CopyPrevious_Should_Succeed_When_PreviousMonthHasNoBudgets()
+    {
+        var userId = Guid.NewGuid().ToString();
+        AuthenticateAs(userId, BudgetUserPermissions);
+
+        var response = await PostAsync(
+            "/api/v1/budgets/copy-previous",
+            new CopyPreviousRequest(Month: 3, Year: 2024));
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        DbContext.ChangeTracker.Clear();
+        var count = await DbContext.Budgets.CountAsync(b => b.UserId == userId);
+        count.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task GetById_Should_ReturnDetails_When_BudgetExists()
+    {
+        var userId = Guid.NewGuid().ToString();
+        AuthenticateAs(userId, BudgetUserPermissions);
+
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Details group");
+        await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Details category");
+        await AddAsync(category);
+
+        var budgetResult = Budget.Create(userId, category.Id, 400m, false, month: 5, year: 2024);
+        budgetResult.IsSuccess.Should().BeTrue();
+        var budget = budgetResult.Value;
+        await AddAsync(budget);
+
+        var response = await GetAsync($"/api/v1/budgets/{budget.Id}?month=5&year=2024");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var dto = await response.Content.ReadFromJsonAsync<BudgetDetailsDto>();
+        dto.Should().NotBeNull();
+        dto!.Id.Should().Be(budget.Id);
+        dto.CategoryName.Should().Be("Details category");
+        dto.LimitAmount.Should().Be(400m);
+        dto.MonthlyHistory.Should().HaveCount(12);
+    }
+
+    [Fact]
+    public async Task GetById_Should_ReturnNotFound_When_BudgetMissing()
+    {
+        var userId = Guid.NewGuid().ToString();
+        AuthenticateAs(userId, BudgetUserPermissions);
+
+        var response = await GetAsync($"/api/v1/budgets/{Guid.NewGuid()}?month=1&year=2024");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task GetById_Should_ReturnNotFound_When_BudgetBelongsToAnotherUser()
+    {
+        var ownerId = Guid.NewGuid().ToString();
+        var otherId = Guid.NewGuid().ToString();
+
+        var group = ExpenseCategoryTestHelpers.CreateSystemGroup("Iso group");
+        await AddAsync(group);
+        var category = ExpenseCategoryTestHelpers.CreateWithGroup(group, name: "Iso category");
+        await AddAsync(category);
+
+        var budgetResult = Budget.Create(ownerId, category.Id, 100m, false, 4, 2024);
+        budgetResult.IsSuccess.Should().BeTrue();
+        await AddAsync(budgetResult.Value);
+        var budgetId = budgetResult.Value.Id;
+
+        AuthenticateAs(otherId, BudgetUserPermissions);
+
+        var response = await GetAsync($"/api/v1/budgets/{budgetId}?month=4&year=2024");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    private sealed class BudgetListResponse
+    {
+        [JsonPropertyName("budgets")]
+        public List<JsonElement> Budgets { get; init; } = new();
+
+        [JsonPropertyName("monthlyIncome")]
+        public decimal MonthlyIncome { get; init; }
     }
 }

@@ -1,11 +1,14 @@
 using Asp.Versioning;
-using Fintrack.Server.Api.Controllers.Expenses;
+using Fintrack.Server.Application.Expenses;
+using Fintrack.Server.Application.Expenses.Commands.CreateExpense;
+using Fintrack.Server.Application.Expenses.Commands.DeleteExpense;
+using Fintrack.Server.Application.Expenses.Commands.UpdateExpense;
+using Fintrack.Server.Application.Expenses.Queries.GetExpenseById;
+using Fintrack.Server.Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Fintrack.Server.Application.Expenses.Queries;
-using Fintrack.Server.Application.Expenses.Commands;
-using Fintrack.Server.Domain.Enums;
+using System.Security.Claims;
 
 namespace Fintrack.Server.Api.Controllers.Expenses;
 
@@ -13,55 +16,63 @@ namespace Fintrack.Server.Api.Controllers.Expenses;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/expenses")]
-public class ExpensesController : ControllerBase
+public class ExpensesController : ApiControllerBase
 {
-    private readonly ISender _sender;
-
-    public ExpensesController(ISender sender)
+    public ExpensesController(ISender sender) : base(sender)
     {
-        _sender = sender;
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // GET: api/v1/expenses/{id}
-    // ═══════════════════════════════════════════════════════════════
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+    [HttpGet("{id:guid}")]
+    [HasPermission(Permissions.ExpensesRead)]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        var result = await _sender.Send(new GetExpenseByIdQuery(id, userId), cancellationToken);
-        return result != null ? Ok(result) : NotFound();
+        var query = new GetExpenseByIdQuery(id, userId);
+        var result = await Sender.Send(query, cancellationToken);
+        return HandleResult(result);
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // POST: api/v1/expenses
-    // ═══════════════════════════════════════════════════════════════
     [HttpPost]
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+    [HasPermission(Permissions.ExpensesWrite)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(
-        [FromBody] RequestCreateExpense request,
+        [FromBody] CreateExpenseRequest request,
         CancellationToken cancellationToken)
     {
-        request.UserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        var resultId = await _sender.Send(request.ToCommand(), cancellationToken);
+        var command = new CreateExpenseCommand(
+            userId,
+            request.TotalAmount,
+            request.Date,
+            request.Merchant,
+            request.InvoiceNumber,
+            request.InvoiceImageUrl,
+            request.Items.Select(i => new ExpenseItemDto(i.CategoryId, i.ItemAmount, i.Description)).ToList(),
+            MapInvoice(request.Invoice));
 
-        return Created($"api/v1/expenses/{resultId}", resultId);
+        var result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsSuccess)
+        {
+            return Created($"api/v1/expenses/{result.Value}", result.Value);
+        }
+
+        return HandleFailure(result);
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // PUT: api/v1/expenses/{id}
-    // ═══════════════════════════════════════════════════════════════
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
+    [HasPermission(Permissions.ExpensesWrite)]
     public async Task<IActionResult> Update(
-        int id,
+        Guid id,
         [FromBody] UpdateExpenseRequest request,
         CancellationToken cancellationToken)
     {
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var command = new UpdateExpenseCommand(
@@ -72,38 +83,47 @@ public class ExpensesController : ControllerBase
             request.Merchant,
             request.InvoiceNumber,
             request.InvoiceImageUrl,
-            request.IsRecurring,
-            request.Frequency,
-            request.Items.Select(i => new UpdateExpenseItemDto(i.Id, i.CategoryId, i.ItemAmount, i.Description)).ToList()
-        );
+            request.Items.Select(i => new UpdateExpenseItemDto(i.CategoryId, i.ItemAmount, i.Description)).ToList(),
+            request.RemoveInvoice,
+            MapInvoice(request.Invoice),
+            request.Status);
 
-        var success = await _sender.Send(command, cancellationToken);
-        return success ? NoContent() : NotFound();
+        var result = await Sender.Send(command, cancellationToken);
+        return HandleResult(result);
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // DELETE: api/v1/expenses/{id}
-    // ═══════════════════════════════════════════════════════════════
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    [HttpDelete("{id:guid}")]
+    [HasPermission(Permissions.ExpensesDelete)]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        var success = await _sender.Send(new DeleteExpenseCommand(id, userId), cancellationToken);
-        return success ? NoContent() : NotFound();
+        var command = new DeleteExpenseCommand(id, userId);
+        var result = await Sender.Send(command, cancellationToken);
+        return HandleResult(result);
+    }
+
+    private static ExpenseInvoicePayload? MapInvoice(ExpenseInvoiceRequest? request)
+    {
+        if (request is null)
+        {
+            return null;
+        }
+
+        return new ExpenseInvoicePayload(
+            request.ImageUrl,
+            request.MerchantName,
+            request.Date,
+            request.TotalAmount,
+            request.Status,
+            request.Lines
+                .Select(l => new ExpenseInvoiceLinePayload(
+                    l.ProductName,
+                    l.Quantity,
+                    l.UnitPrice,
+                    l.TotalPrice,
+                    l.AssignedCategoryId))
+                .ToList());
     }
 }
-
-public record UpdateExpenseRequest(
-    decimal TotalAmount,
-    DateTime Date,
-    string? Merchant,
-    string? InvoiceNumber,
-    string? InvoiceImageUrl,
-    bool IsRecurring,
-    RecurringFrequency? Frequency,
-    List<UpdateExpenseItemRequestDto> Items
-);
-
-public record UpdateExpenseItemRequestDto(int? Id, int CategoryId, decimal ItemAmount, string? Description);

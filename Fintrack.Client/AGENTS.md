@@ -30,6 +30,8 @@ When working in this directory, leverage the following skills (located in `../.a
 - [`vue-pinia-best-practices`](../.agents/skills/vue-pinia-best-practices/SKILL.md): State management patterns.
 - [`vue-testing-best-practices`](../.agents/skills/vue-testing-best-practices/SKILL.md): Testing with Vitest and Vue Test Utils.
 - [`vue-debug-guides`](../.agents/skills/vue-debug-guides/SKILL.md): Handling runtime errors, hydration issues, etc.
+- [`vue-view-generator`](../.agents/skills/vue-view-generator/SKILL.md): Enforces Fintrack specific layouts, ID formats, and shared components.
+- [`vue-view-refactor`](../.agents/skills/vue-view-refactor/SKILL.md): Workflow for refactoring or splitting existing views, removing unused code, and aligning them with shared UI.
 - [`create-adaptable-composable`](../.agents/skills/create-adaptable-composable/SKILL.md): Standards for writing robust composables.
 - [`pwa-development`](../.agents/skills/pwa-development/SKILL.md): Progressive Web Apps guidelines.
 
@@ -39,3 +41,10 @@ When working in this directory, leverage the following skills (located in `../.a
 - **Components:** Keep components small, focused, and pure where possible.
 - **State:** Use Pinia for global state; avoid deeply nested prop drilling.
 - **Styling:** Prefer Tailwind CSS utility classes; use SCSS only when necessary for complex, scoped styling.
+
+## 5. Design Integration Guidelines
+When translating design prototypes (from the `designs/` directory) into Vue views:
+- **Tailwind Config Awareness:** Never blindly copy Tailwind classes from the raw HTML prototypes without verifying `tailwind.config.js`. Pay special attention to custom mappings (e.g., if the app overrides `xl` border-radius to mean 24px, you must use `rounded` to achieve an 8px visual look from the design). Focus on **visual equivalence**, not literal class name matching.
+- **Layouts vs. Views:** Distinctly separate global structure from page content. TopAppBars and BottomNavBars generally belong in Layout components (like `AppLayout.vue` or `FocusedLayout.vue`), while the specific data grids and localized footers belong in the View.
+- **Mobile Safeties:** Always respect device safe areas. Use custom utilities like `pb-safe` strictly on **global Layout wrappers** or **fixed Navigation components** (like `AppLayout.vue` or `Sidebar.vue`). Never apply safe-area paddings inside individual Views, as the Layout should handle device boundaries.
+- **Cohesive Theming:** Ensure newly integrated designs adhere to the root theme tokens (e.g., using `bg-background text-on-background`) rather than hardcoding colors that conflict with global layouts.

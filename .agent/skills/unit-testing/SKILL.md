@@ -1,7 +1,7 @@
 ---
 name: unit-testing
 description: "Generates unit tests for command and query handlers using xUnit and NSubstitute. Implements Arrange-Act-Assert pattern with comprehensive test coverage for success and failure scenarios."
-version: 1.0.0
+version: 1.2.0
 language: C#
 framework: .NET 8+
 dependencies: xUnit, NSubstitute, FluentAssertions
@@ -32,6 +32,8 @@ Unit tests for Clean Architecture handlers:
 
 ## Test Project Structure
 
+Mirror **`Application/{Feature}/{UseCaseFolder}/`** (one folder per command/query). See [`dotnet-clean-architecture`](./dotnet-clean-architecture/SKILL.md).
+
 ```
 tests/
 └── {name}.Application.UnitTests/
@@ -45,6 +47,57 @@ tests/
     │   └── BaseTest.cs
     └── {name}.Application.UnitTests.csproj
 ```
+
+### CeroBase monorepo (`Fintrack.Tests`)
+
+Handlers and validators live under **`Application/{Feature}/...`** mirroring the server. A feature's unit tests are **not complete** until every layer below is covered. If a layer does not apply (e.g., the entity has no child entities), skip it explicitly — do not silently omit it.
+
+| Layer | Location | What to test |
+|-------|----------|----------------|
+| **Domain aggregates** | `Domain/{Aggregate}/{Entity}Tests.cs` | `Create`/`Update` invariants, `Result` failures, domain events (clear events between acts when needed). |
+| **EF repository implementations** | `Infrastructure/Repositories/{Entity}RepositoryTests.cs` | Query filters, includes, and `Add`/`Update`/`Remove` behavior using **EF Core InMemory** (or SQLite). **Do not** rely on InMemory for DB unique constraints or provider-specific SQL—cover those in integration tests. |
+| **FluentValidation** | Next to handler tests: `{Command}ValidatorTests.cs` | `TestValidate` / `ShouldHaveValidationErrorFor`. |
+| **API controllers (thin MediatR)** | `Api/Controllers/{Feature}/{Controller}Tests.cs` | Mock `ISender`, set `ControllerContext` + `ClaimsPrincipal` for `User`, assert `IActionResult` and `Send` received the expected command/query. Does **not** run `[Authorize]` / `[HasPermission]` filters. |
+
+### Per-layer completion checklist
+
+Use this checklist when building or refactoring a feature to verify nothing is missed.
+
+#### Domain entity / aggregate tests
+`Fintrack.Tests/Domain/{Aggregate}/{Entity}Tests.cs`
+- `Create` factory — success case, each validation failure, domain event raised.
+- `Update` / mutation methods — success case, invalid input, domain event raised.
+- Child entity `Create` / `Update` if applicable (e.g., `ExpenseItemTests.cs`).
+
+#### Command handler tests
+`Fintrack.Tests/Application/{Feature}/Commands/{UseCase}/{UseCase}CommandHandlerTests.cs`
+- Happy path returns `Result.Success` / expected value.
+- Not-found returns `Result.Failure` with correct `Error`.
+- Business-rule violation returns the expected failure.
+- Verifies repository / UnitOfWork interactions (`Add`, `SaveChanges`; do **not** assert `Update` on tracked entities — EF change tracking handles that).
+
+#### Query handler tests
+`Fintrack.Tests/Application/{Feature}/Queries/{UseCase}/{UseCase}QueryHandlerTests.cs`
+- Entity found → correct DTO mapping.
+- Entity not found → `Result.Failure`.
+
+#### Validator tests
+`Fintrack.Tests/Application/{Feature}/Commands/{UseCase}/{UseCase}CommandValidatorTests.cs` (and same for queries with validators)
+- Each validation rule has at least one failing and one passing case.
+
+#### Repository tests (EF Core InMemory)
+`Fintrack.Tests/Infrastructure/Repositories/{Entity}RepositoryTests.cs`
+- Every public repository method is exercised: `GetByIdAsync`, `GetByIdWithItemsAsync`, `Add`, `Update`, `Remove`, plus any custom query methods.
+- Filtering, eager-loading (includes), and user isolation.
+- Use `RepositoryTestBase.CreateContext()` for shared InMemory `ApplicationDbContext` setup.
+
+#### API controller unit tests (mock ISender)
+`Fintrack.Tests/Api/Controllers/{Feature}/{Controller}Tests.cs`
+- Each action: success status code, failure status code, unauthorized (no `ClaimsPrincipal`).
+- Verifies `ISender.Send` receives the expected command/query with correct arguments.
+- Does **not** test `[Authorize]` / `[HasPermission]` attributes — those are integration-level concerns.
+
+**API surface, HTTP status codes, and permission policies** are **not** unit tests: place them in **`Fintrack.IntegrationTests`** (see [`integration-testing`](./integration-testing/SKILL.md)). Use `TestAuthHandler` headers for user id, optional `permission` claims, and **`X-Test-User-Roles`** when the default claims transformation would grant too many permissions (e.g. `Roles.User` includes budgets read/write).
 
 ---
 

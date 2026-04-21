@@ -32,3 +32,6 @@ build/
 .env
 .env.local
 .env.*.local
+
+# Server-local pending receipt uploads (async AI queue)
+Fintrack.Server/App_Data/pending-receipts/

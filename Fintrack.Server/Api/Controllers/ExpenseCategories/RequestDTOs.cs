@@ -6,7 +6,7 @@ namespace Fintrack.Server.Api.Controllers.ExpenseCategories
         public string? Description { get; init; }
         public string? Icon { get; init; }
         public string? Color { get; init; }
-        public int? GroupId { get; init; }
+        public Guid? GroupId { get; init; }
     }
 
     public sealed class RequestUpdateExpenseCategory
@@ -15,6 +15,6 @@ namespace Fintrack.Server.Api.Controllers.ExpenseCategories
         public string? Description { get; init; }
         public string? Icon { get; init; }
         public string? Color { get; init; }
-        public int? GroupId { get; init; }
+        public Guid? GroupId { get; init; }
     }
 }

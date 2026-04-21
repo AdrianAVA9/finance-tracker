@@ -2,8 +2,8 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 
 interface Budget {
-  id: number
-  categoryId: number
+  id: string
+  categoryId: string
   categoryName: string
   categoryIcon?: string
   categoryColor?: string
@@ -19,7 +19,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'edit', budget: Budget): void
-  (e: 'delete', id: number): void
+  (e: 'delete', id: string): void
 }>()
 
 const isMenuOpen = ref(false)

@@ -8,6 +8,7 @@ namespace Fintrack.Server.Infrastructure.Authorization
             {
                 Permissions.CategoriesRead, Permissions.CategoriesWrite, Permissions.CategoriesDelete,
                 Permissions.ExpensesRead, Permissions.ExpensesWrite, Permissions.ExpensesDelete,
+                Permissions.IncomesRead, Permissions.IncomesWrite, Permissions.IncomesDelete,
                 Permissions.InvoicesRead, Permissions.InvoicesWrite, Permissions.InvoicesDelete,
                 Permissions.BudgetsRead, Permissions.BudgetsWrite
             },
@@ -15,8 +16,37 @@ namespace Fintrack.Server.Infrastructure.Authorization
             {
                 Permissions.CategoriesRead, // Built in system categories
                 Permissions.ExpensesRead, Permissions.ExpensesWrite, Permissions.ExpensesDelete,
+                Permissions.IncomesRead, Permissions.IncomesWrite, Permissions.IncomesDelete,
                 Permissions.InvoicesRead, Permissions.InvoicesWrite, Permissions.InvoicesDelete,
                 Permissions.BudgetsRead, Permissions.BudgetsWrite
+            },
+            // Authenticated user with no budget permissions (integration / authZ tests only)
+            [Roles.IntegrationTestNoBudgets] = new HashSet<string>
+            {
+                Permissions.CategoriesRead
+            },
+            [Roles.IntegrationTestBudgetReadOnly] = new HashSet<string>
+            {
+                Permissions.CategoriesRead,
+                Permissions.BudgetsRead
+            },
+            [Roles.IntegrationTestNoExpenses] = new HashSet<string>
+            {
+                Permissions.CategoriesRead
+            },
+            [Roles.IntegrationTestExpenseReadOnly] = new HashSet<string>
+            {
+                Permissions.CategoriesRead,
+                Permissions.ExpensesRead
+            },
+            [Roles.IntegrationTestNoIncomes] = new HashSet<string>
+            {
+                Permissions.CategoriesRead
+            },
+            [Roles.IntegrationTestIncomeReadOnly] = new HashSet<string>
+            {
+                Permissions.CategoriesRead,
+                Permissions.IncomesRead
             }
         };
 

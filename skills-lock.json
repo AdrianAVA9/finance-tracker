@@ -1,11 +1,7 @@
 {
   "version": 1,
+  "maintenanceNote": "When a skill under .agents/skills/<name>/ is customized in this repo, remove that <name> entry from skills below (if present) so installers or sync tools that honor this file do not overwrite local changes. Some skills (e.g. unit-testing, integration-testing) are maintained only here and are not pinned.",
   "skills": {
-    "api-controller-generator": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "2f77560bfec46d690ad388621337126f13b2d97cc77463c418a906962a14f810"
-    },
     "audit-trail": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
       "sourceType": "github",
@@ -20,16 +16,6 @@
       "source": "github/awesome-copilot",
       "sourceType": "github",
       "computedHash": "f29c9486cede6c7b2df0cfb0a2e4aa67446552b991bcf17d1b309e903171f03d"
-    },
-    "cqrs-command-generator": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "ee754153065bf6e1dde10b11393122ea4d3074c56a90a4d504f6a7db3eed6cd3"
-    },
-    "cqrs-query-generator": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "b76c146f98687d16fd226d65021fca7b4d6ac6261692b1bc1bde709d42004174"
     },
     "create-adaptable-composable": {
       "source": "hyf0/vue-skills",
@@ -46,11 +32,6 @@
       "sourceType": "github",
       "computedHash": "f03b510586c54ae737377b3a2ef3187f9c3060908cf828cb7027f1131247910d"
     },
-    "domain-events-generator": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "b578bb0ab910df3ae0b0f7fb6a99a3e4fed7409a4b3deabc560bec6e481cb61f"
-    },
     "ef-core-configuration": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
       "sourceType": "github",
@@ -61,35 +42,15 @@
       "sourceType": "github",
       "computedHash": "e24e3c4cab4b5a07bc1d1801db14868f3a1cd184f7f28f5dd2c4a2b234bf2f2d"
     },
-    "fluent-validation": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "d0e95caa84501879a18f584d8181f8d97b5ab3e37375e6fd3a54dd51416d09cf"
-    },
     "health-checks": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
       "sourceType": "github",
       "computedHash": "e22146ae881ed0519d59ab9a032c61ee9187e6dcb7bedcb23761b7af2f831dd7"
     },
-    "integration-testing": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "96f8528926ab1f24c510657491282751d79211996618cacbbf2a807ce8e855c3"
-    },
     "outbox-pattern": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
       "sourceType": "github",
       "computedHash": "1b33705b2814ab2529e47d123bebcdea6b5ef5435c0a88f09a506596ff169f80"
-    },
-    "permission-authorization": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "ee14dde7ed98b312d3fecf0220af2ba52a125e3b9864d2a0731588733750e886"
-    },
-    "pipeline-behaviors": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "b7f422393289ac713d6ee3c878dc25ff7a70b95eb0291aa8adc53c89377d6eea"
     },
     "pwa-development": {
       "source": "alinaqi/claude-bootstrap",
@@ -100,11 +61,6 @@
       "source": "ronnythedev/dotnet-clean-architecture-skills",
       "sourceType": "github",
       "computedHash": "746f52c99cbacba82c4a9e3208907da0a4b8dc7c218b203060072668ba661e22"
-    },
-    "repository-pattern": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "e05ea05b9ef35989c28ec24d35077ee3ee605a7b891927ffab56a05f77b2eedb"
     },
     "result-pattern": {
       "source": "ronnythedev/dotnet-clean-architecture-skills",
@@ -126,11 +82,6 @@
       "sourceType": "github",
       "computedHash": "e3ba3d760c5f4cc43b02a91fb8924f726c7818f95cc35d79d0a606ca622b72f5"
     },
-    "unit-testing": {
-      "source": "ronnythedev/dotnet-clean-architecture-skills",
-      "sourceType": "github",
-      "computedHash": "1f6401c907fdb7228f8e2b9f6bf6129c6373cb1729d94b98e8c16c386640faff"
-    },
     "vue-best-practices": {
       "source": "hyf0/vue-skills",
       "sourceType": "github",
@@ -140,11 +91,6 @@
       "source": "hyf0/vue-skills",
       "sourceType": "github",
       "computedHash": "58bb2ad9e92dce0c15b42acc65aeec1dd93bc36f9db96ab248e52b1d22945472"
-    },
-    "vue-options-api-best-practices": {
-      "source": "hyf0/vue-skills",
-      "sourceType": "github",
-      "computedHash": "4c613ef2a6d5fd5599e6aa58f24bb6460a9f0903f389cf71bad3a71400dbad20"
     },
     "vue-pinia-best-practices": {
       "source": "hyf0/vue-skills",

@@ -34,8 +34,8 @@ namespace Fintrack.IntegrationTests.ExpenseCategories
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-            var entityId = await response.Content.ReadFromJsonAsync<int>();
-            entityId.Should().BeGreaterThan(0);
+            var entityId = await response.Content.ReadFromJsonAsync<Guid>();
+            entityId.Should().NotBeEmpty();
 
             // Verify in database
             var entity = await DbContext.ExpenseCategories.FindAsync(entityId);

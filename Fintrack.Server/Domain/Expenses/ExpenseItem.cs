@@ -1,26 +1,46 @@
 using Fintrack.Server.Domain.Abstractions;
-using Fintrack.Server.Domain.Budgets;
-using Fintrack.Server.Domain.Enums;
-using Fintrack.Server.Domain.Exceptions;
 using Fintrack.Server.Domain.ExpenseCategories;
-using Fintrack.Server.Domain.Expenses;
-using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
-using Fintrack.Server.Domain.SavingsGoals;
-using Fintrack.Server.Domain.Users;
 
-using Fintrack.Server.Domain.Abstractions;
+namespace Fintrack.Server.Domain.Expenses;
 
-namespace Fintrack.Server.Domain.Expenses
+public sealed class ExpenseItem : BaseAuditableEntityGuid
 {
-    public class ExpenseItem : BaseAuditableEntity
-    {
-        public int ExpenseId { get; set; }
+    public Guid ExpenseId { get; private set; }
+    public Guid CategoryId { get; private set; }
+    public decimal ItemAmount { get; private set; }
+    public string? Description { get; private set; }
 
-        public int CategoryId { get; set; }
-        public decimal ItemAmount { get; set; }
-        public string? Description { get; set; }
-        public virtual Expense? Expense { get; set; }
-        public virtual ExpenseCategory? Category { get; set; }
+    public Expense? Expense { get; private set; }
+    public ExpenseCategory? Category { get; private set; }
+
+    private ExpenseItem() : base()
+    {
+    }
+
+    private ExpenseItem(
+        Guid categoryId,
+        decimal itemAmount,
+        string? description)
+        : base()
+    {
+        Id = Guid.NewGuid();
+        CategoryId = categoryId;
+        ItemAmount = itemAmount;
+        Description = description;
+    }
+
+    public static ExpenseItem Create(
+        Guid categoryId,
+        decimal itemAmount,
+        string? description)
+    {
+        return new ExpenseItem(categoryId, itemAmount, description);
+    }
+
+    public void Update(Guid categoryId, decimal itemAmount, string? description)
+    {
+        CategoryId = categoryId;
+        ItemAmount = itemAmount;
+        Description = description;
     }
 }

@@ -1,158 +1,158 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Fintrack.Server.Infrastructure.Data;
-using Fintrack.Server.Domain.Abstractions;
-using Fintrack.Server.Domain.Budgets;
 using Fintrack.Server.Domain.Enums;
-using Fintrack.Server.Domain.Exceptions;
-using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Domain.Expenses;
 using Fintrack.Server.Domain.Incomes;
-using Fintrack.Server.Domain.Invoices;
-using Fintrack.Server.Domain.SavingsGoals;
-using Fintrack.Server.Domain.Users;
-using Fintrack.Server.Domain.Enums;
 
-namespace Fintrack.Server.Infrastructure.BackgroundJobs
+namespace Fintrack.Server.Infrastructure.BackgroundJobs;
+
+public class RecurringTransactionProcessorJob : BackgroundService
 {
-    public class RecurringTransactionProcessorJob : BackgroundService
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<RecurringTransactionProcessorJob> _logger;
+
+    public RecurringTransactionProcessorJob(
+        IServiceProvider serviceProvider,
+        ILogger<RecurringTransactionProcessorJob> logger)
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<RecurringTransactionProcessorJob> _logger;
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
 
-        public RecurringTransactionProcessorJob(IServiceProvider serviceProvider, ILogger<RecurringTransactionProcessorJob> logger)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _logger.LogInformation("RecurringTransactionProcessorJob started.");
+
+        while (!stoppingToken.IsCancellationRequested)
         {
-            _serviceProvider = serviceProvider;
-            _logger = logger;
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            _logger.LogInformation("RecurringTransactionProcessorJob started.");
-
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                try
-                {
-                    await ProcessRecurringIncomesAsync(stoppingToken);
-                    await ProcessRecurringExpensesAsync(stoppingToken);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error occurred processing recurring transactions.");
-                }
-
-                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+                await ProcessRecurringIncomesAsync(stoppingToken);
+                await ProcessRecurringExpensesAsync(stoppingToken);
             }
-        }
-
-        private async Task ProcessRecurringIncomesAsync(CancellationToken cancellationToken)
-        {
-            using var scope = _serviceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-            var today = DateTime.UtcNow.Date;
-
-            var dueIncomes = await dbContext.RecurringIncomes
-                .Where(r => r.IsActive && r.NextProcessingDate.Date <= today)
-                .ToListAsync(cancellationToken);
-
-            if (!dueIncomes.Any()) return;
-
-            _logger.LogInformation($"Found {dueIncomes.Count} recurring incomes to process.");
-
-            foreach (var template in dueIncomes)
+            catch (Exception ex)
             {
-                var newIncome = new Income
-                {
-                    UserId = template.UserId,
-                    Amount = template.Amount,
-                    Source = template.Source,
-                    CategoryId = template.CategoryId,
-                    Date = today,
-                    Notes = $"Procesado automáticamente desde plantilla recurrente."
-                };
-
-                dbContext.Incomes.Add(newIncome);
-
-                template.NextProcessingDate = CalculateNextDate(template.NextProcessingDate.Date, template.Frequency, today);
-                _logger.LogInformation($"Processed recurring income {template.Id}. Next date: {template.NextProcessingDate:d}");
+                _logger.LogError(ex, "Error occurred processing recurring transactions.");
             }
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
         }
+    }
 
-        private async Task ProcessRecurringExpensesAsync(CancellationToken cancellationToken)
+    private async Task ProcessRecurringIncomesAsync(CancellationToken cancellationToken)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var today = DateTime.UtcNow.Date;
+
+        var dueIncomes = await dbContext.RecurringIncomes
+            .Where(r => r.IsActive && r.NextProcessingDate.Date <= today)
+            .ToListAsync(cancellationToken);
+
+        if (!dueIncomes.Any()) return;
+
+        _logger.LogInformation("Found {Count} recurring incomes to process.", dueIncomes.Count);
+
+        foreach (var template in dueIncomes)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var incomeResult = Income.Create(
+                template.UserId,
+                template.Source,
+                template.Amount,
+                template.CategoryId,
+                today,
+                "Procesado automáticamente desde plantilla recurrente.");
 
-            var today = DateTime.UtcNow.Date;
-
-            var dueExpenses = await dbContext.RecurringExpenses
-                .Where(r => r.IsActive && r.NextProcessingDate.Date <= today)
-                .ToListAsync(cancellationToken);
-
-            if (!dueExpenses.Any())
-                return;
-
-            _logger.LogInformation($"Found {dueExpenses.Count} recurring expenses to process.");
-
-            foreach (var template in dueExpenses)
+            if (incomeResult.IsFailure)
             {
-                var newExpense = new Expense
-                {
-                    UserId = template.UserId,
-                    TotalAmount = template.Amount,
-                    Date = today,
-                    Merchant = template.Merchant,
-                    Status = ExpenseStatus.NeedsReview, 
-                    Items = new List<ExpenseItem>
-                    {
-                        new ExpenseItem
-                        {
-                            CategoryId = template.CategoryId,
-                            ItemAmount = template.Amount,
-                            Description = $"Automated recurring charge for {template.Merchant ?? "subscription"}"
-                        }
-                    }
-                };
-
-                dbContext.Expenses.Add(newExpense);
-
-                template.NextProcessingDate = CalculateNextDate(template.NextProcessingDate.Date, template.Frequency, today);
-                _logger.LogInformation($"Processed recurring expense {template.Id}. Next date: {template.NextProcessingDate:d}");
+                _logger.LogWarning(
+                    "Skipped recurring income {Id}: {Error}",
+                    template.Id,
+                    incomeResult.Error.Description);
+                continue;
             }
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+            dbContext.Incomes.Add(incomeResult.Value);
+
+            template.NextProcessingDate = CalculateNextDate(template.NextProcessingDate.Date, template.Frequency, today);
+            _logger.LogInformation("Processed recurring income {Id}. Next date: {NextDate:d}", template.Id, template.NextProcessingDate);
         }
 
-        private DateTime CalculateNextDate(DateTime currentDate, RecurringFrequency frequency, DateTime today)
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task ProcessRecurringExpensesAsync(CancellationToken cancellationToken)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var today = DateTime.UtcNow.Date;
+
+        var dueExpenses = await dbContext.RecurringExpenses
+            .Where(r => r.IsActive && r.NextProcessingDate.Date <= today)
+            .ToListAsync(cancellationToken);
+
+        if (!dueExpenses.Any())
+            return;
+
+        _logger.LogInformation("Found {Count} recurring expenses to process.", dueExpenses.Count);
+
+        foreach (var template in dueExpenses)
         {
-            DateTime nextDate = currentDate;
+            var expenseResult = Expense.Create(
+                template.UserId,
+                template.Amount,
+                today,
+                template.Merchant,
+                status: ExpenseStatus.NeedsReview);
 
-            do
+            if (expenseResult.IsFailure)
             {
-                nextDate = frequency switch
-                {
-                    RecurringFrequency.Daily => nextDate.AddDays(1),
-                    RecurringFrequency.Weekly => nextDate.AddDays(7),
-                    RecurringFrequency.BiWeekly => nextDate.AddDays(14),
-                    RecurringFrequency.Monthly => nextDate.AddMonths(1),
-                    RecurringFrequency.Quarterly => nextDate.AddMonths(3),
-                    RecurringFrequency.Yearly => nextDate.AddYears(1),
-                    _ => nextDate.AddMonths(1)
-                };
-            } while (nextDate <= today);
+                _logger.LogWarning(
+                    "Skipped recurring expense {Id}: {Error}",
+                    template.Id,
+                    expenseResult.Error.Description);
+                continue;
+            }
 
-            return nextDate;
+            var expense = expenseResult.Value;
+            var item = ExpenseItem.Create(
+                template.CategoryId,
+                template.Amount,
+                $"Automated recurring charge for {template.Merchant ?? "subscription"}");
+            expense.AddItem(item);
+
+            dbContext.Expenses.Add(expense);
+
+            template.NextProcessingDate = CalculateNextDate(template.NextProcessingDate.Date, template.Frequency, today);
+            _logger.LogInformation("Processed recurring expense {Id}. Next date: {NextDate:d}", template.Id, template.NextProcessingDate);
         }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private static DateTime CalculateNextDate(DateTime currentDate, RecurringFrequency frequency, DateTime today)
+    {
+        DateTime nextDate = currentDate;
+
+        do
+        {
+            nextDate = frequency switch
+            {
+                RecurringFrequency.Daily => nextDate.AddDays(1),
+                RecurringFrequency.Weekly => nextDate.AddDays(7),
+                RecurringFrequency.BiWeekly => nextDate.AddDays(14),
+                RecurringFrequency.Monthly => nextDate.AddMonths(1),
+                RecurringFrequency.Quarterly => nextDate.AddMonths(3),
+                RecurringFrequency.Yearly => nextDate.AddYears(1),
+                _ => nextDate.AddMonths(1)
+            };
+        } while (nextDate <= today);
+
+        return nextDate;
     }
 }

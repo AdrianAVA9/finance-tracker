@@ -1,6 +1,11 @@
 using Asp.Versioning;
-using Fintrack.Server.Application.Budgets.Commands;
-using Fintrack.Server.Application.Budgets.Queries;
+using Fintrack.Server.Application.Budgets.Commands.CopyPreviousMonthBudgets;
+using Fintrack.Server.Application.Budgets.Commands.DeleteBudget;
+using Fintrack.Server.Application.Budgets.Commands.UpsertBudgets;
+using Fintrack.Server.Application.Budgets.Queries.GetBudgetDetails;
+using Fintrack.Server.Application.Budgets.Queries.GetBudgets;
+using Fintrack.Server.Infrastructure.Authorization;
+using System;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,70 +17,70 @@ namespace Fintrack.Server.Api.Controllers.Budgets;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/budgets")]
-public class BudgetsController : ControllerBase
+public class BudgetsController : ApiControllerBase
 {
-    private readonly ISender _sender;
-
-    public BudgetsController(ISender sender)
+    public BudgetsController(ISender sender) : base(sender)
     {
-        _sender = sender;
     }
 
     [HttpGet]
+    [HasPermission(Permissions.BudgetsRead)]
     public async Task<IActionResult> Get([FromQuery] int month, [FromQuery] int year)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var query = new GetBudgetsQuery(userId, month, year);
-        var result = await _sender.Send(query);
-        return Ok(result);
+        var result = await Sender.Send(query);
+        return HandleResult(result);
     }
 
     [HttpPost("batch")]
+    [HasPermission(Permissions.BudgetsWrite)]
     public async Task<IActionResult> Upsert([FromBody] UpsertBudgetsRequest request)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var command = new UpsertBudgetsCommand(userId, request.Month, request.Year, request.Budgets);
-        await _sender.Send(command);
-        return Ok();
+        var result = await Sender.Send(command);
+        return HandleResult(result);
     }
 
     [HttpPost("copy-previous")]
+    [HasPermission(Permissions.BudgetsWrite)]
     public async Task<IActionResult> CopyPrevious([FromBody] CopyPreviousRequest request)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var command = new CopyPreviousMonthBudgetsCommand(userId, request.Month, request.Year);
-        await _sender.Send(command);
-        return Ok();
+        var result = await Sender.Send(command);
+        return HandleResult(result);
     }
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+
+    [HttpDelete("{id:guid}")]
+    [HasPermission(Permissions.BudgetsWrite)]
+    public async Task<IActionResult> Delete(Guid id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var command = new DeleteBudgetCommand(id, userId);
-        await _sender.Send(command);
-        return NoContent();
+        var result = await Sender.Send(command);
+        return HandleResult(result);
     }
 
-    [HttpGet("{id}/details")]
-    public async Task<IActionResult> GetDetails(int id, [FromQuery] int year, [FromQuery] int month)
+    [HttpGet("{id:guid}")]
+    [HasPermission(Permissions.BudgetsRead)]
+    public async Task<IActionResult> GetById(Guid id, [FromQuery] int year, [FromQuery] int month)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var query = new GetBudgetDetailsQuery(id, userId, month, year);
-        var result = await _sender.Send(query);
-
-        if (result == null) return NotFound();
-
-        return Ok(result);
+        var result = await Sender.Send(query);
+        return HandleResult(result);
     }
 }
 

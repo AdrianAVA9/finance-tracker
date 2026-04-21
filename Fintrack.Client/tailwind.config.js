@@ -81,11 +81,11 @@ export default {
         "label": ["Inter", "sans-serif"]
       },
       borderRadius: {
-        "DEFAULT": "0.5rem",
-        "lg": "1rem",
-        "xl": "1.5rem",
-        "2xl": "2rem",
-        "full": "9999px"
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "2xl": "1rem",
+        "full": "0.75rem"
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
