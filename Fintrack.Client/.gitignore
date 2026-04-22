@@ -44,3 +44,4 @@ __screenshots__/
 
 # PWA splash generator staging (see npm run pwa:apple-splash)
 .pwa-splash-staging
+.pwa-icon-staging

@@ -16,7 +16,9 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "deploy": "npm run build-only && wrangler deploy",
-    "pwa:apple-splash": "pwa-asset-generator ./src/assets/logo.png ./.pwa-splash-staging --splash-only --background #111317 --padding 36% --type jpg --quality 90 && node ./scripts/sync-apple-splash.mjs"
+    "pwa:apple-splash": "pwa-asset-generator ./src/assets/logo.png ./.pwa-splash-staging --splash-only --background #111317 --padding 36% --type jpg --quality 90 && node ./scripts/sync-apple-splash.mjs",
+    "pwa:apple-icons": "pwa-asset-generator ./src/assets/logo.png ./.pwa-icon-staging --icon-only --background #111317 --padding 22% --type png && node ./scripts/sync-pwa-icons.mjs",
+    "pwa:apple-assets": "npm run pwa:apple-splash && npm run pwa:apple-icons"
   },
   "dependencies": {
     "axios": "^1.13.6",
