@@ -20,7 +20,7 @@ onMounted(async () => {
 
 <template>
   <div class="public-layout">
-    <header class="glass">
+    <header class="glass" style="display: none;">
       <nav class="container">
         <div class="logo">
           <img :src="logo" alt="CeroBase Logo" class="logo-img" />
@@ -33,7 +33,7 @@ onMounted(async () => {
         </div>
       </nav>
     </header>
-    
+
     <main>
       <router-view />
     </main>
@@ -91,7 +91,7 @@ header {
       text-decoration: none;
       color: inherit;
       font-weight: 500;
-      
+
       &:hover {
         color: hsl(var(--color-primary));
       }
