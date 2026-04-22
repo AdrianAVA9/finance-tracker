@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest'
-import { getAuthRedirectForPath } from '@/router/authRedirect'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import {
+  getAuthRedirectForPath,
+  getInstalledPwaRedirectForPath,
+  isInstalledPwaDisplayMode,
+} from '@/router/authRedirect'
 
 describe('getAuthRedirectForPath', () => {
   it('sends authenticated users away from public paths to /app', () => {
@@ -26,5 +30,48 @@ describe('getAuthRedirectForPath', () => {
   it('allows unauthenticated users on public and auth routes', () => {
     expect(getAuthRedirectForPath('/', false)).toBeNull()
     expect(getAuthRedirectForPath('/auth/login', false)).toBeNull()
+  })
+})
+
+describe('installed PWA routing', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+  })
+
+  function stubStandaloneDisplay() {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((query: string) => ({
+        matches: query.includes('standalone') || query.includes('fullscreen'),
+        media: query,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    )
+  }
+
+  it('detects installed PWA via display-mode standalone', () => {
+    stubStandaloneDisplay()
+    expect(isInstalledPwaDisplayMode()).toBe(true)
+  })
+
+  it('redirects public paths to /app when in installed display mode', () => {
+    stubStandaloneDisplay()
+    expect(getInstalledPwaRedirectForPath('/')).toBe('/app')
+  })
+
+  it('does not redirect when not in installed display mode', () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }) as MediaQueryList)
+    expect(getInstalledPwaRedirectForPath('/')).toBeNull()
+  })
+
+  it('does not redirect app or auth paths in installed mode', () => {
+    stubStandaloneDisplay()
+    expect(getInstalledPwaRedirectForPath('/app')).toBeNull()
+    expect(getInstalledPwaRedirectForPath('/auth/login')).toBeNull()
   })
 })

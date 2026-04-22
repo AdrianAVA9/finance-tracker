@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
-import { getAuthRedirectForPath } from '@/router/authRedirect';
+import { getAuthRedirectForPath, getInstalledPwaRedirectForPath } from '@/router/authRedirect';
 import { routes as publicRoutes } from '@/public/routes';
 import { routes as authRoutes } from '@/auth/routes';
 import { routes as appRoutes } from '@/app/routes';
@@ -25,6 +25,11 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const pwaEntry = getInstalledPwaRedirectForPath(to.path);
+  if (pwaEntry) {
+    return next({ path: pwaEntry, replace: true });
+  }
+
   const { isAuthenticated, isInitialized } = useAuth();
 
   // Allow the initial navigation to proceed without blocking
