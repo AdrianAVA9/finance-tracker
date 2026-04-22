@@ -48,6 +48,8 @@ export default defineConfig({
             manifest: {
                 name: 'CeroBase',
                 short_name: 'CeroBase',
+                start_url: '/app',
+                scope: '/',
                 description: 'Administra tus finanzas con CeroBase. Rastrea presupuestos, gastos e ingresos en un solo lugar.',
                 theme_color: '#111317',
                 background_color: '#111317',
