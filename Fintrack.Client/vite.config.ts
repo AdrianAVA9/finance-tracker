@@ -8,6 +8,7 @@ import path from 'path';
 import child_process from 'child_process';
 import { env } from 'process';
 import { cloudflare } from "@cloudflare/vite-plugin";
+import prerender from 'vite-plugin-prerender-esm-fix';
 
 const baseFolder =
     env.APPDATA !== undefined && env.APPDATA !== ''
@@ -50,7 +51,7 @@ export default defineConfig({
                 short_name: 'CeroBase',
                 start_url: '/app',
                 scope: '/',
-                description: 'Administra tus finanzas con CeroBase. Rastrea presupuestos, gastos e ingresos en un solo lugar.',
+                description: 'Administra tus finanzas con CeroBase. El mejor rastreador de finanzas personales y control de gastos automatizado por IA.',
                 theme_color: '#111317',
                 background_color: '#111317',
                 display: 'standalone',
@@ -151,7 +152,17 @@ export default defineConfig({
                 ]
             }
         }),
-        cloudflare()
+        cloudflare(),
+        prerender({
+            staticDir: fileURLToPath(new URL('./dist', import.meta.url)),
+            routes: ['/'],
+            rendererOptions: {
+                renderAfterTime: 10000,
+                inject: {
+                    __PRERENDER_INJECTED: true
+                }
+            }
+        })
     ],
     resolve: {
         alias: {
