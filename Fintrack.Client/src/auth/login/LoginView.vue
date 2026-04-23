@@ -9,7 +9,7 @@ const currentYear = new Date().getFullYear();
 </script>
 
 <template>
-  <div class="bg-[#0e0e1b] text-white h-screen w-full overflow-hidden flex flex-row font-display relative z-50">
+  <main class="bg-[#0e0e1b] text-white h-screen w-full overflow-hidden flex flex-row font-display relative z-50">
     <LoginMarketingPanel :logo-src="logo" />
 
     <div class="w-full lg:w-[40%] h-full bg-[#0F0F1A] flex flex-col overflow-y-auto">
@@ -29,12 +29,12 @@ const currentYear = new Date().getFullYear();
           @submit="handleLogin"
         />
 
-        <p class="mt-8 text-xs text-[#9898c3]/50 text-center">
+        <p class="mt-8 text-xs text-slate-500 text-center">
           © {{ currentYear }} CeroBase Inc. Todos los derechos reservados.
         </p>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <style scoped>
