@@ -21,6 +21,10 @@
     "pwa:apple-assets": "npm run pwa:apple-splash && npm run pwa:apple-icons"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/manrope": "^5.2.8",
+    "@fontsource-variable/material-symbols-outlined": "^5.2.42",
+    "@fontsource-variable/space-grotesk": "^5.2.10",
     "axios": "^1.13.6",
     "pinia": "^3.0.4",
     "sass": "^1.97.3",
