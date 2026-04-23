@@ -156,6 +156,7 @@ export default defineConfig({
         prerender({
             staticDir: fileURLToPath(new URL('./dist', import.meta.url)),
             routes: ['/'],
+            // @ts-ignore - plugin supports these at runtime but types are missing/strict
             rendererOptions: {
                 renderAfterTime: 10000,
                 inject: {
