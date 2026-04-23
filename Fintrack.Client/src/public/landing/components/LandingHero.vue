@@ -1,7 +1,7 @@
 <template>
   <section class="relative w-full py-20 lg:py-32 px-4 overflow-hidden">
     <!-- Background Glows -->
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10 pointer-events-none mix-blend-screen"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/5 md:bg-primary/10 rounded-full md:blur-[120px] -z-10 pointer-events-none mix-blend-screen"></div>
     <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
       <div class="flex flex-col gap-6 text-center lg:text-left z-10">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-dark border border-surface-border w-fit mx-auto lg:mx-0">
@@ -38,7 +38,7 @@
       <!-- Hero Visual -->
       <div class="relative w-full aspect-square max-w-[600px] mx-auto lg:mr-0 perspective-1000">
         <!-- Main Card Visual -->
-        <div class="relative z-10 w-full h-full bg-surface-dark/50 backdrop-blur-sm border border-surface-border rounded-2xl overflow-hidden shadow-2xl animate-float">
+        <div class="relative z-10 w-full h-full bg-surface-dark/50 md:backdrop-blur-sm border border-surface-border rounded-2xl overflow-hidden shadow-2xl md:animate-float">
           <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-50"></div>
           <!-- Mock Interface Header -->
           <div class="flex items-center justify-between px-6 py-4 border-b border-surface-border bg-[#151515]">
@@ -93,7 +93,7 @@
           </div>
         </div>
         <!-- Floating Badge -->
-        <div class="absolute -bottom-6 -left-6 z-20 bg-surface-dark border border-surface-border p-4 rounded-xl shadow-xl flex items-center gap-3 animate-bounce-slow">
+        <div class="absolute -bottom-6 -left-6 z-20 bg-surface-dark border border-surface-border p-4 rounded-xl shadow-xl flex items-center gap-3 md:animate-bounce-slow">
           <div class="relative w-10 h-10 flex items-center justify-center rounded-full bg-accent/20 text-accent">
             <span class="material-symbols-outlined">auto_awesome</span>
           </div>

@@ -1,8 +1,4 @@
-/* Self-hosted via Fontsource; bundled for offline PWA (no Google Fonts at runtime). */
-@import '@fontsource-variable/manrope/index.css';
-@import '@fontsource-variable/space-grotesk/index.css';
-@import '@fontsource-variable/inter/index.css';
-@import '@fontsource-variable/material-symbols-outlined/full.css';
+/* Manrope, Space Grotesk, Inter, and Material Symbols load from Google Fonts (see index.html). */
 
 @tailwind base;
 @tailwind components;
@@ -20,9 +16,8 @@
 }
 
 @layer base {
-  /* Self-hosted via @fontsource-variable (bundled; works offline in PWA). */
   .material-symbols-outlined {
-    font-family: 'Material Symbols Outlined Variable', sans-serif;
+    font-family: 'Material Symbols Outlined', sans-serif;
     font-weight: 400;
     font-style: normal;
     line-height: 1;
