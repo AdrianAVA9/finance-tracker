@@ -18,7 +18,8 @@
     "deploy": "npm run build-only && wrangler deploy",
     "pwa:apple-splash": "pwa-asset-generator ./src/assets/logo.png ./.pwa-splash-staging --splash-only --background #111317 --padding 36% --type jpg --quality 90 && node ./scripts/sync-apple-splash.mjs",
     "pwa:apple-icons": "pwa-asset-generator ./src/assets/logo.png ./.pwa-icon-staging --icon-only --background #111317 --padding 22% --type png && node ./scripts/sync-pwa-icons.mjs",
-    "pwa:apple-assets": "npm run pwa:apple-splash && npm run pwa:apple-icons"
+    "pwa:apple-assets": "npm run pwa:apple-splash && npm run pwa:apple-icons",
+    "unlighthouse": "unlighthouse --config-file unlighthouse.config.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
@@ -50,6 +51,7 @@
     "pwa-asset-generator": "^8.1.4",
     "tailwindcss": "^3.4.19",
     "typescript": "~5.9.3",
+    "unlighthouse": "^0.17.9",
     "vite": "^7.3.0",
     "vite-plugin-prerender-esm-fix": "^1.0.8",
     "vite-plugin-pwa": "^1.2.0",
