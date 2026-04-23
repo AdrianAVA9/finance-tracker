@@ -16,7 +16,7 @@
           Deja el registro manual. Deja que nuestro motor inteligente capture recibos, categorice gastos y asegure tu futuro con precisión bancaria.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
-          <a href="/auth/register" class="bg-primary hover:bg-primary-hover text-white text-base font-bold h-12 px-8 rounded-xl transition-all shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group">
+          <a href="/auth/register" aria-label="Empieza a usar CeroBase gratis" class="bg-primary hover:bg-primary-hover text-on-primary text-base font-bold h-12 px-8 rounded-xl transition-all shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group">
             Empieza Gratis
             <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </a>

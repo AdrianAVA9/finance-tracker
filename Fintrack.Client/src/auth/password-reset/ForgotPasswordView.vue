@@ -15,7 +15,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#0B0E11] font-display text-white">
+  <main class="min-h-screen bg-[#0B0E11] font-display text-white">
     <div class="flex min-h-screen items-center justify-center px-4 py-8">
       <div class="w-full max-w-md space-y-8">
         <PasswordResetHeader
@@ -53,5 +53,5 @@ const handleSubmit = async () => {
         Recuperación encriptada de extremo a extremo
       </div>
     </footer>
-  </div>
+  </main>
 </template>

@@ -9,7 +9,7 @@ const currentYear = new Date().getFullYear();
 </script>
 
 <template>
-  <div class="bg-[#0F0F1A] text-slate-100 font-display selection:bg-[#191971]/40 min-h-screen relative z-50">
+  <main class="bg-[#0F0F1A] text-slate-100 font-display selection:bg-[#191971]/40 min-h-screen relative z-50">
     <div class="flex min-h-screen w-full flex-col lg:flex-row">
       <RegisterMarketingPanel :logo-src="logo" />
 
@@ -34,14 +34,14 @@ const currentYear = new Date().getFullYear();
           @submit="handleRegister"
         />
 
-        <div class="mt-12 flex gap-6 text-[10px] font-bold uppercase tracking-widest text-[#AAAAAA]/40">
+        <div class="mt-12 flex gap-6 text-[10px] font-bold uppercase tracking-widest text-slate-500">
           <a href="#" class="hover:text-[#AAAAAA] transition-colors">Seguridad</a>
           <a href="#" class="hover:text-[#AAAAAA] transition-colors">Soporte</a>
           <a href="#" class="hover:text-[#AAAAAA] transition-colors">Privacidad</a>
         </div>
 
-        <p class="mt-5 text-xs text-[#9898c3]/50 text-center">© {{ currentYear }} CeroBase Inc. Todos los derechos reservados.</p>
+        <p class="mt-5 text-xs text-slate-500 text-center">© {{ currentYear }} CeroBase Inc. Todos los derechos reservados.</p>
       </div>
     </div>
-  </div>
+  </main>
 </template>

@@ -5,4 +5,8 @@ Allow: /
 # Authenticated app area (no useful public HTML for crawlers)
 Disallow: /app/
 
+# Password recovery (user-specific flow; not a crawl target)
+Disallow: /auth/forgot-password
+Disallow: /auth/reset-password
+
 Sitemap: https://cerobase.com/sitemap.xml

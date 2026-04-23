@@ -5,7 +5,7 @@
       <div class="max-w-4xl mx-auto text-center flex flex-col items-center gap-8">
         <h2 class="font-heading text-4xl md:text-5xl font-bold text-white">¿Listo para automatizar tu futuro?</h2>
         <p class="text-slate-400 text-lg max-w-xl">Únete a más de 50,000 usuarios que ahorran un promedio de 12 horas al mes en gestión financiera.</p>
-        <a href="/auth/register" class="bg-primary hover:bg-primary-hover text-white text-lg font-bold h-14 px-10 rounded-xl transition-all shadow-lg hover:shadow-primary/40 flex items-center justify-center gap-3">
+        <a href="/auth/register" aria-label="Empieza a usar CeroBase ahora" class="bg-primary hover:bg-primary-hover text-on-primary text-lg font-bold h-14 px-10 rounded-xl transition-all shadow-lg hover:shadow-primary/40 flex items-center justify-center gap-3">
           Empieza Ahora
           <span class="material-symbols-outlined">rocket_launch</span>
         </a>
@@ -37,21 +37,21 @@
             </div>
           </div>
           <div class="flex flex-col gap-3">
-            <h4 class="font-bold text-white mb-2">Producto</h4>
+            <h3 class="font-bold text-white mb-2">Producto</h3>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Funcionalidades</a>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Precios</a>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">API</a>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Registro de Cambios</a>
           </div>
           <div class="flex flex-col gap-3">
-            <h4 class="font-bold text-white mb-2">Empresa</h4>
+            <h3 class="font-bold text-white mb-2">Empresa</h3>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Acerca de</a>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Carreras</a>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Blog</a>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Contacto</a>
           </div>
           <div class="flex flex-col gap-3">
-            <h4 class="font-bold text-white mb-2">Legal</h4>
+            <h3 class="font-bold text-white mb-2">Legal</h3>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Política de Privacidad</a>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Términos de Servicio</a>
             <a class="text-slate-400 hover:text-primary transition-colors" href="#">Cumplimiento de GDPR</a>

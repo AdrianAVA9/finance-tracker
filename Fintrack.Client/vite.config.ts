@@ -19,7 +19,16 @@ const certificateName = "fintrack.client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
-const isCI = !!(env.CI || env.CF_PAGES || env.GITHUB_ACTIONS);
+/** Cloudflare Pages/Workers and other CI images rarely have a working Puppeteer/Chromium. */
+const isCI = !!(
+    env.CI ||
+    env.CF_PAGES ||
+    env.CF_PAGES_BRANCH ||
+    env.GITHUB_ACTIONS ||
+    env.WORKERS_CI
+);
+const enablePrerender =
+    env.VITE_PRERENDER === 'true' || (!isCI && env.SKIP_PRERENDER !== '1');
 
 if (!isCI && (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath))) {
     if (0 !== child_process.spawnSync('dotnet', [
@@ -153,17 +162,21 @@ export default defineConfig({
             }
         }),
         cloudflare(),
-        prerender({
-            staticDir: fileURLToPath(new URL('./dist', import.meta.url)),
-            routes: ['/'],
-            // @ts-ignore - plugin supports these at runtime but types are missing/strict
-            rendererOptions: {
-                renderAfterTime: 10000,
-                inject: {
-                    __PRERENDER_INJECTED: true
-                }
-            }
-        })
+        ...(enablePrerender
+            ? [
+                  prerender({
+                      staticDir: fileURLToPath(new URL('./dist', import.meta.url)),
+                      routes: ['/'],
+                      // @ts-ignore - plugin supports these at runtime but types are missing/strict
+                      rendererOptions: {
+                          renderAfterTime: 10000,
+                          inject: {
+                              __PRERENDER_INJECTED: true
+                          }
+                      }
+                  })
+              ]
+            : [])
     ],
     resolve: {
         alias: {
