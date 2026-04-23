@@ -1,0 +1,6 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Authenticated app area (no useful public HTML for crawlers)
+Disallow: /app/
