@@ -1,3 +1,10 @@
+/** Public files that should not go through PWA or auth heuristics (must match static files under wwwroot / Vite public). */
+const WELL_KNOWN_STATIC_PATHS = new Set(['/robots.txt', '/sitemap.xml', '/favicon.ico'])
+
+function isWellKnownStaticPath(path: string): boolean {
+  return WELL_KNOWN_STATIC_PATHS.has(path)
+}
+
 /**
  * True when the app runs as an installed PWA (home screen / "Add to Home Screen").
  * - `(display-mode: standalone|fullscreen)`: standard signal (Android PWA, modern browsers).
@@ -16,6 +23,7 @@ export function isInstalledPwaDisplayMode(): boolean {
  * the app entry so auth rules can send them to login or the dashboard.
  */
 export function getInstalledPwaRedirectForPath(path: string): string | null {
+  if (isWellKnownStaticPath(path)) return null
   if (!isInstalledPwaDisplayMode()) return null
   const isAuthDomain = path.startsWith('/auth')
   const isAppDomain = path.startsWith('/app')
@@ -33,6 +41,7 @@ export function getAuthRedirectForPath(
   path: string,
   isAuthenticated: boolean,
 ): string | null {
+  if (isWellKnownStaticPath(path)) return null
   const isAuthDomain = path.startsWith('/auth')
   const isAppDomain = path.startsWith('/app')
   const isAdminDomain = path.startsWith('/admin')

@@ -1,14 +1,31 @@
+import { h } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 import { getAuthRedirectForPath, getInstalledPwaRedirectForPath } from '@/router/authRedirect';
 import { routes as publicRoutes } from '@/public/routes';
 import { routes as authRoutes } from '@/auth/routes';
 import { routes as appRoutes } from '@/app/routes';
 
+/** If the host fell through to the SPA for these URLs, repeat the request so static files in wwwroot / Vite public can be served. */
+const voidStatic = { render: () => h('div', { 'aria-hidden': 'true' }) };
+const staticFileEscapeRoutes: RouteRecordRaw[] = [
+  { path: '/robots.txt', name: 'WellKnownRobots' },
+  { path: '/sitemap.xml', name: 'WellKnownSitemap' }
+].map((r) => ({
+  ...r,
+  beforeEnter: (to) => {
+    window.location.replace(to.fullPath);
+    return false;
+  },
+  component: voidStatic
+}));
+
 const routes = [
   ...publicRoutes,
   ...authRoutes,
   ...appRoutes,
+  ...staticFileEscapeRoutes,
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ];
 
