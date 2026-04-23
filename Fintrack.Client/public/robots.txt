@@ -5,4 +5,4 @@ Allow: /
 # Authenticated app area (no useful public HTML for crawlers)
 Disallow: /app/
 
-Sitemap: https://cerobase.app/sitemap.xml
+Sitemap: https://cerobase.com/sitemap.xml

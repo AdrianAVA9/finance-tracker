@@ -17,6 +17,13 @@ export function useAuth() {
   const isAuthenticated = computed(() => !!user.value);
 
   const checkSession = async () => {
+    // Skip session check during prerendering
+    if ((window as any).__PRERENDER_INJECTED) {
+      isInitialized.value = true;
+      isLoading.value = false;
+      return;
+    }
+
     isLoading.value = true;
     try {
       // Use the new AuthController endpoint

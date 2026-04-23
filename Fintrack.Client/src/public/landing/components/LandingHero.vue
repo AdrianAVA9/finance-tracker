@@ -9,7 +9,7 @@
           <span class="text-xs font-medium text-accent uppercase tracking-wider">v2.0 Ya disponible</span>
         </div>
         <h1 class="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight text-white">
-          Tus Finanzas, <br/>
+          Rastreador de Finanzas, <br/>
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">Automatizadas por IA.</span>
         </h1>
         <p class="text-lg text-slate-400 max-w-xl mx-auto lg:mx-0 leading-relaxed">
@@ -50,7 +50,7 @@
             <div class="text-[10px] font-mono text-slate-500 uppercase">Panel • En Vivo</div>
           </div>
           <!-- Abstract Data Visualization -->
-          <div class="p-8 flex flex-col gap-6 h-full" data-alt="Abstract interface showing a spending graph with an upward trend and expense categories">
+          <div class="p-8 flex flex-col gap-6 h-full" role="img" aria-label="Interfaz abstracta que muestra un gráfico de gastos con una tendencia ascendente y categorías de gastos">
             <div class="flex justify-between items-end">
               <div>
                 <div class="text-sm text-slate-400">Balance Total</div>
