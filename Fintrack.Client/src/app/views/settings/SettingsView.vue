@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 import AppButton from '@/app/components/common/AppButton.vue';
 import SettingsAccountSection from '@/app/components/settings/SettingsAccountSection.vue';
 import SettingsCategoriesSection from '@/app/components/settings/SettingsCategoriesSection.vue';
 import SettingsPreferencesSection from '@/app/components/settings/SettingsPreferencesSection.vue';
 import clientPackage from '../../../../package.json';
+
+const router = useRouter();
 
 const { user, logout } = useAuth();
 
@@ -39,7 +42,10 @@ async function handleLogout() {
       :display-name="displayName"
       :email="emailLine"
     />
-    <SettingsCategoriesSection />
+    <SettingsCategoriesSection
+      @expense-categories="router.push({ name: 'SettingsExpenseCategories' })"
+      @income-categories="router.push({ name: 'SettingsIncomeCategories' })"
+    />
     <SettingsPreferencesSection />
     <section class="pt-2">
       <AppButton

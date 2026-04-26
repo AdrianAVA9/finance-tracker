@@ -115,6 +115,18 @@ export const routes: RouteRecordRaw[] = [
             name: 'Settings',
             component: () => import('@/app/views/settings/SettingsView.vue'),
             meta: { title: 'Ajustes', hasHelp: true }
+          },
+          {
+            path: 'categories/income',
+            name: 'SettingsIncomeCategories',
+            component: () => import('@/app/views/settings/CategoryManagementView.vue'),
+            meta: { title: 'Categorías de ingresos', subtitle: 'Rubros que creaste para tus ingresos.' }
+          },
+          {
+            path: 'categories/expense',
+            name: 'SettingsExpenseCategories',
+            component: () => import('@/app/views/settings/CategoryManagementView.vue'),
+            meta: { title: 'Categorías de gastos', subtitle: 'Rubros que creaste para tus gastos.' }
           }
         ]
       },

@@ -3,6 +3,7 @@ using Fintrack.Server.Application.ExpenseCategories.Commands.DeleteExpenseCatego
 using Fintrack.Server.Application.ExpenseCategories.Commands.UpdateExpenseCategory;
 using Fintrack.Server.Application.ExpenseCategories.Queries.GetAllExpenseCategories;
 using Fintrack.Server.Application.ExpenseCategories.Queries.GetExpenseCategoryById;
+using Fintrack.Server.Application.ExpenseCategories.Queries.GetUserOwnedExpenseCategories;
 using Fintrack.Server.Domain.ExpenseCategories;
 using Fintrack.Server.Infrastructure.Authorization;
 using MediatR;
@@ -22,6 +23,16 @@ public sealed class ExpenseCategoriesController : ApiControllerBase
     }
 
     private string GetUserId() => User.GetUserId() ?? throw new UnauthorizedAccessException();
+
+    [HttpGet("owned")]
+    [HasPermission(Permissions.CategoriesRead)]
+    [ProducesResponseType(typeof(IReadOnlyList<ExpenseCategory>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserOwned(CancellationToken cancellationToken)
+    {
+        var query = new GetUserOwnedExpenseCategoriesQuery(GetUserId());
+        var result = await Sender.Send(query, cancellationToken);
+        return HandleResult(result);
+    }
 
     [HttpGet("{id:guid}")]
     [HasPermission(Permissions.CategoriesRead)]

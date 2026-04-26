@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Fintrack.Server.Api.Controllers;
 using Fintrack.Server.Application.IncomeCategories.Queries.GetIncomeCategories;
+using Fintrack.Server.Application.IncomeCategories.Queries.GetUserOwnedIncomeCategories;
 using Fintrack.Server.Application.Incomes.Commands.CreateIncome;
 using Fintrack.Server.Application.Incomes.Commands.DeleteIncome;
 using Fintrack.Server.Application.Incomes.Commands.UpdateIncome;
@@ -33,6 +34,17 @@ public class IncomesController : ApiControllerBase
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var result = await Sender.Send(new GetIncomeCategoriesQuery(userId), cancellationToken);
+        return HandleResult(result);
+    }
+
+    [HttpGet("categories/owned")]
+    [HasPermission(Permissions.IncomesRead)]
+    public async Task<IActionResult> GetUserOwnedCategories(CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        var result = await Sender.Send(new GetUserOwnedIncomeCategoriesQuery(userId), cancellationToken);
         return HandleResult(result);
     }
 

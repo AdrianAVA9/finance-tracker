@@ -8,6 +8,11 @@ public interface IIncomeCategoryRepository
         string userId,
         CancellationToken cancellationToken = default);
 
+    /// <summary>Categories created by the user (excludes system-seeded rows with <c>UserId == null</c>).</summary>
+    Task<IReadOnlyList<IncomeCategory>> GetUserOwnedByUserIdAsync(
+        string userId,
+        CancellationToken cancellationToken = default);
+
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
 
     void Add(IncomeCategory incomeCategory);
