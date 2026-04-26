@@ -46,11 +46,57 @@ const totalSpent = computed(() => budgets.value.reduce((sum, b) => sum + b.spent
 const remainingToAllocate = computed(() => expectedIncome.value - totalBudgeted.value)
 const spentPercentage = computed(() => totalBudgeted.value > 0 ? (totalSpent.value / totalBudgeted.value) * 100 : 0)
 
-// Dynamic UI for Remaining Balance
-const isOverbudgeted = computed(() => remainingToAllocate.value < 0)
-const remainingColorClass = computed(() => isOverbudgeted.value ? 'text-red-500' : 'text-accent-lime')
-const remainingStatusLabel = computed(() => isOverbudgeted.value ? 'Excedido' : 'En Orden')
-const remainingIcon = computed(() => isOverbudgeted.value ? 'report_problem' : 'savings')
+// Dynamic UI for "Balance por Asignar" (expectedIncome - totalBudgeted)
+const planningBalanceStatus = computed<'balanced' | 'unassigned' | 'deficit'>(() => {
+  const v = remainingToAllocate.value
+  if (v > 0) return 'unassigned'
+  if (v < 0) return 'deficit'
+  return 'balanced'
+})
+
+const remainingColorClass = computed(() => {
+  switch (planningBalanceStatus.value) {
+    case 'deficit':
+      return 'text-red-500'
+    case 'unassigned':
+      return 'text-amber-400'
+    default:
+      return 'text-accent-lime'
+  }
+})
+
+const remainingStatusLabel = computed(() => {
+  switch (planningBalanceStatus.value) {
+    case 'unassigned':
+      return 'Por Asignar'
+    case 'deficit':
+      return 'Déficit'
+    default:
+      return 'En Orden'
+  }
+})
+
+const remainingIcon = computed(() => {
+  switch (planningBalanceStatus.value) {
+    case 'deficit':
+      return 'report_problem'
+    case 'unassigned':
+      return 'account_balance_wallet'
+    default:
+      return 'savings'
+  }
+})
+
+const remainingBadgeClass = computed(() => {
+  switch (planningBalanceStatus.value) {
+    case 'deficit':
+      return 'bg-red-500/10 text-red-500'
+    case 'unassigned':
+      return 'bg-amber-500/10 text-amber-400'
+    default:
+      return 'bg-primary/10 text-primary-container'
+  }
+})
 
 // Filtered and Sorted Budgets
 const filteredBudgets = computed(() => {
@@ -192,7 +238,7 @@ watch([selectedMonth, selectedYear], loadBudgets)
             <div class="flex flex-col items-end gap-2">
               <div
                 class="px-3 py-1 rounded-full flex items-center gap-1 border border-white/5 transition-colors"
-                :class="isOverbudgeted ? 'bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary-container'"
+                :class="remainingBadgeClass"
               >
                 <span class="material-symbols-outlined text-[14px]">{{ remainingIcon }}</span>
                 <span class="text-[10px] font-bold uppercase">{{ remainingStatusLabel }}</span>
@@ -281,9 +327,18 @@ watch([selectedMonth, selectedYear], loadBudgets)
         <div class="space-y-2">
           <h5 class="text-sm font-bold text-on-surface">Insight de Planificación</h5>
           <p class="text-xs text-on-surface-variant leading-relaxed">
-            Actualmente tienes ₡{{ Math.abs(remainingToAllocate).toLocaleString() }}
-            {{ isOverbudgeted ? 'por encima de tu capacidad' : 'libres para asignar' }}.
-            Recomendamos revisar tus categorías de mayor impacto para optimizar tu ahorro mensual.
+            <template v-if="planningBalanceStatus === 'balanced'">
+              Tu planificación está equilibrada: lo asignado coincide con tus ingresos esperados.
+              Revisa el gasto real en cada categoría para mantener el control del mes.
+            </template>
+            <template v-else-if="planningBalanceStatus === 'unassigned'">
+              Tienes ₡{{ Math.abs(remainingToAllocate).toLocaleString() }} sin asignar a categorías: es dinero sin propósito y suele gastarse por impulso.
+              Asigna cada colón a un trabajo hasta que el balance llegue a cero.
+            </template>
+            <template v-else>
+              Has asignado ₡{{ Math.abs(remainingToAllocate).toLocaleString() }} más de lo que esperas ingresar: la planificación no cuadra con la realidad.
+              Reduce límites en categorías (por ejemplo supermercado o transporte) hasta que el balance vuelva a cero.
+            </template>
           </p>
         </div>
       </SurfaceCard>
