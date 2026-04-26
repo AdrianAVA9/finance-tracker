@@ -54,7 +54,7 @@ const remainingIcon = computed(() => isOverbudgeted.value ? 'report_problem' : '
 
 // Filtered and Sorted Budgets
 const filteredBudgets = computed(() => {
-  let result = budgets.value.filter(b =>
+  const result = budgets.value.filter(b =>
     b.categoryName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
     (b.categoryGroup?.toLowerCase().includes(searchQuery.value.toLowerCase()))
   )
