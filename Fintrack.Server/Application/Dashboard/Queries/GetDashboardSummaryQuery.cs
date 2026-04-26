@@ -66,22 +66,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
             var lastMonthStart = currentMonthStart.AddMonths(-1);
             var lastMonthEnd = currentMonthStart.AddDays(-1);
 
-            // 1. Total Balance
-            var totalIncomes = (await _dbContext.Incomes
-                .Where(i => i.UserId == request.UserId)
-                .Select(i => i.Amount)
-                .ToListAsync(cancellationToken))
-                .Sum();
-
-            var totalExpenses = (await _dbContext.Expenses
-                .Where(e => e.UserId == request.UserId)
-                .Select(e => e.TotalAmount)
-                .ToListAsync(cancellationToken))
-                .Sum();
-
-            var totalBalance = totalIncomes - totalExpenses;
-
-            // 2. Monthly Stats
+            // 1. Monthly stats (and period net shown as TotalBalance — same window as Ingresos/Gastos on the dashboard)
             var monthlyIncome = (await _dbContext.Incomes
                 .Where(i => i.UserId == request.UserId && i.Date >= currentMonthStart)
                 .Select(i => i.Amount)
@@ -94,7 +79,9 @@ namespace Fintrack.Server.Application.Dashboard.Queries
                 .ToListAsync(cancellationToken))
                 .Sum();
 
-            // 3. Last Month Stats for Percentage
+            var totalBalance = monthlyIncome - monthlyExpenses;
+
+            // 2. Last month stats for percentage change
             var lastMonthIncome = (await _dbContext.Incomes
                 .Where(i => i.UserId == request.UserId && i.Date >= lastMonthStart && i.Date <= lastMonthEnd)
                 .Select(i => i.Amount)
@@ -110,7 +97,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
             var incomeChange = lastMonthIncome == 0 ? (monthlyIncome > 0 ? 100 : 0) : (double)((monthlyIncome - lastMonthIncome) / lastMonthIncome) * 100;
             var expenseChange = lastMonthExpenses == 0 ? (monthlyExpenses > 0 ? 100 : 0) : (double)((monthlyExpenses - lastMonthExpenses) / lastMonthExpenses) * 100;
 
-            // 4. Monthly Data (Last 6 Months)
+            // 3. Monthly data (last 6 months)
             var monthlyData = new List<MonthlyDataDto>();
             for (int i = 5; i >= 0; i--)
             {
@@ -133,7 +120,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
                 monthlyData.Add(new MonthlyDataDto(monthLabel, incomeTotal, expenseTotal));
             }
 
-            // 5. Top Spending Categories (Current Month)
+            // 4. Top spending categories (current month)
             var categorySpendingItems = await _dbContext.ExpenseItems
                 .Include(ei => ei.Expense)
                 .Include(ei => ei.Category)
@@ -159,7 +146,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
                 cs.Color
             )).ToList();
 
-            // 6. Recent Transactions
+            // 5. Recent transactions
             var recentIncomes = await _dbContext.Incomes
                 .Include(i => i.Category)
                 .Where(i => i.UserId == request.UserId)
@@ -201,7 +188,7 @@ namespace Fintrack.Server.Application.Dashboard.Queries
                 .Take(10)
                 .ToList();
 
-            // 7. Top Budgets (Current Month)
+            // 6. Top budgets (current month)
             var currentBudgets = await _dbContext.Budgets
                 .Include(b => b.Category)
                 .Where(b => b.UserId == request.UserId && b.Month == referenceDate.Month && b.Year == referenceDate.Year)

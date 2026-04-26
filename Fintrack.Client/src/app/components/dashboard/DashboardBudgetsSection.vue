@@ -41,7 +41,8 @@ defineProps<{
                   {{ budget.categoryName }}
                 </h4>
                 <p class="text-xs text-[#bacbbe] mt-0.5">
-                  {{ formatDashboardCurrency(budget.remainingAmount) }} restantes
+                  {{ formatDashboardCurrency(budget.remainingAmount) }}
+                  {{ budget.remainingAmount < 0 ? 'excedidos' : 'restantes' }}
                 </p>
               </div>
             </div>
