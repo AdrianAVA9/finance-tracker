@@ -58,13 +58,17 @@ const spentRatio = computed(() => {
   return props.budget.spentAmount / props.budget.limitAmount
 })
 
+/** Negative only when gasto real supera el límite (no cuando disponible === 0). */
+const remainingAmount = computed(() => props.budget.limitAmount - props.budget.spentAmount)
+const isOverBudget = computed(() => remainingAmount.value < 0)
+
 const progressColorClass = computed(() => {
-  if (spentRatio.value >= 1) return 'bg-red-500'
+  if (isOverBudget.value) return 'bg-red-500'
   return 'bg-emerald-500'
 })
 
 const statusLabel = computed(() => {
-  const diff = props.budget.limitAmount - props.budget.spentAmount
+  const diff = remainingAmount.value
   if (diff >= 0) {
     return `Disponible ₡${formatCurrency(diff)}`
   }
@@ -72,8 +76,8 @@ const statusLabel = computed(() => {
 })
 
 const statusLabelColorClass = computed(() => {
-  if (spentRatio.value >= 1) return 'text-red-500 font-black'
-  return 'text-on-surface-variant/70'
+  if (isOverBudget.value) return 'text-red-500 font-black'
+  return 'text-[#05E699] font-bold'
 })
 
 const infoText = computed(() => {
@@ -95,7 +99,7 @@ const formatCurrency = (amount: number) => {
     <div class="flex items-start gap-4 mb-6">
       <!-- Category Icon -->
       <div class="w-12 h-12 rounded-md bg-surface-container-highest flex items-center justify-center text-primary grow-0 shrink-0 border border-white/5 shadow-inner relative">
-        <span class="material-symbols-outlined text-2xl" :style="{ color: spentRatio >= 1 ? '#ef4444' : '#05E699' }">
+        <span class="material-symbols-outlined text-2xl" :style="{ color: isOverBudget ? '#ef4444' : '#05E699' }">
           {{ budget.categoryIcon || 'category' }}
         </span>
 
