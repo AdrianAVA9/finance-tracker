@@ -14,6 +14,11 @@ public interface IExpenseCategoryRepository
         string userId,
         CancellationToken cancellationToken = default);
 
+    /// <summary>Categories created by the user (excludes system-seeded rows with <c>UserId == null</c>).</summary>
+    Task<IReadOnlyList<ExpenseCategory>> GetUserOwnedByUserIdAsync(
+        string userId,
+        CancellationToken cancellationToken = default);
+
     Task<bool> ExistsAsync(
         Guid id,
         CancellationToken cancellationToken = default);

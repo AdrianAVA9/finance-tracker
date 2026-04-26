@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#003822",
+                    "surface-container": "#1e2024",
+                    "secondary": "#92d5ae",
+                    "background": "#111317",
+                    "tertiary": "#ffdedc",
+                    "on-tertiary-fixed-variant": "#930014",
+                    "outline": "#849589",
+                    "surface-bright": "#37393e",
+                    "tertiary-container": "#ffb8b3",
+                    "on-secondary-fixed-variant": "#065134",
+                    "surface-container-high": "#282a2e",
+                    "on-primary-fixed-variant": "#005233",
+                    "primary-fixed-dim": "#00e296",
+                    "surface-variant": "#333539",
+                    "tertiary-fixed-dim": "#ffb3ae",
+                    "primary": "#77ffbb",
+                    "on-background": "#e2e2e8",
+                    "surface-tint": "#00e296",
+                    "surface-dim": "#111317",
+                    "surface": "#111317",
+                    "secondary-fixed": "#adf1c9",
+                    "primary-container": "#05e699",
+                    "on-primary-container": "#00623e",
+                    "on-primary-fixed": "#002112",
+                    "on-secondary": "#003822",
+                    "on-surface-variant": "#bacbbe",
+                    "secondary-container": "#0b5436",
+                    "on-tertiary": "#68000b",
+                    "on-tertiary-container": "#ac061b",
+                    "error-container": "#93000a",
+                    "surface-container-lowest": "#0c0e12",
+                    "on-tertiary-fixed": "#410004",
+                    "on-surface": "#e2e2e8",
+                    "error": "#ffb4ab",
+                    "on-error": "#690005",
+                    "inverse-on-surface": "#2f3035",
+                    "outline-variant": "#3b4a40",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-highest": "#333539",
+                    "on-secondary-fixed": "#002112",
+                    "inverse-surface": "#e2e2e8",
+                    "tertiary-fixed": "#ffdad7",
+                    "secondary-fixed-dim": "#92d5ae",
+                    "primary-fixed": "#4dffb1",
+                    "surface-container-low": "#1a1c20",
+                    "on-secondary-container": "#84c6a0",
+                    "inverse-primary": "#006c46"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "display": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #111317;
+            font-family: 'Inter', sans-serif;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<nav class="sticky top-0 z-50 bg-[#111317]/80 backdrop-blur-xl flex justify-between items-center w-full px-6 py-4">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#05E699]">menu</span>
+<h1 class="font-['Manrope'] font-bold tracking-tight text-[#F3F4F6] text-xl">Categories</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container-highest">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="close-up portrait of a confident professional man with a minimalist blurred tech office background in cool dark tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0z3Ec-ha76NPNHkcCGUxwhFF3M_1PgI7WXdpD7OR6mrkE2SFtHbYS_gqzn1AvX892jw2rZEwg74AOOPL_rzeDDvlUaN0HzFyPrbWCchCFAyMyX9oPCfrTAYAd7L87L3r_J6QVnphChGfBc0QIEZkB1sfFgaQNIkRS8wt-Gf2-nUB67D-j4TPX0yPZOINE-1EL_sYedRBpnrz41JGzBBjNvoGInatHe9X40ym3oxtKeuEucm1FuAXVpYceyLfdgfchjTvj0GSWkP7u"/>
+</div>
+</nav>
+<main class="px-6 pt-4 max-w-4xl mx-auto">
+<!-- Search Bar -->
+<div class="relative mb-8 group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/10 rounded-xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" placeholder="Search categories..." type="text"/>
+</div>
+<!-- Category Sections -->
+<div class="space-y-10">
+<!-- Section: Basicos mensuales -->
+<section>
+<div class="flex items-center justify-between mb-4 px-1">
+<h2 class="font-headline font-bold text-lg tracking-tight text-on-surface-variant">Basicos mensuales</h2>
+<span class="text-xs font-label uppercase tracking-widest text-outline">4 Items</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<!-- Category Item -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">home</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Alquiler</p>
+<p class="text-xs text-outline font-label uppercase">Fixed</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Electricidad</p>
+<p class="text-xs text-outline font-label uppercase">Utility</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Agua</p>
+<p class="text-xs text-outline font-label uppercase">Utility</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">wifi</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Internet</p>
+<p class="text-xs text-outline font-label uppercase">Digital</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Section: Mascota -->
+<section>
+<div class="flex items-center justify-between mb-4 px-1">
+<h2 class="font-headline font-bold text-lg tracking-tight text-on-surface-variant">Mascota</h2>
+<span class="text-xs font-label uppercase tracking-widest text-outline">2 Items</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">pets</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Alimento</p>
+<p class="text-xs text-outline font-label uppercase">Essential</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">medical_services</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Veterinario</p>
+<p class="text-xs text-outline font-label uppercase">Health</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Section: Seguros -->
+<section>
+<div class="flex items-center justify-between mb-4 px-1">
+<h2 class="font-headline font-bold text-lg tracking-tight text-on-surface-variant">Seguros</h2>
+<span class="text-xs font-label uppercase tracking-widest text-outline">2 Items</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">health_and_safety</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Seguro Médico</p>
+<p class="text-xs text-outline font-label uppercase">Protection</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">directions_car</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Seguro Auto</p>
+<p class="text-xs text-outline font-label uppercase">Protection</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Section: Transporte -->
+<section class="pb-20">
+<div class="flex items-center justify-between mb-4 px-1">
+<h2 class="font-headline font-bold text-lg tracking-tight text-on-surface-variant">Transporte</h2>
+<span class="text-xs font-label uppercase tracking-widest text-outline">3 Items</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">local_gas_station</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Gasolina</p>
+<p class="text-xs text-outline font-label uppercase">Movement</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">train</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Transporte Público</p>
+<p class="text-xs text-outline font-label uppercase">Transit</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-[#1E2228] transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">hail</span>
+</div>
+<div>
+<p class="font-body font-semibold text-on-surface">Uber / Lyft</p>
+<p class="text-xs text-outline font-label uppercase">Ride share</p>
+</div>
+</div>
+<button class="p-2 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-28 right-6 w-14 h-14 bg-primary-container text-on-primary-container rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pt-3 pb-8 bg-[#111317]/90 backdrop-blur-2xl rounded-t-[24px] shadow-[0_-8px_30px_rgb(5,230,153,0.04)]">
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#F3F4F6] transition-all" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#F3F4F6] transition-all" href="#">
+<span class="material-symbols-outlined">swap_horiz</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Activity</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#05E699] font-bold transform translate-y-[-2px]" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="font-['Inter'] text-[10px] tracking-wide uppercase mt-1">Categories</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9CA3AF] hover:text-[#F3F4F6] transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

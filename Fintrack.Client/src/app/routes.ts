@@ -107,6 +107,54 @@ export const routes: RouteRecordRaw[] = [
         ]
       },
       {
+        path: 'settings',
+        component: FocusedLayout,
+        children: [
+          {
+            path: '',
+            name: 'Settings',
+            component: () => import('@/app/views/settings/SettingsView.vue'),
+            meta: { title: 'Ajustes', hasHelp: true }
+          },
+          {
+            path: 'categories/income',
+            name: 'SettingsIncomeCategories',
+            component: () => import('@/app/views/settings/CategoryManagementView.vue'),
+            meta: { title: 'Categorías de ingresos', subtitle: 'Rubros que creaste para tus ingresos.' }
+          },
+          {
+            path: 'categories/expense',
+            name: 'SettingsExpenseCategories',
+            component: () => import('@/app/views/settings/CategoryManagementView.vue'),
+            meta: { title: 'Categorías de gastos', subtitle: 'Rubros que creaste para tus gastos.' }
+          },
+          {
+            path: 'categories/income/new',
+            name: 'CategoryIncomeNew',
+            component: () => import('@/app/views/settings/CategoryFormView.vue'),
+            meta: { title: 'Nueva categoría' }
+          },
+          {
+            path: 'categories/income/:categoryId/edit',
+            name: 'CategoryIncomeEdit',
+            component: () => import('@/app/views/settings/CategoryFormView.vue'),
+            meta: { title: 'Editar categoría' }
+          },
+          {
+            path: 'categories/expense/new',
+            name: 'CategoryExpenseNew',
+            component: () => import('@/app/views/settings/CategoryFormView.vue'),
+            meta: { title: 'Nueva categoría' }
+          },
+          {
+            path: 'categories/expense/:categoryId/edit',
+            name: 'CategoryExpenseEdit',
+            component: () => import('@/app/views/settings/CategoryFormView.vue'),
+            meta: { title: 'Editar categoría' }
+          }
+        ]
+      },
+      {
         path: '',
         component: AppLayout,
         children: [

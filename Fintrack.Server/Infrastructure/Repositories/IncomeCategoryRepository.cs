@@ -30,6 +30,17 @@ internal sealed class IncomeCategoryRepository : IIncomeCategoryRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<IncomeCategory>> GetUserOwnedByUserIdAsync(
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.IncomeCategories
+            .AsNoTracking()
+            .Where(c => c.UserId == userId)
+            .OrderBy(c => c.Name)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dbContext.IncomeCategories

@@ -35,6 +35,19 @@ internal sealed class ExpenseCategoryRepository : IExpenseCategoryRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<ExpenseCategory>> GetUserOwnedByUserIdAsync(
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext
+            .ExpenseCategories
+            .Include(e => e.Group)
+            .AsNoTracking()
+            .Where(e => e.UserId == userId)
+            .OrderBy(e => e.Name)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> ExistsAsync(
         Guid id,
         CancellationToken cancellationToken = default)
