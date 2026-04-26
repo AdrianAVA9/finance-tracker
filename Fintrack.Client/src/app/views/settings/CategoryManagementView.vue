@@ -109,12 +109,11 @@ function goToEdit(id: string) {
                 <SurfaceCard>
                 <div class="flex items-center gap-4 p-0 -m-1">
                   <div
-                    class="w-12 h-12 rounded-lg flex items-center justify-center text-primary"
-                    :style="item.color ? { backgroundColor: `${item.color}22` } : undefined"
-                    :class="!item.color ? 'bg-surface-container-highest' : ''"
+                    class="w-12 h-12 rounded-lg flex items-center justify-center bg-surface-container transition-colors group-hover:bg-surface-container-high"
+                    :style="item.color ? { color: item.color } : undefined"
                   >
-                    <span v-if="item.icon" class="material-symbols-outlined">{{ item.icon }}</span>
-                    <span v-else class="material-symbols-outlined">category</span>
+                    <span v-if="item.icon" class="material-symbols-outlined" :style="{ color: item.color }">{{ item.icon }}</span>
+                    <span v-else class="material-symbols-outlined text-primary">category</span>
                   </div>
                   <div class="min-w-0 flex-1">
                     <p class="font-body font-semibold text-on-surface truncate">{{ item.name }}</p>
