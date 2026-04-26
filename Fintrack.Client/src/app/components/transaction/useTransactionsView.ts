@@ -1,5 +1,6 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { parseCalendarDateFromApi } from '@/app/utils/calendarDate'
 import transactionService, { type TransactionDto } from '@/services/transactionService'
 
 export function useTransactionsView() {
@@ -15,11 +16,6 @@ export function useTransactionsView() {
 
   const normalize = (value: string): string =>
     value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-
-  const parseLocalDate = (isoDate: string): Date => {
-    const [year, month, day] = (isoDate.split('T')[0] || '').split('-').map(Number)
-    return new Date(year || 0, (month || 1) - 1, day || 1)
-  }
 
   const fetchTransactions = async () => {
     try {
@@ -61,7 +57,7 @@ export function useTransactionsView() {
     yesterday.setDate(today.getDate() - 1)
 
     filteredTransactions.value.forEach((transaction) => {
-      const date = parseLocalDate(transaction.date)
+      const date = parseCalendarDateFromApi(transaction.date)
 
       let groupKey = ''
       if (date.toDateString() === today.toDateString()) {

@@ -1,3 +1,5 @@
+import { isUtcMidnightInstant, parseCalendarDateFromApi } from '@/app/utils/calendarDate'
+
 export const formatDashboardCurrency = (value: number): string =>
   new Intl.NumberFormat('es-CR', {
     style: 'currency',
@@ -7,19 +9,28 @@ export const formatDashboardCurrency = (value: number): string =>
   }).format(value)
 
 export const formatDashboardDate = (dateString: string): string => {
-  const date = new Date(dateString)
+  const cal = parseCalendarDateFromApi(dateString)
+  const instant = new Date(dateString.trim())
   const now = new Date()
-  const isToday = date.toDateString() === now.toDateString()
+  const isToday = cal.toDateString() === now.toDateString()
+  const dateOnly = isUtcMidnightInstant(dateString)
 
   if (isToday) {
-    return `Hoy, ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`
+    if (dateOnly || !Number.isFinite(instant.getTime())) {
+      return 'Hoy'
+    }
+    return `Hoy, ${instant.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`
   }
 
-  return (
-    date.toLocaleDateString('es-ES', {
-      month: 'short',
-      day: '2-digit',
-      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
-    }) + `, ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`
-  )
+  const datePart = cal.toLocaleDateString('es-ES', {
+    month: 'short',
+    day: '2-digit',
+    year: cal.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
+  })
+
+  if (dateOnly || !Number.isFinite(instant.getTime())) {
+    return datePart
+  }
+
+  return `${datePart}, ${instant.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`
 }
