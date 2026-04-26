@@ -107,6 +107,18 @@ export const routes: RouteRecordRaw[] = [
         ]
       },
       {
+        path: 'settings',
+        component: FocusedLayout,
+        children: [
+          {
+            path: '',
+            name: 'Settings',
+            component: () => import('@/app/views/settings/SettingsView.vue'),
+            meta: { title: 'Ajustes', hasHelp: true }
+          }
+        ]
+      },
+      {
         path: '',
         component: AppLayout,
         children: [

@@ -35,10 +35,10 @@ const store = useActionSheetStore();
             <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Presupuesto</span>
         </router-link>
 
-        <!-- Profile / Cuentas -->
+        <!-- Settings -->
         <router-link to="/app/settings" class="sidebar-link">
-            <span class="material-symbols-outlined">wallet</span>
-            <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Cuentas</span>
+            <span class="material-symbols-outlined">settings</span>
+            <span class="text-[10px] font-medium tracking-wide uppercase mt-1">Ajustes</span>
         </router-link>
     </nav>
 </template>
