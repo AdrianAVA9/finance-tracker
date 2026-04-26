@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, type Ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import LoadingIndicator from '@/app/components/common/LoadingIndicator.vue'
 import SurfaceCard from '@/app/components/common/SurfaceCard.vue'
 import { useUserOwnedCategoryList, type UserOwnedCategoryKind } from './composables/useUserOwnedCategoryList'
 
 const route = useRoute()
+const router = useRouter()
 
 const kind = computed<UserOwnedCategoryKind>(() =>
   route.name === 'SettingsIncomeCategories' ? 'income' : 'expense'
@@ -14,6 +15,22 @@ const kind = computed<UserOwnedCategoryKind>(() =>
 const { isLoading, loadError, search, visibleIncome, expenseSections, load } = useUserOwnedCategoryList(
   kind as Ref<UserOwnedCategoryKind>
 )
+
+const newCategoryRoute = computed(() =>
+  kind.value === 'income' ? 'CategoryIncomeNew' : 'CategoryExpenseNew'
+)
+
+function goToNewCategory() {
+  void router.push({ name: newCategoryRoute.value })
+}
+
+function goToEdit(id: string) {
+  if (kind.value === 'income') {
+    void router.push({ name: 'CategoryIncomeEdit', params: { categoryId: id } })
+  } else {
+    void router.push({ name: 'CategoryExpenseEdit', params: { categoryId: id } })
+  }
+}
 </script>
 
 <template>
@@ -45,7 +62,12 @@ const { isLoading, loadError, search, visibleIncome, expenseSections, load } = u
     <template v-if="!isLoading && !loadError && kind === 'income'">
       <ul v-if="visibleIncome.length > 0" class="space-y-3" role="list">
         <li v-for="item in visibleIncome" :key="item.id">
-          <SurfaceCard>
+          <button
+            type="button"
+            class="w-full text-left rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            @click="goToEdit(item.id)"
+          >
+            <SurfaceCard>
             <div class="flex items-center gap-4 p-0 -m-1">
               <div
                 class="w-12 h-12 rounded-lg flex items-center justify-center text-primary"
@@ -59,7 +81,8 @@ const { isLoading, loadError, search, visibleIncome, expenseSections, load } = u
                 <p class="font-body font-semibold text-on-surface truncate">{{ item.name }}</p>
               </div>
             </div>
-          </SurfaceCard>
+            </SurfaceCard>
+          </button>
         </li>
       </ul>
       <p v-else class="text-center text-sm text-on-surface-variant py-8">No tenés categorías de ingresos propias aún.</p>
@@ -78,7 +101,12 @@ const { isLoading, loadError, search, visibleIncome, expenseSections, load } = u
           </div>
           <ul class="space-y-3" role="list">
             <li v-for="item in section.items" :key="item.id">
-              <SurfaceCard>
+              <button
+                type="button"
+                class="w-full text-left rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                @click="goToEdit(item.id)"
+              >
+                <SurfaceCard>
                 <div class="flex items-center gap-4 p-0 -m-1">
                   <div
                     class="w-12 h-12 rounded-lg flex items-center justify-center text-primary"
@@ -93,12 +121,30 @@ const { isLoading, loadError, search, visibleIncome, expenseSections, load } = u
                     <p v-if="item.description" class="text-xs text-outline truncate">{{ item.description }}</p>
                   </div>
                 </div>
-              </SurfaceCard>
+                </SurfaceCard>
+              </button>
             </li>
           </ul>
         </section>
       </div>
       <p v-else class="text-center text-sm text-on-surface-variant py-8">No tenés categorías de gastos propias aún.</p>
     </template>
+
+    <div class="h-20 sm:hidden" aria-hidden="true" />
+
+    <button
+      type="button"
+      class="fixed bottom-32 right-8 w-14 h-14 flex items-center justify-center rounded-full bg-primary-container text-on-primary-container shadow-2xl shadow-primary-container/40 z-[100] hover:scale-110 active:scale-90 transition-all duration-300"
+      aria-label="Registrar categoría"
+      @click="goToNewCategory"
+    >
+      <span class="material-symbols-outlined text-3xl font-black">add</span>
+    </button>
   </div>
 </template>
+
+<style scoped>
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+</style>

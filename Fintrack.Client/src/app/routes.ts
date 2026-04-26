@@ -127,6 +127,30 @@ export const routes: RouteRecordRaw[] = [
             name: 'SettingsExpenseCategories',
             component: () => import('@/app/views/settings/CategoryManagementView.vue'),
             meta: { title: 'Categorías de gastos', subtitle: 'Rubros que creaste para tus gastos.' }
+          },
+          {
+            path: 'categories/income/new',
+            name: 'CategoryIncomeNew',
+            component: () => import('@/app/views/settings/CategoryFormView.vue'),
+            meta: { title: 'Nueva categoría' }
+          },
+          {
+            path: 'categories/income/:categoryId/edit',
+            name: 'CategoryIncomeEdit',
+            component: () => import('@/app/views/settings/CategoryFormView.vue'),
+            meta: { title: 'Editar categoría' }
+          },
+          {
+            path: 'categories/expense/new',
+            name: 'CategoryExpenseNew',
+            component: () => import('@/app/views/settings/CategoryFormView.vue'),
+            meta: { title: 'Nueva categoría' }
+          },
+          {
+            path: 'categories/expense/:categoryId/edit',
+            name: 'CategoryExpenseEdit',
+            component: () => import('@/app/views/settings/CategoryFormView.vue'),
+            meta: { title: 'Editar categoría' }
           }
         ]
       },

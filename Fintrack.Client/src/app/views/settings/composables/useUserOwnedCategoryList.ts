@@ -17,6 +17,7 @@ export interface UserOwnedExpenseCategory {
   color?: string | null
   icon?: string | null
   description?: string | null
+  isEditable?: boolean
   group?: { name?: string | null } | null
 }
 
@@ -59,6 +60,7 @@ function mapExpenseRows(data: unknown): UserOwnedExpenseCategory[] {
       color: o['color'] as string | null | undefined,
       icon: o['icon'] as string | null | undefined,
       description: o['description'] as string | null | undefined,
+      isEditable: o['isEditable'] as boolean | undefined,
       group: groupRaw
         ? { name: typeof groupRaw['name'] === 'string' ? groupRaw['name'] : null }
         : null

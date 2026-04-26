@@ -14,7 +14,9 @@ namespace Fintrack.Server.Infrastructure.Authorization
             },
             [Roles.User] = new HashSet<string>
             {
-                Permissions.CategoriesRead, // Built in system categories
+                Permissions.CategoriesRead,
+                Permissions.CategoriesWrite,
+                Permissions.CategoriesDelete,
                 Permissions.ExpensesRead, Permissions.ExpensesWrite, Permissions.ExpensesDelete,
                 Permissions.IncomesRead, Permissions.IncomesWrite, Permissions.IncomesDelete,
                 Permissions.InvoicesRead, Permissions.InvoicesWrite, Permissions.InvoicesDelete,
