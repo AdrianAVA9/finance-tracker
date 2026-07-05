@@ -55,6 +55,27 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_49401152B0C94ACD985751EC4841CF92 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FDD0A061C3B945F482F3CA61D4011753 }}
 
+      steps:
+      - name: Login to Azure (diagnostic)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F3122BE1C7534A8C8E6BB11CA8A982A4 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_49401152B0C94ACD985751EC4841CF92 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FDD0A061C3B945F482F3CA61D4011753 }}
+          allow-no-subscriptions: true
+
+      - name: Diagnostic Step
+        shell: pwsh
+        run: |
+          Write-Host "=== az account show ==="
+          az account show || Write-Host "az account show failed or returned no subscriptions"
+          
+          Write-Host "=== az account list (all) ==="
+          az account list --all -o table || Write-Host "az account list failed"
+          
+          Write-Host "=== service principal details (by client id) ==="
+          az ad sp show --id ${{ secrets.AZUREAPPSERVICE_CLIENTID_F3122BE1C7534A8C8E6BB11CA8A982A4 }} || Write-Host "az ad sp show failed"
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
